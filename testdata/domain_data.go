@@ -1,6 +1,6 @@
 package testdata
 
-import "github.com/flexiant/concerto/api/types"
+import "github.com/ingrammicro/concerto/api/types"
 
 // GetDomainData loads test data
 func GetDomainData() *[]types.Domain {

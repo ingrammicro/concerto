@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/DATA-DOG/godog"
 	"github.com/codegangsta/cli"
-	"github.com/flexiant/concerto/utils"
+	"github.com/ingrammicro/concerto/utils"
 	"strings"
 )
 

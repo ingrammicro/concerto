@@ -3,8 +3,8 @@ package blueprint
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/flexiant/concerto/api/types"
-	"github.com/flexiant/concerto/utils"
+	"github.com/ingrammicro/concerto/api/types"
+	"github.com/ingrammicro/concerto/utils"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

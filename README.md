@@ -1,7 +1,7 @@
 
 # Concerto CLI / Go Library
 [![Go Report Card](http://goreportcard.com/badge/flexiant/concerto)](http://goreportcard.com/report/flexiant/concerto)
-[![Build Status](https://drone.io/github.com/flexiant/concerto/status.png)][cli_build] [![GoDoc](https://godoc.org/github.com/flexiant/concerto?status.png)](https://godoc.org/github.com/flexiant/concerto)
+[![Build Status](https://drone.io/github.com/ingrammicro/concerto/status.png)][cli_build] [![GoDoc](https://godoc.org/github.com/ingrammicro/concerto?status.png)](https://godoc.org/github.com/ingrammicro/concerto)
 [![codecov.io](https://codecov.io/github/flexiant/concerto/coverage.svg?branch=master)](https://codecov.io/github/flexiant/concerto?branch=master)
 [//]: # ([![Build Status](https://travis-ci.org/flexiant/concerto.svg?branch=master)](https://travis-ci.org/flexiant/concerto))
 
@@ -148,7 +148,7 @@ USAGE:
 VERSION:
    0.1.0
 AUTHOR(S):
-   Concerto Contributors <https://github.com/flexiant/concerto>
+   Concerto Contributors <https://github.com/ingrammicro/concerto>
 COMMANDS:
    firewall	Manages Firewall Policies within a Host
    scripts	Manages Execution Scripts within a Host
@@ -650,7 +650,7 @@ To contribute
 
 Please, use gofmt, golint, go vet, and follow [go style](https://github.com/golang/go/wiki/CodeReviewComments) advices
 
-[cli_build]: https://drone.io/github.com/flexiant/concerto/latest
+[cli_build]: https://drone.io/github.com/ingrammicro/concerto/latest
 [cli_linux]: http://get.concerto.io/concerto.x64.linux
 [cli_darwin]: http://get.concerto.io/concerto.x64.darwin
 [cli_windows]: http://get.concerto.io/concerto.x64.windows.exe

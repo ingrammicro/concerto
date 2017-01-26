@@ -2,7 +2,7 @@ package testdata
 
 import (
 	"encoding/json"
-	"github.com/flexiant/concerto/api/types"
+	"github.com/ingrammicro/concerto/api/types"
 )
 
 // GetTemplateData loads loads test data

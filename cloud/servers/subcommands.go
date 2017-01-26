@@ -2,7 +2,7 @@ package servers
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/flexiant/concerto/cmd"
+	"github.com/ingrammicro/concerto/cmd"
 )
 
 func SubCommands() []cli.Command {
@@ -48,6 +48,11 @@ func SubCommands() []cli.Command {
 					Name:  "server_plan_id",
 					Usage: "Identifier of the server plan in which the server shall be deployed",
 				},
+				cli.StringFlag{
+					Name:  "cloud_account_id",
+					Usage: "Identifier of the cloud account in which the server shall be registered",
+				},
+
 			},
 		},
 		{

@@ -1,7 +1,7 @@
 package cluster
 
 import (
-	"github.com/flexiant/concerto/testdata"
+	"github.com/ingrammicro/concerto/testdata"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

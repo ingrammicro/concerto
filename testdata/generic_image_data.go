@@ -1,7 +1,7 @@
 package testdata
 
 import (
-	"github.com/flexiant/concerto/api/types"
+	"github.com/ingrammicro/concerto/api/types"
 )
 
 // GetGenericImageData loads test data

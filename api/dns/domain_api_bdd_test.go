@@ -2,7 +2,7 @@ package dns
 
 import (
 	"fmt"
-	"github.com/flexiant/concerto/api/types"
+	"github.com/ingrammicro/concerto/api/types"
 	"gopkg.in/cucumber/gherkin-go.v3"
 	"strings"
 )

@@ -4,7 +4,7 @@ package firewall
 
 import (
 	"fmt"
-	"github.com/flexiant/concerto/utils"
+	"github.com/ingrammicro/concerto/utils"
 )
 
 func driverName() string {

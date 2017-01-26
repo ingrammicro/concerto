@@ -18,7 +18,7 @@ import (
 	"syscall"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/flexiant/concerto/utils"
+	"github.com/ingrammicro/concerto/utils"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/codegangsta/cli"

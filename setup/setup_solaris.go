@@ -15,7 +15,7 @@ import (
 	"path"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/flexiant/concerto/utils"
+	"github.com/ingrammicro/concerto/utils"
 
 	"github.com/codegangsta/cli"
 	"golang.org/x/net/html"

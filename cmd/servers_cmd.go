@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/flexiant/concerto/api/cloud"
-	"github.com/flexiant/concerto/utils"
-	"github.com/flexiant/concerto/utils/format"
+	"github.com/ingrammicro/concerto/api/cloud"
+	"github.com/ingrammicro/concerto/utils"
+	"github.com/ingrammicro/concerto/utils/format"
 )
 
 // WireUpServer prepares common resources to send request to Concerto API
@@ -64,7 +64,7 @@ func ServerCreate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	serverSvc, formatter := WireUpServer(c)
 
-	checkRequiredFlags(c, []string{"name", "fqdn", "workspace_id", "template_id", "server_plan_id"}, formatter)
+	checkRequiredFlags(c, []string{"name", "fqdn", "workspace_id", "template_id", "server_plan_id", "cloud_account_id"}, formatter)
 	server, err := serverSvc.CreateServer(utils.FlagConvertParams(c))
 	if err != nil {
 		formatter.PrintFatal("Couldn't create server", err)
