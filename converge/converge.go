@@ -11,7 +11,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	"github.com/flexiant/concerto/utils"
+	"github.com/ingrammicro/concerto/utils"
 )
 
 func CmbConverge(c *cli.Context) error {

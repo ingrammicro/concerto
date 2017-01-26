@@ -1,6 +1,6 @@
 package testdata
 
-import "github.com/flexiant/concerto/api/types"
+import "github.com/ingrammicro/concerto/api/types"
 
 // GetLoadBalancerData loads test data
 func GetLoadBalancerData() *[]types.LoadBalancer {

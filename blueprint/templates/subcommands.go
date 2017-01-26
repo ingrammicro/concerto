@@ -2,7 +2,7 @@ package templates
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/flexiant/concerto/cmd"
+	"github.com/ingrammicro/concerto/cmd"
 )
 
 func SubCommands() []cli.Command {

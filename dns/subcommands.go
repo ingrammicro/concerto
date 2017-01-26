@@ -2,7 +2,7 @@ package dns
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/flexiant/concerto/cmd"
+	"github.com/ingrammicro/concerto/cmd"
 )
 
 // SubCommands return CLI subcommands

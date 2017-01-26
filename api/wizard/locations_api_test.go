@@ -3,7 +3,7 @@ package wizard
 import (
 	"testing"
 
-	"github.com/flexiant/concerto/testdata"
+	"github.com/ingrammicro/concerto/testdata"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/flexiant/concerto/api/blueprint"
-	"github.com/flexiant/concerto/utils"
-	"github.com/flexiant/concerto/utils/format"
+	"github.com/ingrammicro/concerto/api/blueprint"
+	"github.com/ingrammicro/concerto/utils"
+	"github.com/ingrammicro/concerto/utils/format"
 )
 
 // WireUpService prepares common resources to send request to Concerto API
