@@ -26,8 +26,8 @@ func SubCommands() []cli.Command {
 					Usage: "Identifier of the Location on which the App will be deployed",
 				},
 				cli.StringFlag{
-					Name:  "cloud_provider_id",
-					Usage: "Identifier of the Cloud Provider on which the App will be deployed",
+					Name:  "cloud_account_id",
+					Usage: "Identifier of the Cloud Account with which the App will be deployed",
 				},
 				cli.StringFlag{
 					Name:  "server_plan_id",
