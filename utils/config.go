@@ -5,9 +5,6 @@ import (
 	"encoding/pem"
 	"encoding/xml"
 	"fmt"
-	log "github.com/Sirupsen/logrus"
-	"github.com/codegangsta/cli"
-	"github.com/mitchellh/go-homedir"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -17,6 +14,10 @@ import (
 	"reflect"
 	"runtime"
 	"strings"
+
+	log "github.com/Sirupsen/logrus"
+	"github.com/codegangsta/cli"
+	"github.com/mitchellh/go-homedir"
 )
 
 const windowsServerConfigFile = "c:\\concerto\\client.xml"
@@ -25,15 +26,17 @@ const defaultConcertoEndpoint = "https://clients.concerto.io:886/"
 
 // Config stores configuration file contents
 type Config struct {
-	XMLName      xml.Name `xml:"concerto"`
-	APIEndpoint  string   `xml:"server,attr"`
-	LogFile      string   `xml:"log_file,attr"`
-	LogLevel     string   `xml:"log_level,attr"`
-	Certificate  Cert     `xml:"ssl"`
-	ConfLocation string
-	ConfFile     string
-	IsHost       bool
-	ConcertoURL  string
+	XMLName            xml.Name `xml:"concerto"`
+	APIEndpoint        string   `xml:"server,attr"`
+	LogFile            string   `xml:"log_file,attr"`
+	LogLevel           string   `xml:"log_level,attr"`
+	Certificate        Cert     `xml:"ssl"`
+	ConfLocation       string
+	ConfFile           string
+	IsHost             bool
+	ConcertoURL        string
+	BrownfieldToken    string
+	CurrentUserIsAdmin bool
 }
 
 // Cert stores cert files location
@@ -60,9 +63,15 @@ func InitializeConcertoConfig(c *cli.Context) (*Config, error) {
 		return cachedConfig, nil
 	}
 
-	// where config file must me
 	cachedConfig = &Config{}
-	err := cachedConfig.evaluateConcertoConfigFile(c)
+
+	err := cachedConfig.readBrownfieldToken(c)
+	if err != nil {
+		return nil, err
+	}
+
+	// where config file must me
+	err = cachedConfig.evaluateConcertoConfigFile(c)
 	if err != nil {
 		return nil, err
 	}
@@ -146,6 +155,16 @@ func (config *Config) IsConfigReadySetup() bool {
 	return config.ConcertoURL != ""
 }
 
+// IsConfigReadyBrownfield returns whether config is ready for brownfield token
+// authentication
+func (config *Config) IsConfigReadyBrownfield() bool {
+	if config.APIEndpoint == "" ||
+		config.BrownfieldToken == "" {
+		return false
+	}
+	return true
+}
+
 // readConcertoConfig reads Concerto config file located at fileLocation
 func (config *Config) readConcertoConfig(c *cli.Context) error {
 	log.Debug("Reading Concerto Configuration")
@@ -200,10 +219,36 @@ func (config *Config) readConcertoConfig(c *cli.Context) error {
 	return nil
 }
 
+func (config *Config) evaluateCurrentUser() (*user.User, error) {
+	currUser, err := user.Current()
+	if err != nil {
+		log.Debugf("Couldn't use os.user to get user details: %s", err.Error())
+		dir, err := homedir.Dir()
+		if err != nil {
+			return nil, fmt.Errorf("Couldn't get home dir for current user: %s", err.Error())
+		}
+		currUser = &user.User{
+			Username: getUsername(),
+			HomeDir:  dir,
+		}
+	}
+	if runtime.GOOS == "windows" {
+		currUser.Username = currUser.Username[strings.LastIndex(currUser.Username, "\\")+1:]
+		log.Debugf("Windows username is %s", currUser.Username)
+		config.CurrentUserIsAdmin = (currUser.Gid == "S-1-5-32-544" || isWinAdministrator(currUser.Username))
+	} else {
+		config.CurrentUserIsAdmin = (currUser.Uid == "0" || currUser.Username == "root")
+	}
+	return currUser, nil
+}
+
 // evaluateConcertoConfigFile returns path to concerto config file
 func (config *Config) evaluateConcertoConfigFile(c *cli.Context) error {
 	log.Debug("evaluateConcertoConfigFile")
-
+	currUser, err := config.evaluateCurrentUser()
+	if err != nil {
+		return err
+	}
 	if configFile := c.String("concerto-config"); configFile != "" {
 
 		log.Debug("Concerto configuration file location taken from env/args")
@@ -211,24 +256,8 @@ func (config *Config) evaluateConcertoConfigFile(c *cli.Context) error {
 
 	} else {
 
-		currUser, err := user.Current()
-		if err != nil {
-			log.Debugf("Couldn't use os.user to get user details: %s", err.Error())
-			dir, err := homedir.Dir()
-			if err != nil {
-				return fmt.Errorf("Couldn't get home dir for current user: %s", err.Error())
-			}
-			currUser = &user.User{
-				Username: getUsername(),
-				HomeDir:  dir,
-			}
-		}
-
 		if runtime.GOOS == "windows" {
-			currUser.Username = currUser.Username[strings.LastIndex(currUser.Username, "\\")+1:]
-			log.Debugf("Windows username is %s", currUser.Username)
-
-			if (currUser.Gid == "S-1-5-32-544" || isWinAdministrator(currUser.Username)) && FileExists(windowsServerConfigFile) {
+			if config.CurrentUserIsAdmin && (config.BrownfieldToken != "" || FileExists(windowsServerConfigFile)) {
 				log.Debug("Current user is administrator, setting config file as %s", windowsServerConfigFile)
 				config.ConfFile = windowsServerConfigFile
 			} else {
@@ -238,7 +267,7 @@ func (config *Config) evaluateConcertoConfigFile(c *cli.Context) error {
 			}
 		} else {
 			// Server mode *nix
-			if currUser.Uid == "0" || currUser.Username == "root" && FileExists(nixServerConfigFile) {
+			if config.CurrentUserIsAdmin && (config.BrownfieldToken != "" || FileExists(nixServerConfigFile)) {
 				config.ConfFile = nixServerConfigFile
 			} else {
 				// User mode *nix
@@ -316,6 +345,21 @@ func (config *Config) readConcertoURL() error {
 	}
 
 	config.ConcertoURL = fmt.Sprintf("%s://%s/", cURL.Scheme, strings.Join(tokenFqdn, "."))
+	return nil
+}
+
+// readConcertoURL reads URL from CONCERTO_URL envrionment or calculates using API URL
+func (config *Config) readBrownfieldToken(c *cli.Context) error {
+	if config.BrownfieldToken != "" {
+		return nil
+	}
+
+	// overwrite with environment/arguments vars
+	if overwBrownfieldToken := c.String("concerto-brownfield-token"); overwBrownfieldToken != "" {
+		log.Debug("Concerto Brownfield token taken from env/args")
+		config.BrownfieldToken = overwBrownfieldToken
+	}
+
 	return nil
 }
 

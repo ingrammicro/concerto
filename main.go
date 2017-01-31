@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/admin"
@@ -9,6 +11,7 @@ import (
 	"github.com/ingrammicro/concerto/blueprint/scripts"
 	"github.com/ingrammicro/concerto/blueprint/services"
 	"github.com/ingrammicro/concerto/blueprint/templates"
+	"github.com/ingrammicro/concerto/brownfield"
 	cl_prov "github.com/ingrammicro/concerto/cloud/cloud_providers"
 	"github.com/ingrammicro/concerto/cloud/generic_images"
 	"github.com/ingrammicro/concerto/cloud/saas_providers"
@@ -35,8 +38,17 @@ import (
 	"github.com/ingrammicro/concerto/wizard/cloud_providers"
 	"github.com/ingrammicro/concerto/wizard/locations"
 	"github.com/ingrammicro/concerto/wizard/server_plans"
-	"os"
 )
+
+var BrownfieldCommands = []cli.Command{
+	{
+		Name:  "brownfield",
+		Usage: "Manages concerto agent configuration on imported brownfield Host",
+		Subcommands: append(
+			brownfield.SubCommands(),
+		),
+	},
+}
 
 var ServerCommands = []cli.Command{
 	{
@@ -340,7 +352,10 @@ func prepareFlags(c *cli.Context) error {
 	}
 	format.InitializeFormatter(c.String("formatter"), os.Stdout)
 
-	if config.IsHost {
+	if config.BrownfieldToken != "" {
+		log.Debug("Setting brownfield commands to concerto")
+		c.App.Commands = BrownfieldCommands
+	} else if config.IsHost {
 		log.Debug("Setting server commands to concerto")
 		c.App.Commands = ServerCommands
 	} else {
@@ -412,6 +427,11 @@ func main() {
 			EnvVar: "CONCERTO_URL",
 			Name:   "concerto-url",
 			Usage:  "Concerto Web URL",
+		},
+		cli.StringFlag{
+			EnvVar: "CONCERTO_BROWNFIELD_TOKEN",
+			Name:   "concerto-brownfield-token",
+			Usage:  "Concerto Brownfield Token",
 		},
 		cli.StringFlag{
 			EnvVar: "CONCERTO_FORMATTER",

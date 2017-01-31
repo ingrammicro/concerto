@@ -59,6 +59,31 @@ func NewHTTPConcertoService(config *Config) (hcs *HTTPConcertoservice, err error
 	return hcs, nil
 }
 
+// NewHTTPConcertoService creates new http Concerto client based on config
+func NewHTTPConcertoServiceWithBrownfieldToken(config *Config) (hcs *HTTPConcertoservice, err error) {
+
+	if config == nil {
+		return nil, fmt.Errorf("Web service configuration failed. No data in configuration")
+	}
+
+	if !config.IsConfigReadyBrownfield() {
+		return nil, fmt.Errorf("Configuration is incomplete.")
+	}
+
+	// creates HTTP Concerto service with config
+	hcs = &HTTPConcertoservice{
+		config: config,
+	}
+
+	// Creates a client with specific transport configurations
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	hcs.client = &http.Client{Transport: transport}
+
+	return hcs, nil
+}
+
 // Post sends POST request to Concerto API
 func (hcs *HTTPConcertoservice) Post(path string, payload *map[string]interface{}) ([]byte, int, error) {
 
@@ -68,7 +93,13 @@ func (hcs *HTTPConcertoservice) Post(path string, payload *map[string]interface{
 	}
 
 	log.Debugf("Sending POST request to %s with payload %s ", url, jsPayload)
-	response, err := hcs.client.Post(url, "application/json", jsPayload)
+	req, err := http.NewRequest("POST", url, jsPayload)
+	req.Header.Add("Content-Type", "application/json")
+	if hcs.config.BrownfieldToken != "" {
+		log.Debugf("Including brownfield token %s in POST request as X-Concerto-Brownfield-Token header ", hcs.config.BrownfieldToken)
+		req.Header.Add("X-Concerto-Brownfield-Token", hcs.config.BrownfieldToken)
+	}
+	response, err := hcs.client.Do(req)
 	if err != nil {
 		return nil, 0, err
 	}
