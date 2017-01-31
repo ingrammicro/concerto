@@ -14,7 +14,7 @@ import (
 	"github.com/ingrammicro/concerto/utils/format"
 )
 
-func cmdConfigure(c *cli.Context) error {
+func cmdRegister(c *cli.Context) error {
 	f := format.GetFormatter()
 	config, err := utils.GetConcertoConfig()
 	if err != nil {
