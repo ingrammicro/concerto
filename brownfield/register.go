@@ -3,16 +3,21 @@ package brownfield
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
+	"text/template"
 
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
+
+var configFileTemplate = template.Must(template.New("configFile").Parse(`<concerto version="1.0" server="{{.APIEndpoint}}" log_file="{{.LogFile}}" log_level="{{.LogLevel}}">
+<ssl cert="{{.CertPath}}" key="{{.KeyPath}}" server_ca="{{.CaCertPath}}" />
+</concerto>
+`))
 
 func cmdRegister(c *cli.Context) error {
 	f := format.GetFormatter()
@@ -35,6 +40,7 @@ func cmdRegister(c *cli.Context) error {
 	if err != nil {
 		f.PrintFatal("Couldn't configure server keys", err)
 	}
+	fmt.Printf("Concerto agent successfully registered, configuration file placed at %s\n", config.ConfFile)
 	return nil
 }
 
@@ -94,7 +100,6 @@ func obtainServerKeys(config *utils.Config) (rootCAcert string, cert string, key
 }
 
 func configureServerKeys(config *utils.Config, rootCACert, cert, key string) error {
-	fmt.Printf("Config file is %s\n", config.ConfFile)
 	configFileData := &struct {
 		APIEndpoint string
 		LogFile     string
@@ -143,13 +148,6 @@ func configureServerKeys(config *utils.Config, rootCACert, cert, key string) err
 	if err != nil {
 		return fmt.Errorf("cannot write server key: %v", err)
 	}
-	configTemplate, err := template.New("configFile").Parse(`<concerto version="1.0" server="{{.APIEndpoint}}" log_file="{{.LogFile}}" log_level="{{.LogLevel}}">
-	<ssl cert="{{.CertPath}}" key="{{.KeyPath}}" server_ca="{{.CaCertPath}}" />
-</concerto>
-`)
-	if err != nil {
-		return fmt.Errorf("Could not compile config file template: %v", err)
-	}
 	err = os.MkdirAll(config.ConfLocation, 0644)
 	if err != nil {
 		return fmt.Errorf("cannot create directory to place config file: %v", err)
@@ -159,7 +157,7 @@ func configureServerKeys(config *utils.Config, rootCACert, cert, key string) err
 		return fmt.Errorf("Could not open config file for writing: %v", err)
 	}
 	defer f.Close()
-	err = configTemplate.Execute(f, configFileData)
+	err = configFileTemplate.Execute(f, configFileData)
 	if err != nil {
 		return fmt.Errorf("Could not generate config file contents: %v", err)
 	}

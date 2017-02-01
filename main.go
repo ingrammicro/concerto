@@ -40,16 +40,6 @@ import (
 	"github.com/ingrammicro/concerto/wizard/server_plans"
 )
 
-var BrownfieldCommands = []cli.Command{
-	{
-		Name:  "brownfield",
-		Usage: "Manages concerto agent configuration on imported brownfield Host",
-		Subcommands: append(
-			brownfield.SubCommands(),
-		),
-	},
-}
-
 var ServerCommands = []cli.Command{
 	{
 		Name:  "firewall",
@@ -69,6 +59,13 @@ var ServerCommands = []cli.Command{
 		Name:   "converge",
 		Usage:  "Converges Host to original Blueprint",
 		Action: converge.CmbConverge,
+	},
+	{
+		Name:  "brownfield",
+		Usage: "Manages registration and configuration within an imported brownfield Host",
+		Subcommands: append(
+			brownfield.SubCommands(),
+		),
 	},
 }
 
@@ -352,10 +349,7 @@ func prepareFlags(c *cli.Context) error {
 	}
 	format.InitializeFormatter(c.String("formatter"), os.Stdout)
 
-	if config.BrownfieldToken != "" {
-		log.Debug("Setting brownfield commands to concerto")
-		c.App.Commands = BrownfieldCommands
-	} else if config.IsHost {
+	if config.IsHost || config.BrownfieldToken != "" {
 		log.Debug("Setting server commands to concerto")
 		c.App.Commands = ServerCommands
 	} else {
