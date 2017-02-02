@@ -3,12 +3,12 @@ package brownfield
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+	"text/template"
 
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
@@ -36,9 +36,8 @@ func applyConcertoSettings(config *utils.Config, f format.Formatter) {
 		defer func() {
 			if tmpfileName == "" {
 				tmpfile.Close()
-			} else {
-				os.Remove(tmpfileName)
 			}
+			os.Remove(tmpfileName)
 		}()
 		err = nixScriptTemplate.Execute(tmpfile, settings)
 		if err != nil {
