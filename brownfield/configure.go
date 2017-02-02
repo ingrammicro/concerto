@@ -23,5 +23,6 @@ func cmdConfigure(c *cli.Context) error {
 		}
 	}
 	applyConcertoSettings(config, f)
+	configureConcertoFirewall(config, f)
 	return nil
 }
