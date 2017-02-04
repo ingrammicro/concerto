@@ -32,6 +32,17 @@ type Rule struct {
 	MaxPort  int    `json:"max_port"`
 }
 
+func (policy Policy) Apply() error {
+	if len(policy.Rules) > 0 {
+		return apply(policy)
+	}
+	return nil
+}
+
+func Flush() error {
+	return flush()
+}
+
 func list(policy Policy) error {
 	w := tabwriter.NewWriter(os.Stdout, 15, 1, 3, ' ', 0)
 	fmt.Fprintln(w, "CIDR\tPROTOCOL\tMIN\tMAX")

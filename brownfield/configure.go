@@ -15,6 +15,10 @@ func cmdConfigure(c *cli.Context) error {
 	if err != nil {
 		f.PrintFatal("Couldn't read config", err)
 	}
+	cs, err := utils.NewHTTPConcertoService(config)
+	if err != nil {
+		f.PrintFatal("Couldn't set up connection to Concerto", err)
+	}
 	if !config.CurrentUserIsAdmin {
 		if runtime.GOOS == "windows" {
 			f.PrintFatal("Must run as administrator user", fmt.Errorf("running as non-administrator user"))
@@ -22,7 +26,7 @@ func cmdConfigure(c *cli.Context) error {
 			f.PrintFatal("Must run as super-user", fmt.Errorf("running as non-administrator user"))
 		}
 	}
-	applyConcertoSettings(config, f)
-	configureConcertoFirewall(config, f)
+	applyConcertoSettings(cs, f)
+	configureConcertoFirewall(cs, f)
 	return nil
 }

@@ -20,8 +20,8 @@ type Settings struct {
 	SSHPublicKeys []string `json:"ssh_public_keys"`
 }
 
-func applyConcertoSettings(config *utils.Config, f format.Formatter) {
-	settings, err := obtainSettings(config)
+func applyConcertoSettings(cs *utils.HTTPConcertoservice, f format.Formatter) {
+	settings, err := obtainSettings(cs)
 	if err != nil {
 		f.PrintFatal("Cannot obtain settings", err)
 	}
@@ -56,11 +56,7 @@ func applyConcertoSettings(config *utils.Config, f format.Formatter) {
 	}
 }
 
-func obtainSettings(config *utils.Config) (settings *Settings, err error) {
-	cs, err := utils.NewHTTPConcertoService(config)
-	if err != nil {
-		return
-	}
+func obtainSettings(cs *utils.HTTPConcertoservice) (settings *Settings, err error) {
 	body, status, err := cs.Get("/brownfield/settings")
 	if err != nil {
 		return

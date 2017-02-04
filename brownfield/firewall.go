@@ -1,9 +1,11 @@
 package brownfield
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 
+	fw "github.com/ingrammicro/concerto/firewall"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
@@ -21,7 +23,7 @@ type FirewallRule struct {
 	dports   [2]int
 }
 
-func configureConcertoFirewall(config *utils.Config, f format.Formatter) {
+func configureConcertoFirewall(cs *utils.HTTPConcertoservice, f format.Formatter) {
 	chains := obtainCurrentFirewallRules(f)
 	fmt.Printf("Parsed chains: %v\n", chains)
 	flattenedInputChain, err := buildFlattenedChain("INPUT", chains, nil)
@@ -29,6 +31,11 @@ func configureConcertoFirewall(config *utils.Config, f format.Formatter) {
 		f.PrintFatal("Cannot flatten firewall INPUT chain", err)
 	}
 	fmt.Printf("Flattened chain: %v\n", flattenedInputChain)
+	policy, err := startFirewallMapping(cs, flattenedInputChain.rules)
+	if err != nil {
+		f.PrintFatal("Error starting the firewall mapping", err)
+	}
+	fmt.Printf("Policy to apply: %v\n", policy)
 }
 
 func (fc *FirewallChain) String() string {
@@ -194,4 +201,63 @@ func intersectFirewallRules(r1, r2 *FirewallRule) (*FirewallRule, error) {
 		source:   source,
 		dports:   dports,
 	}, nil
+}
+
+func startFirewallMapping(cs *utils.HTTPConcertoservice, rules []*FirewallRule) (p *fw.Policy, err error) {
+	payload := convertFirewallChainToPayload(rules)
+	body, status, err := cs.Post("/cloud/firewall_profile", &payload)
+	if err != nil {
+		return
+	}
+	if status >= 300 {
+		err = fmt.Errorf("server responded with %d code: %s", status, string(body))
+		return
+	}
+	responseData := &fw.FirewallProfile{}
+	err = json.Unmarshal(body, &responseData)
+	if err != nil {
+		return
+	}
+	p = &(responseData.Profile)
+	return
+}
+
+func convertFirewallChainToPayload(rules []*FirewallRule) map[string]interface{} {
+	fpRules := []interface{}{}
+	for _, r := range rules {
+		newRules := convertRuleToPayload(r)
+		fpRules = append(fpRules, newRules...)
+	}
+	fp := map[string]interface{}{
+		"firewall_profile": map[string]interface{}{
+			"rules": fpRules,
+		},
+	}
+	return fp
+}
+
+func convertRuleToPayload(rule *FirewallRule) (rules []interface{}) {
+	protocol := rule.protocol
+	if protocol != "all" && protocol != "tcp" && protocol != "udp" {
+		return
+	}
+	if protocol == "all" || protocol == "tcp" {
+		rules = append(rules,
+			fw.Rule{
+				Protocol: "tcp",
+				Cidr:     rule.source,
+				MinPort:  rule.dports[0],
+				MaxPort:  rule.dports[1],
+			})
+	}
+	if protocol == "all" || protocol == "udp" {
+		rules = append(rules,
+			fw.Rule{
+				Protocol: "udp",
+				Cidr:     rule.source,
+				MinPort:  rule.dports[0],
+				MaxPort:  rule.dports[1],
+			})
+	}
+	return
 }
