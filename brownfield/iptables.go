@@ -7,12 +7,18 @@ import (
 	"strconv"
 	"strings"
 
+	fw "github.com/ingrammicro/concerto/firewall"
+	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
 
+func apply(p *fw.Policy) error {
+	utils.RunCmd("/sbin/iptables -w -F INPUT")
+	return p.Apply()
+}
+
 func obtainCurrentFirewallRules(f format.Formatter) []*FirewallChain {
-	//output, err := exec.Command("/sbin/iptables", "-L", "-n", "-v").Output()
-	output, err := exec.Command("cat", "/root/test.iptables.output").Output()
+	output, err := exec.Command("/sbin/iptables", "-L", "-n", "-v").Output()
 	if err != nil {
 		f.PrintFatal("Error happened running iptables list command", err)
 	}

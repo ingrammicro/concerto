@@ -48,11 +48,11 @@ func applyConcertoSettings(cs *utils.HTTPConcertoservice, f format.Formatter) {
 		if err != nil {
 			f.PrintFatal("Cannot instantiate setup script", err)
 		}
-		output, err := exec.Command("cat", tmpfileName).Output()
+		_, err = exec.Command("bash", tmpfileName).Output()
 		if err != nil {
 			f.PrintFatal("Error happened running setup script", err)
 		}
-		fmt.Printf("Setup script ran successfully:\n%s", output)
+		fmt.Printf("Setup script ran successfully\n")
 	}
 }
 

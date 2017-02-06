@@ -25,17 +25,18 @@ type FirewallRule struct {
 
 func configureConcertoFirewall(cs *utils.HTTPConcertoservice, f format.Formatter) {
 	chains := obtainCurrentFirewallRules(f)
-	fmt.Printf("Parsed chains: %v\n", chains)
 	flattenedInputChain, err := buildFlattenedChain("INPUT", chains, nil)
 	if err != nil {
 		f.PrintFatal("Cannot flatten firewall INPUT chain", err)
 	}
-	fmt.Printf("Flattened chain: %v\n", flattenedInputChain)
 	policy, err := startFirewallMapping(cs, flattenedInputChain.rules)
 	if err != nil {
 		f.PrintFatal("Error starting the firewall mapping", err)
 	}
-	fmt.Printf("Policy to apply: %v\n", policy)
+	err = apply(policy)
+	if err != nil {
+		f.PrintFatal("Applying Concerto firewall", err)
+	}
 }
 
 func (fc *FirewallChain) String() string {
