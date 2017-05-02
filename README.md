@@ -8,14 +8,14 @@
 
 
 
-Flexiant Concerto Command Line Interface allows you to interact with Concerto features, and build your own scripts calling Concerto's API.
+Ingram Micro Concerto Command Line Interface allows you to interact with Concerto features, and build your own scripts calling Concerto's API.
 
 If you are already using Concerto CLI, and only want to obtain the latest version, download Concerto CLI for:
 - [Linux][cli_linux]
 - [OSX][cli_darwin]
 - [Windows][cli_windows]
 
-If you want to build the CLI using the source code, please, take into account that the master branch is used for development, it is unstable and might be broken. Download stable tagged versions to use Flexiant Concerto CLI.
+If you want to build the CLI using the source code, please, take into account that the master branch is used for development, it is unstable and might be broken. Download stable tagged versions to use Ingram Micro Concerto CLI.
 
 # Table of Contents
 
@@ -48,9 +48,9 @@ If you want to build the CLI using the source code, please, take into account th
 # Setup
 
 ## Pre-requisites
-Before setting up the CLI, we will need a Flexiant Concerto account, and an API key associated with your account.
+Before setting up the CLI, we will need a Ingram Micro Concerto account, and an API key associated with your account.
 
-You can create a free account in less than a minute following the steps in Flexiant Concerto [login page](https://start.concerto.io/).
+You can create a free account in less than a minute following the steps in Ingram Micro Concerto [login page](https://start.concerto.io/).
 
 
 Once your account have been provisioned, if you are a linux or OS X, we recommend you to execute the automated setup script. Otherwise, follow the [manual process](#manual-setup)
@@ -309,7 +309,7 @@ After a brief amount of time you will have your new Worpress server up and runni
 
 ## Blueprint
 
-Flexiant Concerto blueprints are the compendium of
+Ingram Micro Concerto blueprints are the compendium of
  - services, they map to Concerto's Web UI cookbooks. Use `concerto blueprint services list` to show all cookbooks available at your account.
  - scripts, the provide a way to execute custom scripts after bootstraping, before a clean shutdown, or on demand.
  - templates, an ordered combination of services and scripts.
@@ -321,7 +321,7 @@ A template must be created with an OS target, a service list, and a list of cust
 #### Template OS
 Blueprints are associated with an Operative System, and each cloud provider has a different way of identifying the OS that a machine is running.
 
-Flexiant Concerto takes care of the gap, and lets you select a cloud provider independent OS, and find out later which image is appropriate for the chosen cloud provider and location. Hence blueprints are bound to OS, but cloud provider and location independent.
+Ingram Micro Concerto takes care of the gap, and lets you select a cloud provider independent OS, and find out later which image is appropriate for the chosen cloud provider and location. Hence blueprints are bound to OS, but cloud provider and location independent.
 
 
 For our case we will be using Ubuntu 14.04. Let's find it's Concerto ID

@@ -1,10 +1,10 @@
 
-# Getting started with Kubernetes in Flexiant Concerto
+# Getting started with Kubernetes in Ingram Micro Concerto
 [![Build Status](https://drone.io/github.com/flexiant/concerto/status.png)][cli_build] [![GoDoc](https://godoc.org/github.com/flexiant/concerto?status.png)](https://godoc.org/github.com/flexiant/concerto)
 
-Flexiant Concerto's integration with Kubernetes allows you to deploy and maintain Kubernetes clusters using the Flexiant Concerto UI and CLI interface. 
+Ingram Micro Concerto's integration with Kubernetes allows you to deploy and maintain Kubernetes clusters using the Ingram Micro Concerto UI and CLI interface.
 
-This guide concerns how to use the Flexiant Concerto UI to create a Kubernetes cluster; for information about how to use the CLI to accomplish this, see the [CLI documentation](README.md).
+This guide concerns how to use the Ingram Micro Concerto UI to create a Kubernetes cluster; for information about how to use the CLI to accomplish this, see the [CLI documentation](README.md).
 
 # Table of Contents
 
@@ -19,9 +19,9 @@ This guide concerns how to use the Flexiant Concerto UI to create a Kubernetes c
 # Setup
 
 ## Pre-requisites
-Before setting up Kubernetes, we will need a Flexiant Concerto account.
+Before setting up Kubernetes, we will need a Ingram Micro Concerto account.
 
-You can create a free account in less than a minute following the steps in Flexiant Concerto [login page](https://start.concerto.io/).
+You can create a free account in less than a minute following the steps in Ingram Micro Concerto [login page](https://start.concerto.io/).
 
 Once your account have been provisioned, add a cloud provider. After doing this, ensure that beta features are activated and listed as one of the top menu tabs options. If that is not the case, enable beta features by doing the following:
 
@@ -69,7 +69,7 @@ To add nodes to a cluster:
 
 ## Uploading config files
 
-Kubernetes allows the configuration of pods and replication controllers to be defined in a .json or .yaml file. Once your Kubernetes cluster is operational, these files can be uploaded to your cluster using the Flexiant Concerto UI.
+Kubernetes allows the configuration of pods and replication controllers to be defined in a .json or .yaml file. Once your Kubernetes cluster is operational, these files can be uploaded to your cluster using the Ingram Micro Concerto UI.
 
 To upload configuration files:
 
@@ -88,7 +88,7 @@ To upload configuration files:
 7. Select the file to upload and click the **Open** button.
 
 # Contact
-We have included most common use cases here. If you feel a use case is missing, open an issue or contact us at <contact@flexiant.com>.
+We have included most common use cases here. If you feel a use case is missing, open an issue or contact us at <contact@concerto.com>.
 
 
 # Contribute

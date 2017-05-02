@@ -167,30 +167,27 @@ installedMessage(){
 }
 showLogo(){
 	[ $LOGO_H_SIZE -lt $(tput cols) ] && logoFull || logoSimple
-	echo "Executing Flexiant Concerto CLI install"
+	echo "Executing Ingram Micro Concerto CLI install"
 }
 
 logoSimple(){
 cat <<EOF
 
-            ╔                       
-            ╠▒╕                     
-            ╠╢╢▒                    
-            ╠╢╢╢▒╕               ╓⌐ 
-            ╠╢╢╢╢╢▒        ╓╗╪╬▒Θ   
-            ╠╢╢╢╢╢╢▒╦╓╤╗╬▒╢╢╢╢╢Å    
-            ╠╢╢╢╢╢╢╢╢╢╬ÅÅÅ╫╢╢╢┘  ,,,
-       ,╓╗@▒▒╢╢╢╢╢╢╢╢╢╢╤   ▒▒   ╬╢╢┘
-,╓╗╗╬▒╬╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢▒╕    ╓▒╢Θ    
-'▀Å▒╫╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢Å    ╙▒╢▒  
-      '"▀Å▒╢╢╢╢╢╢╢╢╢╢╢╢▒   ╬▒   Å╢▒╦
-            ╠╢╢╢╢╢╢╢╢╢╬╤╤╤╬╢╢▒╕   """
-            ╠╢╢╢╢╢╢╬Ö╙ÅΘ╫╢╢╢╢╢╢▒     
-            ╠╢╢╢╢╢Θ        "▀Å▒╢▒╕   
-            ╠╢╢╢╢▀               '"  
-            ╠╢╢▒                     
-            ╠╢▀    Flexiant Concerto       
-            ╠      https://start.concerto.io                   
+                                                                                                                                                 syyys
+                                                                                                                                                 yyyyy
+.........`  ..............   ........`                 ...................`        .............`   `.............`    ..............      ..... .:::.
+yyyyyyyyy- `yyyyyyyyyyyyyy.  +yyyyyyy/                 yyyyyyyyyyyyyyyyyyyyyo/`   -yyyyyyyyyyyyy:   -yyyyyyyyyyyyy/    +yyyyyyyyyyyyy`    .y++ss.
+yyyyyyyyy- `yyyyyyyyyyyyyyo  +yyyyyyy/         ``-:::::+yyyyyyyyyyyyyyyyyyyyyyy- `syyyyyyyyyyyyyy-  -yyyyyyyyyyyyyy`  .yyyyyyyyyyyyyy`    `osss/`
+yyyyyyyyy- `yyyyyyyyyyyyyyy: +yyyyyy/`       -oyyyyyyyyyyyyyyyyyyo::/oyyyyyyyyyy`+yyyyyyyyyyyyyyys` -yyyyyyyyyyyyyy+  oyyyyyyyyyyyyyy`    .ss+s+
+yyyyyyyyy- `yyyyyyyyyyyyyyyo`+yyyyy:       `+yyyyyyyyyyyyyyyyyyyy+    :yyyyyyyyy/yyyyyyys:yyyyyyyy+ -yyyyyyyyyyyyyyy.-yyyyyy+yyyyyyyy`    .ysys/
+yyyyyyyyy- `yyyyyyyy/yyyyyyy-+yyyyy        .yyyyyyyys++/-`syyyyyyo:::/yyyyyyyys:yyyyyyyy- /yyyyyyyy:-yyyyyyysoyyyyyy+/yyyyys.yyyyyyyy`    .++:+/
+yyyyyyyyy- `yyyyyyyy.syyyyyyo+yyyyy        .yyyyyyy-      .yyyyyyyyyyyyyyyyy+-`oyyyyyyy+...syyyyyyyy+yyyyyyyo-yyyyyyyyyyyyy+ yyyyyyyy`    .y+-sy-
+yyyyyyyyy- `yyyyyyyy :yyyyyyyyyyyyy        .syyyyyys       +yyyyyyyyyyyyyyyys/+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyo +yyyyyyyyyyyy` yyyyyyyy`    `+ooo:
+yyyyyyyyy- `yyyyyyyy `syyyyyyyyyyyyo`       .oyyyyyy:      .yyyyyo--+syyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyo .syyyyyyyyyy/  yyyyyyyy`    .ssss+
+yyyyyyyyy- `yyyyyyyy  :yyyyyyyyyyyyyo`        ..//..`       oyyyy+   .yyyyyyyyyyyyyyyysssssssyyyyyyyyyyyyyyyo  +yyyyyyyyys`  yyyyyyyy`    .oooo/
+yyyyyyyyy- `yyyyyyyy   syyyyyyyyyyyyys/`                 .-osyyyy+    syyyyyyyyyyyyyy+       oyyyyyyyyyyyyyyo  `yyyyyyyyy/   yyyyyyyy`    `oyyy/
+yyyyyyyyy- `yyyyyyyy   -yyyyyyyyyyyyyyyy+:-         -:+oyyyyyyyyy+    -yyyyyyyyyyyyyy        .yyyyyyyyyyyyyyo   /yyyyyyys.   yyyyyyyy`    .yyyyo
+
 
 EOF
 }
@@ -198,24 +195,30 @@ EOF
 logoFull(){
 cat <<EOF
 
-            ╔                        88888888888 88                        88 
-            ╠▒╕                      88          88                        ""                         ,d
-            ╠╢╢▒                     88          88                                                   88
-            ╠╢╢╢▒╕               ╓⌐  88aaaaa     88  ,adPPYba, 8b,     ,d8 88 ,adPPYYba, 8b,dPPYba, MM88MMM
-            ╠╢╢╢╢╢▒        ╓╗╪╬▒Θ    88"""""     88 a8P_____88  'Y8, ,8P'  88 ""     'Y8 88P'   '"8a  88
-            ╠╢╢╢╢╢╢▒╦╓╤╗╬▒╢╢╢╢╢Å     88          88 8PP"""""""    )888(    88 ,adPPPPP88 88       88  88 
-            ╠╢╢╢╢╢╢╢╢╢╬ÅÅÅ╫╢╢╢┘  ,,, 88          88 "8b,   ,aa  ,d8" "8b,  88 88,    ,88 88       88  88, 
-       ,╓╗@▒▒╢╢╢╢╢╢╢╢╢╢╤   ▒▒   ╬╢╢┘ 88          88  '"Ybbd8"' 8P'     'Y8 88 '"8bbdP"Y8 88       88  "Y888 
-,╓╗╗╬▒╬╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢▒╕    ╓▒╢Θ    
-'▀Å▒╫╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢╢Å    ╙▒╢▒      ,ad8888ba, 
-      '"▀Å▒╢╢╢╢╢╢╢╢╢╢╢╢▒   ╬▒   Å╢▒╦   d8"'    '"8b                                                            ,d
-            ╠╢╢╢╢╢╢╢╢╢╬╤╤╤╬╢╢▒╕   """ d8'                                                                      88
-            ╠╢╢╢╢╢╢╬Ö╙ÅΘ╫╢╢╢╢╢╢▒      88             ,adPPYba,  8b,dPPYba,   ,adPPYba,  ,adPPYba, 8b,dPPYba, MM88MMM ,adPPYba,
-            ╠╢╢╢╢╢Θ        "▀Å▒╢▒╕    88            a8"     "8a 88P'   '"8a a8"     "" a8P_____88 88P'   "Y8   88   a8"     "8a
-            ╠╢╢╢╢▀               '"   Y8,           8b       d8 88       88 8b         8PP""""""" 88           88   8b       d8
-            ╠╢╢▒                       Y8a.    .a8P "8a,   ,a8" 88       88 "8a,   ,aa "8b,   ,aa 88           88,  "8a,   ,a8"
-            ╠╢▀                         '"Y8888Y"'   '"YbbdP"'  88       88  '"Ybbd8"'  '"Ybbd8"' 88           "Y888 '"YbbdP"'
-            ╠                         
+syyys
+yyyyy
+.........`  ..............   ........`                 ...................`        .............`   `.............`    ..............      ..... .:::.
+yyyyyyyyy- `yyyyyyyyyyyyyy.  +yyyyyyy/                 yyyyyyyyyyyyyyyyyyyyyo/`   -yyyyyyyyyyyyy:   -yyyyyyyyyyyyy/    +yyyyyyyyyyyyy`    .y++ss.
+yyyyyyyyy- `yyyyyyyyyyyyyyo  +yyyyyyy/         ``-:::::+yyyyyyyyyyyyyyyyyyyyyyy- `syyyyyyyyyyyyyy-  -yyyyyyyyyyyyyy`  .yyyyyyyyyyyyyy`    `osss/`
+yyyyyyyyy- `yyyyyyyyyyyyyyy: +yyyyyy/`       -oyyyyyyyyyyyyyyyyyyo::/oyyyyyyyyyy`+yyyyyyyyyyyyyyys` -yyyyyyyyyyyyyy+  oyyyyyyyyyyyyyy`    .ss+s+
+yyyyyyyyy- `yyyyyyyyyyyyyyyo`+yyyyy:       `+yyyyyyyyyyyyyyyyyyyy+    :yyyyyyyyy/yyyyyyys:yyyyyyyy+ -yyyyyyyyyyyyyyy.-yyyyyy+yyyyyyyy`    .ysys/
+yyyyyyyyy- `yyyyyyyy/yyyyyyy-+yyyyy        .yyyyyyyys++/-`syyyyyyo:::/yyyyyyyys:yyyyyyyy- /yyyyyyyy:-yyyyyyysoyyyyyy+/yyyyys.yyyyyyyy`    .++:+/
+yyyyyyyyy- `yyyyyyyy.syyyyyyo+yyyyy        .yyyyyyy-      .yyyyyyyyyyyyyyyyy+-`oyyyyyyy+...syyyyyyyy+yyyyyyyo-yyyyyyyyyyyyy+ yyyyyyyy`    .y+-sy-
+yyyyyyyyy- `yyyyyyyy :yyyyyyyyyyyyy        .syyyyyys       +yyyyyyyyyyyyyyyys/+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyo +yyyyyyyyyyyy` yyyyyyyy`    `+ooo:
+yyyyyyyyy- `yyyyyyyy `syyyyyyyyyyyyo`       .oyyyyyy:      .yyyyyo--+syyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyo .syyyyyyyyyy/  yyyyyyyy`    .ssss+
+yyyyyyyyy- `yyyyyyyy  :yyyyyyyyyyyyyo`        ..//..`       oyyyy+   .yyyyyyyyyyyyyyyysssssssyyyyyyyyyyyyyyyo  +yyyyyyyyys`  yyyyyyyy`    .oooo/
+yyyyyyyyy- `yyyyyyyy   syyyyyyyyyyyyys/`                 .-osyyyy+    syyyyyyyyyyyyyy+       oyyyyyyyyyyyyyyo  `yyyyyyyyy/   yyyyyyyy`    `oyyy/
+yyyyyyyyy- `yyyyyyyy   -yyyyyyyyyyyyyyyy+:-         -:+oyyyyyyyyy+    -yyyyyyyyyyyyyy        .yyyyyyyyyyyyyyo   /yyyyyyys.   yyyyyyyy`    .yyyyo
+
+   ,ad8888ba, 
+  d8"'    '"8b                                                            ,d
+ d8'                                                                      88
+ 88             ,adPPYba,  8b,dPPYba,   ,adPPYba,  ,adPPYba, 8b,dPPYba, MM88MMM ,adPPYba,
+ 88            a8"     "8a 88P'   '"8a a8"     "" a8P_____88 88P'   "Y8   88   a8"     "8a
+ Y8,           8b       d8 88       88 8b         8PP""""""" 88           88   8b       d8
+  Y8a.    .a8P "8a,   ,a8" 88       88 "8a,   ,aa "8b,   ,aa 88           88,  "8a,   ,a8"
+   '"Y8888Y"'   '"YbbdP"'  88       88  '"Ybbd8"'  '"Ybbd8"' 88           "Y888 '"YbbdP"'
+ 
 
 EOF
 }

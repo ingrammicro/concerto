@@ -1,10 +1,10 @@
 
-# Kubernetes Guestbook example in Flexiant Concerto
+# Kubernetes Guestbook example in Ingram Micro Concerto
 [![Build Status](https://drone.io/github.com/flexiant/concerto/status.png)][cli_build] [![GoDoc](https://godoc.org/github.com/flexiant/concerto?status.png)](https://godoc.org/github.com/flexiant/concerto)
 
-Flexiant Concerto's integration with Kubernetes allows you to deploy and maintain Kubernetes clusters using the Flexiant Concerto UI and CLI interface.
+Ingram Micro Concerto's integration with Kubernetes allows you to deploy and maintain Kubernetes clusters using the Ingram Micro Concerto UI and CLI interface.
 
-This guide concerns how to run the Kubernetes Guestbook example using Flexiant Concerto UI; for an introduction of Kubernetes in Flexiant Concerto see [Getting Started with Kubernetes](Getting started with Kubernetes.md).
+This guide concerns how to run the Kubernetes Guestbook example using Ingram Micro Concerto UI; for an introduction of Kubernetes in Ingram Micro Concerto see [Getting Started with Kubernetes](Getting started with Kubernetes.md).
 
 # Table of Contents
 
@@ -23,9 +23,9 @@ This guide concerns how to run the Kubernetes Guestbook example using Flexiant C
 
 Before setting up the Kubernetes Guestbook example, we will need:
 
- - A Flexiant Concerto account.
+ - A Ingram Micro Concerto account.
  - Cloud credentials for those providers you'd like to deploy the example on.
- - Enable Beta features for your Flexiant Concerto account.
+ - Enable Beta features for your Ingram Micro Concerto account.
  - (Optional) A domain to customize the example's URL.
 
 Please, refer to [Getting Started with Kubernetes](Getting started with Kubernetes.md).
@@ -52,7 +52,7 @@ Once your cluster is running, create the replication controllers and services th
 
 Access the [Kubernetes Guestbook Example](https://github.com/kubernetes/kubernetes/tree/master/examples/guestbook) and download all yaml files.
 
-2. Modify frontend service type to use Flexiant Concerto load balancer. Edit `frontend-service.yaml` Uncomment the line that allows load balancing.
+2. Modify frontend service type to use Ingram Micro Concerto load balancer. Edit `frontend-service.yaml` Uncomment the line that allows load balancing.
 
 ```
 ...
@@ -75,7 +75,7 @@ spec:
 
 ## Creating a friendly URL
 
-The guestbook is now available at a random generated subdomain. You can customize the DNS subdomain using Flexiant Concerto DNS management.
+The guestbook is now available at a random generated subdomain. You can customize the DNS subdomain using Ingram Micro Concerto DNS management.
 
  1. Get the front-end's current FQDN. You can find it at the cluster's Service tab.
 
@@ -92,7 +92,7 @@ Access the guestbook using the default generated domain or your own alias.
  <img src="./docs/images/guestbook.png" alt="guestbook" width="500px" >
 
 # Contact
-If you want to have further information about Flexiant Concerto, you can contact us at <contact@flexiant.com>.
+If you want to have further information about Ingram Micro Concerto, you can contact us at <contact@concerto.com>.
 
 
 [cli_build]: https://drone.io/github.com/flexiant/concerto/latest
