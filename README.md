@@ -196,12 +196,11 @@ Wizard is the quickest way to install a well known stack in a cloud server. You 
 ```
 $ concerto wizard
 NAME:
-   concerto wizard - Manages wizard related commands for apps, locations, cloud providers, server plans
+   concerto wizard - Manages wizard related commands for apps, locations, cloud accounts, server plans
 USAGE:
    concerto wizard command [command options] [arguments...]
 COMMANDS:
    apps         Provides information about apps
-   cloud_providers  Provides information about cloud providers
    locations        Provides information about locations
    server_plans     Provides information about server plans
    help, h      Shows a list of commands or help for one command
@@ -209,10 +208,10 @@ OPTIONS:
    --help, -h   show help
 ```
 
-Concerto Wizard lets you select the application layer, the location, the cloud provider for that location, and finally the hostname. Concerto Wizard takes care of the details.
+Concerto Wizard lets you select the application layer, the location, the cloud account for that location, and finally the hostname. Concerto Wizard takes care of the details.
 
 
-If you haven't configured you cloud provider account yet, you can do it from the Concerto Web UI, or using `concerto settings cloud_accounts` commands
+If you haven't configured your cloud provider (and cloud accounts), you should talk with your Concerto account provider.
 
 ### Wizard Use Case
 Let's type concerto wizard apps list to check what servers can I instantiate using Concerto wizard
@@ -240,9 +239,10 @@ ID                          NAME
 ```
 Take note of your preferred location. We will use `53f0f0e2d8a5975a1c00006c` for Europe.
 
-When using Concerto's Web UI, the wizard takes care of filtering appropriate cloud providers for that location. However, using the CLI is the user's responsibility to chose a cloud provider and a server plan capable of instantiating the stack in that location. To show all possible providers execute this command:
+When using Concerto's Web UI, the wizard takes care of filtering appropriate cloud accounts for that location. However, using the CLI is the user's responsibility to choose a cloud provider and a server plan capable of instantiating the stack in that location. To show all possible cloud accounts execute this command:
 ```
-$ concerto cloud cloud_providers list
+
+$ concerto settings cloud_accounts list
 ID                         NAME                  REQUIRED CREDENTIALS                                   PROVIDED SERVICES
 53f0f099d8a5975a1c000001   Linode                [api_key]                                              [server]
 53f0f099d8a5975a1c000002   AWS                   [access_key_id secret_access_key]                      [server]
@@ -260,7 +260,7 @@ ID                         NAME                  REQUIRED CREDENTIALS           
 54b7d6b5d8a5974f2c000002   Microsoft Azure       [subscription_id cert_management_certificate]          [server]
 5579b79bd8a5978602000002   Softlayer             [username api_key]                                     [server]
 ```
-Take also into account that you should have configured your credentials before, using the Web UI or concerto settings cloud_accounts create. We will choose Digital Ocean, whose ID is `53f0f09ad8a5975a1c000010`.
+Take also into account that you should have configured your credentials before (ask to your Concerto account provider about this). We will choose Digital Ocean, whose ID is `53f0f09ad8a5975a1c000010`.
 
 
 The server's FQDN will be formed using one of your domains, and a given hostname. You can bring your own domains using Concerto Web UI or CLI command concerto dns_domains subcommands.
@@ -327,6 +327,7 @@ IMCO Cloud Orchestrator takes care of the gap, and lets you select a cloud provi
 For our case we will be using Ubuntu 14.04. Let's find it's Concerto ID
 ```
 $ concerto cloud generic_images list
+**THIS IS PENDING TO UPDATE**
 ID                         NAME
 55b0914e10c0ecc351000078   Red Hat Enterprise Linux 6 x86_64
 55b0914e10c0ecc351000079   CentOS 5 x86_64
@@ -343,7 +344,7 @@ Take note of Ubuntu 14.04 ID, `55b0914e10c0ecc35100007c`.
 We want to use Concerto's curated Joomla cookbook. Use `concerto blueprint services` to find the cookbooks to add.
 ```
 $ concerto blueprint services list | awk 'NR==1 || /joomla/'
-ID                         NAME                  DESCRIPTION                                                                                                                                  PUBLIC         LICENSE                  RECIPES
+ID                         NAME             DESCRIPTION                                                                                                                                  PUBLIC         LICENSE                  RECIPES
 563c8f4a358021214f000001   joomla                Installs/Configures joomla environment                                                                                                       false          All rights reserved      [joomla@0.10.0 joomla::appserver@0.10.0 joomla::database@0.10.0]
 ```
 
@@ -372,11 +373,15 @@ Find available domain names
 ```
 $ concerto dns_domains list
 ID                         NAME                         TTL            CONTACT          MINIMUM        ENABLED
+<<<<<<< b5b4e81049c723578e631c699c44d913ea8be362
 55b732650cbbc01fc2000004   ingrammicro-concerto.concerto.io   10800          ns@concerto.io   10800          true
+=======
+55b732650cbbc01fc2000004   ingram-concerto.concerto.io  10800          ns@concerto.io   10800          true
+>>>>>>> Update README.md: add new parameter about templates and instances (cloud_accounts), rename concerto client name (Ingram Micro), and other small changes. Issue #6
 ```
-Find cloud provider server plan
+Find cloud account server plan
 ```
-$ concerto cloud cloud_providers list
+$ concerto settings cloud_accounts list
 ID                         NAME              REQUIRED CREDENTIALS                                   PROVIDED SERVICES
 55b090f810c0ecc351000001   AWS               [access_key_id secret_access_key]                      [server]
 55b090f810c0ecc351000002   Rackspace US      [username api_key]                                     [server]
@@ -415,7 +420,11 @@ ID                         NAME           GENERIC IMAGE ID
 
 Create our Joomla Server
 ```
+<<<<<<< b5b4e81049c723578e631c699c44d913ea8be362
 concerto cloud servers create --name joomla-node1 --fqdn joomla1.ingrammicro-concerto.concerto.io  --workspace_id 55b7326c0cbbc01fc2000008 --template_id 5641d1ab7aa4b1a678000039 --server_plan_id 55b0916d10c0ecc35100040e
+=======
+concerto cloud servers create --name joomla-node1 --fqdn joomla1.ingram-concerto.concerto.io  --workspace_id 55b7326c0cbbc01fc2000008 --template_id 5641d1ab7aa4b1a678000039 --server_plan_id 55b0916d10c0ecc35100040e
+>>>>>>> Update README.md: add new parameter about templates and instances (cloud_accounts), rename concerto client name (Ingram Micro), and other small changes. Issue #6
 ID                         NAME           FQDN                                 STATE           PUBLIC IP      WORKSPACE ID               TEMPLATE ID                SERVER PLAN ID             SSH PROFILE ID
 5641e7497aa4b1a67800006c   joomla-node1   joomla1.ingrammicro-concerto.concerto.io   commissioning   0.0.0.0        55b7326c0cbbc01fc2000008   5641d1ab7aa4b1a678000039   55b0916d10c0ecc35100040e   55b7326b0cbbc01fc2000007
 ```
