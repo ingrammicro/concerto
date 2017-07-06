@@ -1,1 +1,5 @@
 concerto
+vendor/*
+_vendor*
+coverage.txt
+profile.out
