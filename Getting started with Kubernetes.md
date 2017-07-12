@@ -1,10 +1,10 @@
 
-# Getting started with Kubernetes in Flexiant Concerto
-[![Build Status](https://drone.io/github.com/flexiant/concerto/status.png)][cli_build] [![GoDoc](https://godoc.org/github.com/flexiant/concerto?status.png)](https://godoc.org/github.com/flexiant/concerto)
+# Getting started with Kubernetes in IMCO Cloud Orchestrator
+[![Build Status](https://drone.io/github.com/ingrammicro/concerto/status.png)][cli_build] [![GoDoc](https://godoc.org/github.com/ingrammicro/concerto?status.png)](https://godoc.org/github.com/ingrammicro/concerto)
 
-Flexiant Concerto's integration with Kubernetes allows you to deploy and maintain Kubernetes clusters using the Flexiant Concerto UI and CLI interface. 
+IMCO Cloud Orchestrator's integration with Kubernetes allows you to deploy and maintain Kubernetes clusters using the IMCO Cloud Orchestrator UI and CLI interface. 
 
-This guide concerns how to use the Flexiant Concerto UI to create a Kubernetes cluster; for information about how to use the CLI to accomplish this, see the [CLI documentation](README.md).
+This guide concerns how to use the IMCO Cloud Orchestrator UI to create a Kubernetes cluster; for information about how to use the CLI to accomplish this, see the [CLI documentation](README.md).
 
 # Table of Contents
 
@@ -19,9 +19,9 @@ This guide concerns how to use the Flexiant Concerto UI to create a Kubernetes c
 # Setup
 
 ## Pre-requisites
-Before setting up Kubernetes, we will need a Flexiant Concerto account.
+Before setting up Kubernetes, we will need a IMCO Cloud Orchestrator account.
 
-You can create a free account in less than a minute following the steps in Flexiant Concerto [login page](https://start.concerto.io/).
+You can create a free account in less than a minute following the steps in IMCO Cloud Orchestrator [login page](https://start.concerto.io/).
 
 Once your account have been provisioned, add a cloud provider. After doing this, ensure that beta features are activated and listed as one of the top menu tabs options. If that is not the case, enable beta features by doing the following:
 
@@ -69,7 +69,7 @@ To add nodes to a cluster:
 
 ## Uploading config files
 
-Kubernetes allows the configuration of pods and replication controllers to be defined in a .json or .yaml file. Once your Kubernetes cluster is operational, these files can be uploaded to your cluster using the Flexiant Concerto UI.
+Kubernetes allows the configuration of pods and replication controllers to be defined in a .json or .yaml file. Once your Kubernetes cluster is operational, these files can be uploaded to your cluster using the IMCO Cloud Orchestrator UI.
 
 To upload configuration files:
 
@@ -88,7 +88,7 @@ To upload configuration files:
 7. Select the file to upload and click the **Open** button.
 
 # Contact
-We have included most common use cases here. If you feel a use case is missing, open an issue or contact us at <contact@flexiant.com>.
+We have included most common use cases here. If you feel a use case is missing, open an issue or contact us at <contact@ingrammicro.com>.
 
 
 # Contribute
@@ -104,7 +104,7 @@ To contribute:
 
 Please, use gofmt, golint, go vet, and follow [go style](https://github.com/golang/go/wiki/CodeReviewComments) advices
 
-[cli_build]: https://drone.io/github.com/flexiant/concerto/latest
-[cli_linux]: https://drone.io/github.com/flexiant/concerto/files/concerto.x64.linux
-[cli_darwin]: https://drone.io/github.com/flexiant/concerto/files/concerto.x64.darwin
-[cli_windows]: https://drone.io/github.com/flexiant/concerto/files/concerto.x64.windows.exe
+[cli_build]: https://drone.io/github.com/ingrammicro/concerto/latest
+[cli_linux]: https://drone.io/github.com/ingrammicro/concerto/files/concerto.x64.linux
+[cli_darwin]: https://drone.io/github.com/ingrammicro/concerto/files/concerto.x64.darwin
+[cli_windows]: https://drone.io/github.com/ingrammicro/concerto/files/concerto.x64.windows.exe

@@ -22,7 +22,7 @@ func GetAdminReportsData() *[]types.Report {
 			Closed:        true,
 			AccountGroup: types.AccountGroup{
 				ID:   "55b0911810c0ecc351000016",
-				Name: "Flexiant Test1",
+				Name: "IMCO Test1",
 			},
 		},
 		{
@@ -35,7 +35,7 @@ func GetAdminReportsData() *[]types.Report {
 			Closed:        true,
 			AccountGroup: types.AccountGroup{
 				ID:   "55b0911810c0ecc351000017",
-				Name: "Flexiant Test2",
+				Name: "IMCO Test2",
 			},
 		},
 		{
@@ -48,7 +48,7 @@ func GetAdminReportsData() *[]types.Report {
 			Closed:        true,
 			AccountGroup: types.AccountGroup{
 				ID:   "55b0911810c0ecc351000018",
-				Name: "Flexiant Test3",
+				Name: "IMCO Test3",
 			},
 		},
 	}

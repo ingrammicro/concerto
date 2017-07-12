@@ -1,21 +1,21 @@
 
 # Concerto CLI / Go Library
-[![Go Report Card](http://goreportcard.com/badge/flexiant/concerto)](http://goreportcard.com/report/flexiant/concerto)
+[![Go Report Card](http://goreportcard.com/badge/ingrammicro/concerto)](http://goreportcard.com/report/ingrammicro/concerto)
 [![Build Status](https://drone.io/github.com/ingrammicro/concerto/status.png)][cli_build] [![GoDoc](https://godoc.org/github.com/ingrammicro/concerto?status.png)](https://godoc.org/github.com/ingrammicro/concerto)
-[![codecov.io](https://codecov.io/github/flexiant/concerto/coverage.svg?branch=master)](https://codecov.io/github/flexiant/concerto?branch=master)
-[//]: # ([![Build Status](https://travis-ci.org/flexiant/concerto.svg?branch=master)](https://travis-ci.org/flexiant/concerto))
+[![codecov.io](https://codecov.io/github/ingrammicro/concerto/coverage.svg?branch=master)](https://codecov.io/github/ingrammicro/concerto?branch=master)
+[//]: # ([![Build Status](https://travis-ci.org/ingrammicro/concerto.svg?branch=master)](https://travis-ci.org/ingrammicro/concerto))
 
 
 
 
-Flexiant Concerto Command Line Interface allows you to interact with Concerto features, and build your own scripts calling Concerto's API.
+IMCO Cloud Orchestrator Command Line Interface allows you to interact with Concerto features, and build your own scripts calling Concerto's API.
 
 If you are already using Concerto CLI, and only want to obtain the latest version, download Concerto CLI for:
 - [Linux][cli_linux]
 - [OSX][cli_darwin]
 - [Windows][cli_windows]
 
-If you want to build the CLI using the source code, please, take into account that the master branch is used for development, it is unstable and might be broken. Download stable tagged versions to use Flexiant Concerto CLI.
+If you want to build the CLI using the source code, please, take into account that the master branch is used for development, it is unstable and might be broken. Download stable tagged versions to use IMCO Cloud Orchestrator CLI.
 
 # Table of Contents
 
@@ -48,9 +48,9 @@ If you want to build the CLI using the source code, please, take into account th
 # Setup
 
 ## Pre-requisites
-Before setting up the CLI, we will need a Flexiant Concerto account, and an API key associated with your account.
+Before setting up the CLI, we will need a IMCO Cloud Orchestrator account, and an API key associated with your account.
 
-You can create a free account in less than a minute following the steps in Flexiant Concerto [login page](https://start.concerto.io/).
+You can create a free account in less than a minute following the steps in IMCO Cloud Orchestrator [login page](https://start.concerto.io/).
 
 
 Once your account have been provisioned, if you are a linux or OS X, we recommend you to execute the automated setup script. Otherwise, follow the [manual process](#manual-setup)
@@ -59,7 +59,7 @@ Once your account have been provisioned, if you are a linux or OS X, we recommen
 
 Open a terminal window and execute
 
-`curl -sSL get.concerto.io | sh`
+`curl -sSL goo.gl/ujPLzA | sh`
 
 The script will drive you through
  - Concerto CLI Binary download
@@ -75,7 +75,7 @@ The setup script can take these arguments:
 
 Example
 
-`curl -sSL get.concerto.io | sh -s f`
+`curl -sSL goo.gl/ujPLzA | sh -s f`
 
 
 ## Manual Setup
@@ -128,13 +128,13 @@ Download linux binaries for [Linux][cli_linux] or for [OSX][cli_darwin] and plac
 
 Linux:
 ```
-sudo curl -o /usr/local/bin/concerto http://get.concerto.io/concerto.x64.linux
+sudo curl -o /usr/local/bin/concerto https://github.com/ingrammicro/concerto/raw/master/binaries/concerto.x64.linux
 sudo chmod +x /usr/local/bin/concerto
 ```
 
 OSX:
 ```
-sudo curl -o /usr/local/bin/concerto http://get.concerto.io/concerto.x64.darwin
+sudo curl -o /usr/local/bin/concerto https://github.com/ingrammicro/concerto/raw/master/binaries/concerto.x64.darwin
 sudo chmod +x /usr/local/bin/concerto
 ```
 
@@ -309,7 +309,7 @@ After a brief amount of time you will have your new Worpress server up and runni
 
 ## Blueprint
 
-Flexiant Concerto blueprints are the compendium of
+IMCO Cloud Orchestrator blueprints are the compendium of
  - services, they map to Concerto's Web UI cookbooks. Use `concerto blueprint services list` to show all cookbooks available at your account.
  - scripts, the provide a way to execute custom scripts after bootstraping, before a clean shutdown, or on demand.
  - templates, an ordered combination of services and scripts.
@@ -321,7 +321,7 @@ A template must be created with an OS target, a service list, and a list of cust
 #### Template OS
 Blueprints are associated with an Operative System, and each cloud provider has a different way of identifying the OS that a machine is running.
 
-Flexiant Concerto takes care of the gap, and lets you select a cloud provider independent OS, and find out later which image is appropriate for the chosen cloud provider and location. Hence blueprints are bound to OS, but cloud provider and location independent.
+IMCO Cloud Orchestrator takes care of the gap, and lets you select a cloud provider independent OS, and find out later which image is appropriate for the chosen cloud provider and location. Hence blueprints are bound to OS, but cloud provider and location independent.
 
 
 For our case we will be using Ubuntu 14.04. Let's find it's Concerto ID
@@ -372,7 +372,7 @@ Find available domain names
 ```
 $ concerto dns_domains list
 ID                         NAME                         TTL            CONTACT          MINIMUM        ENABLED
-55b732650cbbc01fc2000004   flexiant-concerto.concerto.io   10800          ns@concerto.io   10800          true
+55b732650cbbc01fc2000004   ingrammicro-concerto.concerto.io   10800          ns@concerto.io   10800          true
 ```
 Find cloud provider server plan
 ```
@@ -415,16 +415,16 @@ ID                         NAME           GENERIC IMAGE ID
 
 Create our Joomla Server
 ```
-concerto cloud servers create --name joomla-node1 --fqdn joomla1.flexiant-concerto.concerto.io  --workspace_id 55b7326c0cbbc01fc2000008 --template_id 5641d1ab7aa4b1a678000039 --server_plan_id 55b0916d10c0ecc35100040e
+concerto cloud servers create --name joomla-node1 --fqdn joomla1.ingrammicro-concerto.concerto.io  --workspace_id 55b7326c0cbbc01fc2000008 --template_id 5641d1ab7aa4b1a678000039 --server_plan_id 55b0916d10c0ecc35100040e
 ID                         NAME           FQDN                                 STATE           PUBLIC IP      WORKSPACE ID               TEMPLATE ID                SERVER PLAN ID             SSH PROFILE ID
-5641e7497aa4b1a67800006c   joomla-node1   joomla1.flexiant-concerto.concerto.io   commissioning   0.0.0.0        55b7326c0cbbc01fc2000008   5641d1ab7aa4b1a678000039   55b0916d10c0ecc35100040e   55b7326b0cbbc01fc2000007
+5641e7497aa4b1a67800006c   joomla-node1   joomla1.ingrammicro-concerto.concerto.io   commissioning   0.0.0.0        55b7326c0cbbc01fc2000008   5641d1ab7aa4b1a678000039   55b0916d10c0ecc35100040e   55b7326b0cbbc01fc2000007
 ```
 
 And finally boot it
 ```
 $ concerto cloud servers boot --id 5641e7497aa4b1a67800006c
 ID                         NAME           FQDN                                 STATE          PUBLIC IP      WORKSPACE ID               TEMPLATE ID                SERVER PLAN ID             SSH PROFILE ID
-5641e7497aa4b1a67800006c   joomla-node1   joomla1.flexiant-concerto.concerto.io   booting        0.0.0.0        55b7326c0cbbc01fc2000008   5641d1ab7aa4b1a678000039   55b0916d10c0ecc35100040e   55b7326b0cbbc01fc2000007
+5641e7497aa4b1a67800006c   joomla-node1   joomla1.ingrammicro-concerto.concerto.io   booting        0.0.0.0        55b7326c0cbbc01fc2000008   5641d1ab7aa4b1a678000039   55b0916d10c0ecc35100040e   55b7326b0cbbc01fc2000007
 ```
 
 ## Kubernetes Cluster
@@ -478,7 +478,7 @@ Before creating the cluster, we need to select the domain under which the cluste
 ```
 $ concerto dns_domains list
 ID                         NAME                         TTL            CONTACT          MINIMUM        ENABLED
-55b732650cbbc01fc2000004   flexiant-concerto.concerto.io   10800          ns@concerto.io   10800          true
+55b732650cbbc01fc2000004   ingrammicro-concerto.concerto.io   10800          ns@concerto.io   10800          true
 ```
 
 Use your domain ID to create the cluster.
@@ -512,7 +512,7 @@ The kubernetes master will be commissioned and start booting. Give it some time 
 ```
 $ concerto nodes list
 CLUSTER           MASTER         ID                         NAME                        FQDN                                             IP               STATE
-k8sconcerto       *              56420d894579c0932e00000c   k8sconcerto-master-01       k8sconcerto-master-01.flexiant.concerto.io       178.62.111.185   bootstrapping - 10%
+k8sconcerto       *              56420d894579c0932e00000c   k8sconcerto-master-01       k8sconcerto-master-01.ingrammicro.concerto.io       178.62.111.185   bootstrapping - 10%
 ```
 Our master is booting, wait untill it becomes operational and launch a new node. Concerto will instance first node as a master, and subsequent nodes as kubernetes slaves.
 ```
@@ -651,6 +651,6 @@ To contribute
 Please, use gofmt, golint, go vet, and follow [go style](https://github.com/golang/go/wiki/CodeReviewComments) advices
 
 [cli_build]: https://drone.io/github.com/ingrammicro/concerto/latest
-[cli_linux]: http://get.concerto.io/concerto.x64.linux
-[cli_darwin]: http://get.concerto.io/concerto.x64.darwin
-[cli_windows]: http://get.concerto.io/concerto.x64.windows.exe
+[cli_linux]: https://github.com/ingrammicro/concerto/raw/master/binaries/concerto.x64.linux
+[cli_darwin]: https://github.com/ingrammicro/concerto/raw/master/binaries/concerto.x64.darwin
+[cli_windows]: https://github.com/ingrammicro/concerto/raw/master/binaries/concerto.x64.windows.exe

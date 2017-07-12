@@ -132,7 +132,7 @@ installAPIKeys(){
 		printf " Skipped\n"
 	else
 		echo
-		concerto setup api_keys < /dev/tty
+		#concerto setup api_keys < /dev/tty
 
 		if [ $? -ne 0 ];
 		then
@@ -167,7 +167,7 @@ installedMessage(){
 }
 showLogo(){
 	[ $LOGO_H_SIZE -lt $(tput cols) ] && logoSimple || logoSimple
-	echo "Executing Flexiant Concerto CLI install"
+	echo "Executing IMCO Cloud Orchestrator CLI install"
 }
 
 logoSimple(){
