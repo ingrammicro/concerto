@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-cli_url=http://get.concerto.io/concerto.x64
+cli_url=https://github.com/ingrammicro/concerto/raw/master/binaries/concerto.x64
 api_url=${CONCERTO_ENDPOINT:=https://clients.concerto.io:886/}
 cli_command=concerto
 cli_fullpath=/usr/local/bin/$cli_command
