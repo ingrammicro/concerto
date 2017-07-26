@@ -1,6 +1,6 @@
 builds:
   - main: main.go
-    binary: drum-roll
+    binary: concerto
     goos:
       - windows
       - darwin
