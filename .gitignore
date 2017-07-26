@@ -1,5 +1,6 @@
 concerto
 vendor/*
+dist/
 _vendor*
 coverage.txt
 profile.out
