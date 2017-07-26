@@ -24,3 +24,4 @@ git tag $new_release `git rev-parse HEAD`
 echo "+ git push"
 git push
 rm -r -f dist
+goreleaser 
