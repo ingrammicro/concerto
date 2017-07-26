@@ -7,3 +7,7 @@ builds:
       - linux
     goarch:
       - amd64
+archive:
+  name_template: "{{ .ProjectName }}.{{ .Arch }}.{{ .Os }}"
+  format: binary
+
