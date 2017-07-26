@@ -23,4 +23,4 @@ echo "+ git tag $new_release `git rev-parse HEAD`"
 git tag $new_release `git rev-parse HEAD`
 echo "+ git push"
 git push
-gorelease
+rm -r -f dist
