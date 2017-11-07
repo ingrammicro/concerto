@@ -443,41 +443,33 @@ func (config *Config) evaluateCertificate() error {
 }
 
 // GetDefaultLogFilePath returns default concerto configuration path file
-func GetDefaultLogFilePath() (path string) {
+func GetDefaultLogFilePath() string {
 	if runtime.GOOS == "windows" {
-		path = windowsServerLogFilePath
-	} else {
-		path = nixServerLogFilePath
+		return windowsServerLogFilePath
 	}
-	return
+	return nixServerLogFilePath
 }
 
 // GetDefaultCaCertFilePath returns default concerto configuration path file
-func GetDefaultCaCertFilePath() (path string) {
+func GetDefaultCaCertFilePath() string {
 	if runtime.GOOS == "windows" {
-		path = windowsServerCaCertPath
-	} else {
-		path = nixServerCaCertPath
+		return windowsServerCaCertPath
 	}
-	return
+	return nixServerCaCertPath
 }
 
 // GetDefaultCertFilePath returns default concerto configuration path file
-func GetDefaultCertFilePath() (path string) {
+func GetDefaultCertFilePath() string {
 	if runtime.GOOS == "windows" {
-		path = windowsServerCertPath
-	} else {
-		path = nixServerCertPath
+		return windowsServerCertPath
 	}
-	return
+	return nixServerCertPath
 }
 
 // GetDefaultKeyFilePath returns default concerto configuration path file
-func GetDefaultKeyFilePath() (path string) {
+func GetDefaultKeyFilePath() string {
 	if runtime.GOOS == "windows" {
-		path = windowsServerKeyPath
-	} else {
-		path = nixServerKeyPath
+		return windowsServerKeyPath
 	}
-	return
+	return nixServerKeyPath
 }
