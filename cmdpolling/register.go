@@ -114,16 +114,16 @@ func configureServerKeys(config *utils.Config, rootCACert, cert, key string) err
 		configFileData.LogLevel = "info"
 	}
 	if configFileData.LogFile == "" {
-		configFileData.LogFile = utils.GetConfigFilePath("LogFile")
+		configFileData.LogFile = utils.GetDefaultLogFilePath()
 	}
 	if configFileData.CaCertPath == "" {
-		configFileData.CaCertPath = utils.GetConfigFilePath("CaCertPath")
+		configFileData.CaCertPath = utils.GetDefaultCaCertFilePath()
 	}
 	if configFileData.CertPath == "" {
-		configFileData.CertPath = utils.GetConfigFilePath("CertPath")
+		configFileData.CertPath = utils.GetDefaultCertFilePath()
 	}
 	if configFileData.KeyPath == "" {
-		configFileData.KeyPath = utils.GetConfigFilePath("KeyPath")
+		configFileData.KeyPath = utils.GetDefaultKeyFilePath()
 	}
 	err := os.MkdirAll(filepath.Dir(configFileData.CaCertPath), 0644)
 	if err != nil {

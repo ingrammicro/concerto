@@ -442,35 +442,42 @@ func (config *Config) evaluateCertificate() error {
 	return nil
 }
 
-// GetConfigFilePath returns concerto configuration path file
-func GetConfigFilePath(fileFilter string) string {
-	log.Debug("GetConfigFilePath")
-	path := ""
-	switch {
-	case fileFilter == "LogFile":
-		if runtime.GOOS == "windows" {
-			path = windowsServerLogFilePath
-		} else {
-			path = nixServerLogFilePath
-		}
-	case fileFilter == "CaCertPath":
-		if runtime.GOOS == "windows" {
-			path = windowsServerCaCertPath
-		} else {
-			path = nixServerCaCertPath
-		}
-	case fileFilter == "CertPath":
-		if runtime.GOOS == "windows" {
-			path = windowsServerCertPath
-		} else {
-			path = nixServerCertPath
-		}
-	case fileFilter == "KeyPath":
-		if runtime.GOOS == "windows" {
-			path = windowsServerKeyPath
-		} else {
-			path = nixServerKeyPath
-		}
+// GetDefaultLogFilePath returns default concerto configuration path file
+func GetDefaultLogFilePath() (path string) {
+	if runtime.GOOS == "windows" {
+		path = windowsServerLogFilePath
+	} else {
+		path = nixServerLogFilePath
 	}
-	return path
+	return
+}
+
+// GetDefaultCaCertFilePath returns default concerto configuration path file
+func GetDefaultCaCertFilePath() (path string) {
+	if runtime.GOOS == "windows" {
+		path = windowsServerCaCertPath
+	} else {
+		path = nixServerCaCertPath
+	}
+	return
+}
+
+// GetDefaultCertFilePath returns default concerto configuration path file
+func GetDefaultCertFilePath() (path string) {
+	if runtime.GOOS == "windows" {
+		path = windowsServerCertPath
+	} else {
+		path = nixServerCertPath
+	}
+	return
+}
+
+// GetDefaultKeyFilePath returns default concerto configuration path file
+func GetDefaultKeyFilePath() (path string) {
+	if runtime.GOOS == "windows" {
+		path = windowsServerKeyPath
+	} else {
+		path = nixServerKeyPath
+	}
+	return
 }
