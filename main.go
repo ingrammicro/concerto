@@ -357,7 +357,7 @@ func prepareFlags(c *cli.Context) error {
 	}
 	format.InitializeFormatter(c.String("formatter"), os.Stdout)
 
-	if config.IsHost || config.BrownfieldToken != "" || (config.CommandPollingToken != "" && config.ServerID != "") {
+	if config.IsHost || config.BrownfieldToken != "" || config.CommandPollingToken != "" {
 		log.Debug("Setting server commands to concerto")
 		c.App.Commands = ServerCommands
 	} else {
