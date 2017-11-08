@@ -109,20 +109,20 @@ func configureServerKeys(config *utils.Config, rootCACert, cert, key string) err
 		CaCertPath  string
 	}{config.APIEndpoint, config.LogFile, config.LogLevel,
 		config.Certificate.Cert, config.Certificate.Key, config.Certificate.Ca}
-	if configFileData.LogFile == "" {
-		configFileData.LogFile = "/var/log/concerto-client.log"
-	}
 	if configFileData.LogLevel == "" {
 		configFileData.LogLevel = "info"
 	}
+	if configFileData.LogFile == "" {
+		configFileData.LogFile = utils.GetDefaultLogFilePath()
+	}
 	if configFileData.CaCertPath == "" {
-		configFileData.CaCertPath = "/etc/concerto/client_ssl/ca_cert.pem"
+		configFileData.CaCertPath = utils.GetDefaultCaCertFilePath()
 	}
 	if configFileData.CertPath == "" {
-		configFileData.CertPath = "/etc/concerto/client_ssl/cert.pem"
+		configFileData.CertPath = utils.GetDefaultCertFilePath()
 	}
 	if configFileData.KeyPath == "" {
-		configFileData.KeyPath = "/etc/concerto/client_ssl/private/key.pem"
+		configFileData.KeyPath = utils.GetDefaultKeyFilePath()
 	}
 	err := os.MkdirAll(filepath.Dir(configFileData.CaCertPath), 0644)
 	if err != nil {
