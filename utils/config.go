@@ -24,19 +24,30 @@ const windowsServerConfigFile = "c:\\concerto\\client.xml"
 const nixServerConfigFile = "/etc/concerto/client.xml"
 const defaultConcertoEndpoint = "https://clients.concerto.io:886/"
 
+const windowsServerLogFilePath = "c:\\concerto\\log\\concerto-client.log"
+const windowsServerCaCertPath = "c:\\concerto\\client_ssl\\ca_cert.pem"
+const windowsServerCertPath = "c:\\concerto\\client_ssl\\cert.pem"
+const windowsServerKeyPath = "c:\\concerto\\client_ssl\\private\\key.pem"
+const nixServerLogFilePath = "/var/log/concerto-client.log"
+const nixServerCaCertPath = "/etc/concerto/client_ssl/ca_cert.pem"
+const nixServerCertPath = "/etc/concerto/client_ssl/cert.pem"
+const nixServerKeyPath = "/etc/concerto/client_ssl/private/key.pem"
+
 // Config stores configuration file contents
 type Config struct {
-	XMLName            xml.Name `xml:"concerto"`
-	APIEndpoint        string   `xml:"server,attr"`
-	LogFile            string   `xml:"log_file,attr"`
-	LogLevel           string   `xml:"log_level,attr"`
-	Certificate        Cert     `xml:"ssl"`
-	ConfLocation       string
-	ConfFile           string
-	IsHost             bool
-	ConcertoURL        string
-	BrownfieldToken    string
-	CurrentUserIsAdmin bool
+	XMLName             xml.Name `xml:"concerto"`
+	APIEndpoint         string   `xml:"server,attr"`
+	LogFile             string   `xml:"log_file,attr"`
+	LogLevel            string   `xml:"log_level,attr"`
+	Certificate         Cert     `xml:"ssl"`
+	ConfLocation        string
+	ConfFile            string
+	IsHost              bool
+	ConcertoURL         string
+	BrownfieldToken     string
+	CommandPollingToken string
+	ServerID            string
+	CurrentUserIsAdmin  bool
 }
 
 // Cert stores cert files location
@@ -66,6 +77,11 @@ func InitializeConcertoConfig(c *cli.Context) (*Config, error) {
 	cachedConfig = &Config{}
 
 	err := cachedConfig.readBrownfieldToken(c)
+	if err != nil {
+		return nil, err
+	}
+
+	err = cachedConfig.readCommandPollingConfig(c)
 	if err != nil {
 		return nil, err
 	}
@@ -165,6 +181,17 @@ func (config *Config) IsConfigReadyBrownfield() bool {
 	return true
 }
 
+// IsConfigReadyCommandPolling returns whether config is ready for polling token
+// authentication
+func (config *Config) IsConfigReadyCommandPolling() bool {
+	if config.APIEndpoint == "" ||
+		config.CommandPollingToken == "" ||
+		config.ServerID == "" {
+		return false
+	}
+	return true
+}
+
 // readConcertoConfig reads Concerto config file located at fileLocation
 func (config *Config) readConcertoConfig(c *cli.Context) error {
 	log.Debug("Reading Concerto Configuration")
@@ -257,7 +284,7 @@ func (config *Config) evaluateConcertoConfigFile(c *cli.Context) error {
 	} else {
 
 		if runtime.GOOS == "windows" {
-			if config.CurrentUserIsAdmin && (config.BrownfieldToken != "" || FileExists(windowsServerConfigFile)) {
+			if config.CurrentUserIsAdmin && (config.BrownfieldToken != "" || (config.CommandPollingToken != "" && config.ServerID != "") || FileExists(windowsServerConfigFile)) {
 				log.Debug("Current user is administrator, setting config file as %s", windowsServerConfigFile)
 				config.ConfFile = windowsServerConfigFile
 			} else {
@@ -267,7 +294,7 @@ func (config *Config) evaluateConcertoConfigFile(c *cli.Context) error {
 			}
 		} else {
 			// Server mode *nix
-			if config.CurrentUserIsAdmin && (config.BrownfieldToken != "" || FileExists(nixServerConfigFile)) {
+			if config.CurrentUserIsAdmin && (config.BrownfieldToken != "" || (config.CommandPollingToken != "" && config.ServerID != "") || FileExists(nixServerConfigFile)) {
 				config.ConfFile = nixServerConfigFile
 			} else {
 				// User mode *nix
@@ -363,6 +390,25 @@ func (config *Config) readBrownfieldToken(c *cli.Context) error {
 	return nil
 }
 
+func (config *Config) readCommandPollingConfig(c *cli.Context) error {
+	if config.CommandPollingToken != "" || config.ServerID != "" {
+		return nil
+	}
+
+	// overwrite with environment/arguments vars
+	if overwCommandPollingToken := c.String("concerto-command-polling-token"); overwCommandPollingToken != "" {
+		log.Debug("Concerto Command Polling token taken from env/args")
+		config.CommandPollingToken = overwCommandPollingToken
+	}
+
+	if overwServerID := c.String("concerto-server-id"); overwServerID != "" {
+		log.Debug("Concerto Server ID taken from env/args")
+		config.ServerID = overwServerID
+	}
+
+	return nil
+}
+
 // evaluateCertificate determines if a certificate has been issued for a host
 func (config *Config) evaluateCertificate() error {
 
@@ -394,4 +440,36 @@ func (config *Config) evaluateCertificate() error {
 	}
 	config.IsHost = false
 	return nil
+}
+
+// GetDefaultLogFilePath returns default concerto configuration path file
+func GetDefaultLogFilePath() string {
+	if runtime.GOOS == "windows" {
+		return windowsServerLogFilePath
+	}
+	return nixServerLogFilePath
+}
+
+// GetDefaultCaCertFilePath returns default concerto configuration path file
+func GetDefaultCaCertFilePath() string {
+	if runtime.GOOS == "windows" {
+		return windowsServerCaCertPath
+	}
+	return nixServerCaCertPath
+}
+
+// GetDefaultCertFilePath returns default concerto configuration path file
+func GetDefaultCertFilePath() string {
+	if runtime.GOOS == "windows" {
+		return windowsServerCertPath
+	}
+	return nixServerCertPath
+}
+
+// GetDefaultKeyFilePath returns default concerto configuration path file
+func GetDefaultKeyFilePath() string {
+	if runtime.GOOS == "windows" {
+		return windowsServerKeyPath
+	}
+	return nixServerKeyPath
 }

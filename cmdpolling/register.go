@@ -1,4 +1,4 @@
-package brownfield
+package cmdpolling
 
 import (
 	"encoding/json"
@@ -45,17 +45,17 @@ func cmdRegister(c *cli.Context) error {
 }
 
 func obtainServerKeys(config *utils.Config) (rootCAcert string, cert string, key string, err error) {
-	cs, err := utils.NewHTTPConcertoServiceWithBrownfieldToken(config)
+	cs, err := utils.NewHTTPConcertoServiceWithCommandPolling(config)
 	if err != nil {
 		return
 	}
 	payload := make(map[string]interface{})
-	body, status, err := cs.Post("/brownfield/ssl_profile", &payload)
+	body, status, err := cs.Post("/command_polling/api_key", &payload)
 	if err != nil {
 		return
 	}
 	if status == 403 {
-		err = fmt.Errorf("server responded with 403 code: the brownfield token is not valid, maybe it expired...")
+		err = fmt.Errorf("server responded with 403 code: the polling token is not valid, maybe it expired")
 		return
 	}
 	if status >= 300 {
@@ -109,6 +109,7 @@ func configureServerKeys(config *utils.Config, rootCACert, cert, key string) err
 		CaCertPath  string
 	}{config.APIEndpoint, config.LogFile, config.LogLevel,
 		config.Certificate.Cert, config.Certificate.Key, config.Certificate.Ca}
+
 	if configFileData.LogLevel == "" {
 		configFileData.LogLevel = "info"
 	}

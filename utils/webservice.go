@@ -4,13 +4,14 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	log "github.com/Sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // ConcertoService defines actions to be performed by web service manager
@@ -84,6 +85,30 @@ func NewHTTPConcertoServiceWithBrownfieldToken(config *Config) (hcs *HTTPConcert
 	return hcs, nil
 }
 
+func NewHTTPConcertoServiceWithCommandPolling(config *Config) (hcs *HTTPConcertoservice, err error) {
+
+	if config == nil {
+		return nil, fmt.Errorf("Web service configuration failed. No data in configuration")
+	}
+
+	if !config.IsConfigReadyCommandPolling() {
+		return nil, fmt.Errorf("Configuration is incomplete.")
+	}
+
+	// creates HTTP Concerto service with config
+	hcs = &HTTPConcertoservice{
+		config: config,
+	}
+
+	// Creates a client with specific transport configurations
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	hcs.client = &http.Client{Transport: transport}
+
+	return hcs, nil
+}
+
 // Post sends POST request to Concerto API
 func (hcs *HTTPConcertoservice) Post(path string, payload *map[string]interface{}) ([]byte, int, error) {
 
@@ -98,6 +123,12 @@ func (hcs *HTTPConcertoservice) Post(path string, payload *map[string]interface{
 	if hcs.config.BrownfieldToken != "" {
 		log.Debugf("Including brownfield token %s in POST request as X-Concerto-Brownfield-Token header ", hcs.config.BrownfieldToken)
 		req.Header.Add("X-Concerto-Brownfield-Token", hcs.config.BrownfieldToken)
+	}
+	if hcs.config.CommandPollingToken != "" && hcs.config.ServerID != "" {
+		log.Debugf("Including command polling token %s in POST request as X-IMCO-Command-Polling-Token header ", hcs.config.CommandPollingToken)
+		req.Header.Add("X-IMCO-Command-Polling-Token", hcs.config.CommandPollingToken)
+		log.Debugf("Including Server id %s in POST request as X-IMCO-Server-ID header ", hcs.config.ServerID)
+		req.Header.Add("X-IMCO-Server-ID", hcs.config.ServerID)
 	}
 	response, err := hcs.client.Do(req)
 	if err != nil {

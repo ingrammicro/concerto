@@ -20,6 +20,7 @@ import (
 	"github.com/ingrammicro/concerto/cloud/ssh_profiles"
 	"github.com/ingrammicro/concerto/cloud/workspaces"
 	"github.com/ingrammicro/concerto/cluster"
+	"github.com/ingrammicro/concerto/cmdpolling"
 	"github.com/ingrammicro/concerto/converge"
 	"github.com/ingrammicro/concerto/dispatcher"
 	"github.com/ingrammicro/concerto/dns"
@@ -65,6 +66,13 @@ var ServerCommands = []cli.Command{
 		Usage: "Manages registration and configuration within an imported brownfield Host",
 		Subcommands: append(
 			brownfield.SubCommands(),
+		),
+	},
+	{
+		Name:  "polling",
+		Usage: "Manages polling commands",
+		Subcommands: append(
+			cmdpolling.SubCommands(),
 		),
 	},
 }
@@ -349,7 +357,7 @@ func prepareFlags(c *cli.Context) error {
 	}
 	format.InitializeFormatter(c.String("formatter"), os.Stdout)
 
-	if config.IsHost || config.BrownfieldToken != "" {
+	if config.IsHost || config.BrownfieldToken != "" || config.CommandPollingToken != "" {
 		log.Debug("Setting server commands to concerto")
 		c.App.Commands = ServerCommands
 	} else {
@@ -426,6 +434,16 @@ func main() {
 			EnvVar: "CONCERTO_BROWNFIELD_TOKEN",
 			Name:   "concerto-brownfield-token",
 			Usage:  "Concerto Brownfield Token",
+		},
+		cli.StringFlag{
+			EnvVar: "CONCERTO_COMMAND_POLLING_TOKEN",
+			Name:   "concerto-command-polling-token",
+			Usage:  "Concerto Command Polling Token",
+		},
+		cli.StringFlag{
+			EnvVar: "CONCERTO_SERVER_ID",
+			Name:   "concerto-server-id",
+			Usage:  "Concerto Server ID",
 		},
 		cli.StringFlag{
 			EnvVar: "CONCERTO_FORMATTER",
