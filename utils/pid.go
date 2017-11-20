@@ -28,7 +28,7 @@ func SetProcessIdToFile(pidFileName string) error {
 func GetProcessIdFromFile(pidFileName string) (int, error) {
 	log.Debug("GetProcessIdFromFile")
 
-	pid := int64(0)
+	var pid int64
 
 	if bytes, err := ioutil.ReadFile(pidFileName); err != nil {
 		return 0, err

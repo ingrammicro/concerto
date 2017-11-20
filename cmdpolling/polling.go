@@ -1,9 +1,9 @@
 package cmdpolling
 
 import (
+	"context"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
 
@@ -21,18 +21,17 @@ const (
 )
 
 var (
-	wg               = &sync.WaitGroup{}
 	commandProcessed = make(chan bool, 1)
 )
 
 // Handle signals
-func handleSysSignals() {
+func handleSysSignals(cancelFunc context.CancelFunc) {
 	log.Debug("handleSysSignals")
 
 	gracefulStop := make(chan os.Signal, 1)
 	signal.Notify(gracefulStop, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
 	log.Debug("Ending, signal detected:", <-gracefulStop)
-	wg.Done()
+	cancelFunc()
 }
 
 // Start the polling process
@@ -44,11 +43,12 @@ func cmdStart(c *cli.Context) error {
 		formatter.PrintFatal("cannot create the pid file", err)
 	}
 
-	go handleSysSignals()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	wg.Add(1)
-	go pingRoutine(c)
-	wg.Wait()
+	go handleSysSignals(cancel)
+
+	pingRoutine(ctx, c)
 
 	return nil
 }
@@ -67,10 +67,8 @@ func cmdStop(c *cli.Context) error {
 }
 
 // Main polling background routine
-func pingRoutine(c *cli.Context) {
+func pingRoutine(ctx context.Context, c *cli.Context) {
 	log.Debug("pingRoutine")
-
-	defer wg.Done()
 
 	formatter := format.GetFormatter()
 	pollingSvc := cmd.WireUpPolling(c)
@@ -82,19 +80,22 @@ func pingRoutine(c *cli.Context) {
 		ping, status, err := pollingSvc.Ping()
 		if err != nil {
 			formatter.PrintError("Couldn't receive polling ping data", err)
-		}
-
-		// One command is available, and no process running
-		if status == 201 && ping.PendingCommands && !isRunningCommandRoutine {
-			log.Debug("Detected a candidate command")
-			isRunningCommandRoutine = true
-			wg.Add(1)
-			go processingCommandRoutine(pollingSvc, formatter)
+		} else {
+			// One command is available, and no process running
+			if status == 201 && ping.PendingCommands && !isRunningCommandRoutine {
+				log.Debug("Detected a candidate command")
+				isRunningCommandRoutine = true
+				go processingCommandRoutine(pollingSvc, formatter)
+			}
 		}
 
 		select {
 		case <-commandProcessed:
 			isRunningCommandRoutine = false
+		case <-ctx.Done():
+			log.Debug(ctx.Err())
+			log.Debug("closing polling")
+			return
 		default:
 		}
 		<-t.C
@@ -104,8 +105,6 @@ func pingRoutine(c *cli.Context) {
 // Subsidiary routine for commands processing
 func processingCommandRoutine(pollingSvc *polling.PollingService, formatter format.Formatter) {
 	log.Debug("processingCommandRoutine")
-
-	defer wg.Done()
 
 	// 1. Request for the new command available
 	log.Debug("Retrieving available command")
