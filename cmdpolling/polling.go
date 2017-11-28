@@ -92,13 +92,16 @@ func pingRoutine(ctx context.Context, c *cli.Context) {
 		select {
 		case <-commandProcessed:
 			isRunningCommandRoutine = false
+		default:
+		}
+
+		select {
+		case <-t.C:
 		case <-ctx.Done():
 			log.Debug(ctx.Err())
 			log.Debug("closing polling")
 			return
-		default:
 		}
-		<-t.C
 	}
 }
 
