@@ -6,7 +6,6 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"errors"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
@@ -17,7 +16,8 @@ import (
 )
 
 const (
-	ProcessIdFile = "imco-polling.pid"
+	DefaultPollingPingTimingInterval = 30
+	ProcessIdFile                    = "imco-polling.pid"
 )
 
 var (
@@ -45,7 +45,7 @@ func cmdStart(c *cli.Context) error {
 
 	pollingPingTimingInterval := c.Int64("time")
 	if !(pollingPingTimingInterval > 0) {
-		formatter.PrintFatal("invalid argument", errors.New("a positive value should be used"))
+		pollingPingTimingInterval = DefaultPollingPingTimingInterval
 	}
 	log.Debug("Ping time interval:", pollingPingTimingInterval)
 
