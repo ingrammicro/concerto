@@ -36,3 +36,12 @@ func TestUpdateCommand(t *testing.T) {
 	UpdateCommandFailStatusMocked(t, commandIn)
 	UpdateCommandFailJSONMocked(t, commandIn)
 }
+
+
+func TestReportBootstrapLog(t *testing.T) {
+	commandIn := testdata.GetPollingContinuousReportData()
+	ReportBootstrapLogMocked(t, commandIn)
+	ReportBootstrapLogFailErrMocked(t, commandIn)
+	ReportBootstrapLogFailStatusMocked(t, commandIn)
+	ReportBootstrapLogFailJSONMocked(t, commandIn)
+}

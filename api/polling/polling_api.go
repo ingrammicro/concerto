@@ -72,3 +72,20 @@ func (p *PollingService) UpdateCommand(pollingCommandVector *map[string]interfac
 
 	return command, status, nil
 }
+
+// ReportBootstrapLog reports a command result
+func (p *PollingService) ReportBootstrapLog(PollingContinuousReportVector *map[string]interface{}) (command *types.PollingContinuousReport, status int, err error) {
+	log.Debug("ReportBootstrapLog")
+
+	payload := make(map[string]interface{})
+	data, status, err := p.concertoService.Post("/command_polling/bootstrap_logs", &payload)
+	if err != nil {
+		return nil, status, err
+	}
+
+	if err = json.Unmarshal(data, &command); err != nil {
+		return nil, status, err
+	}
+
+	return command, status, nil
+}
