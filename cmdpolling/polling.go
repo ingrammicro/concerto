@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"errors"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
@@ -16,8 +17,7 @@ import (
 )
 
 const (
-	PollingPingTimingInterval = 2
-	ProcessIdFile             = "imco-polling.pid"
+	ProcessIdFile = "imco-polling.pid"
 )
 
 var (
@@ -43,12 +43,18 @@ func cmdStart(c *cli.Context) error {
 		formatter.PrintFatal("cannot create the pid file", err)
 	}
 
+	pollingPingTimingInterval := c.Int64("time")
+	if !(pollingPingTimingInterval > 0) {
+		formatter.PrintFatal("invalid argument", errors.New("a positive value should be used"))
+	}
+	log.Debug("Ping time interval:", pollingPingTimingInterval)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	go handleSysSignals(cancel)
 
-	pingRoutine(ctx, c)
+	pingRoutine(ctx, c, pollingPingTimingInterval)
 
 	return nil
 }
@@ -67,14 +73,14 @@ func cmdStop(c *cli.Context) error {
 }
 
 // Main polling background routine
-func pingRoutine(ctx context.Context, c *cli.Context) {
+func pingRoutine(ctx context.Context, c *cli.Context, pollingPingTimingInterval int64) {
 	log.Debug("pingRoutine")
 
 	formatter := format.GetFormatter()
 	pollingSvc := cmd.WireUpPolling(c)
 
 	isRunningCommandRoutine := false
-	t := time.NewTicker(PollingPingTimingInterval * time.Second)
+	t := time.NewTicker(time.Duration(pollingPingTimingInterval) * time.Second)
 	for {
 		log.Debug("Requesting for candidate commands status")
 		ping, status, err := pollingSvc.Ping()
