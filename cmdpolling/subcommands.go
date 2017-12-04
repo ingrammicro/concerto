@@ -2,6 +2,7 @@ package cmdpolling
 
 import (
 	"github.com/codegangsta/cli"
+	"github.com/ingrammicro/concerto/utils"
 )
 
 func SubCommands() []cli.Command {
@@ -37,17 +38,17 @@ func SubCommands() []cli.Command {
 				cli.IntFlag{
 					Name:  "lines, l",
 					Usage: "Maximum lines threshold per response chunk",
-					Value: DefaultThresholdLines,
+					Value: utils.DefaultThresholdLines,
 				},
 				cli.IntFlag{
 					Name:  "time, t",
 					Usage: "Maximum time -seconds- threshold per response chunk",
-					Value: DefaultThresholdTime,
+					Value: utils.DefaultThresholdTime,
 				},
 				cli.IntFlag{
 					Name:  "bytes, b",
 					Usage: "Maximum bytes threshold per response chunk",
-					Value: DefaultThresholdBytes,
+					Value: utils.DefaultThresholdBytes,
 				},
 			},
 		},
