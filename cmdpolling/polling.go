@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"encoding/json"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
@@ -132,26 +133,22 @@ func processingCommandRoutine(pollingSvc *polling.PollingService, formatter form
 			command.Stdout = ""
 		}
 
-		// 3. If command successfully executed, then status is propagated to IMCO
-		if command.ExitCode == 0 {
-			log.Debug("Reporting command execution status")
-			commandIn, err := utils.ItemConvertParamsWithTagAsID(*command)
-			if err != nil {
-				formatter.PrintError("Couldn't send polling command report data; error parsing payload", err)
-			}
+		// 3. then status is propagated to IMCO
+		log.Debug("Reporting command execution status")
 
-			_, status, err := pollingSvc.UpdateCommand(commandIn, command.Id)
-			if err != nil {
-				formatter.PrintError("Couldn't send polling command report data", err)
-			}
+		var commandIn map[string]interface{}
+		inRec, _ := json.Marshal(command)
+		json.Unmarshal(inRec, &commandIn)
 
-			if status == 200 {
-				log.Debug("Command execution results successfully reported")
-			} else {
-				log.Error("Cannot report the command execution results")
-			}
+		_, status, err := pollingSvc.UpdateCommand(&commandIn, command.Id)
+		if err != nil {
+			formatter.PrintError("Couldn't send polling command report data", err)
+		}
+
+		if status == 200 {
+			log.Debug("Command execution results successfully reported")
 		} else {
-			log.Error("Cannot run the retrieved command")
+			log.Error("Cannot report the command execution results")
 		}
 	} else {
 		log.Error("Cannot retrieve the next command")

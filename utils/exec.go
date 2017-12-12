@@ -148,7 +148,7 @@ func RunCmd(command string) (output string, exitCode int, startedAt time.Time, f
 	return
 }
 
-func RunContinuousReportRun(fn func(chunk string) error, cmdArg string, thresholds Thresholds) error {
+func RunContinuousReportRun(fn func(chunk string) error, cmdArg string, thresholds Thresholds) (int, error) {
 	log.Debug("RunContinuousReportRun")
 
 	// command thresholds flags
@@ -193,13 +193,13 @@ func RunContinuousReportRun(fn func(chunk string) error, cmdArg string, threshol
 	// Gets the pipe command
 	stdout, err := newCmd.StdoutPipe()
 	if err != nil {
-		return fmt.Errorf("cannot get pipe command %v", err)
+		return 1, fmt.Errorf("cannot get pipe command %v", err)
 	}
 	log.Info("==> Executing: ", strings.Join(newCmd.Args, " "))
 
 	// Start command asynchronously
 	if err = newCmd.Start(); err != nil {
-		return fmt.Errorf("cannot start the specified command %v", err)
+		return 1, fmt.Errorf("cannot start the specified command %v", err)
 	}
 
 	chunk := ""
@@ -232,8 +232,12 @@ func RunContinuousReportRun(fn func(chunk string) error, cmdArg string, threshol
 	if len(chunk) > 0 {
 		log.Debug("Sending the last pending chunk")
 		if err := fn(chunk); err != nil {
-			return err
+			log.Error("Cannot send the last chunk", err.Error())
 		}
 	}
-	return nil
+
+	err = newCmd.Wait()
+	exitCode := extractExitCode(err)
+
+	return exitCode, nil
 }

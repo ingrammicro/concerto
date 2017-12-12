@@ -77,8 +77,7 @@ func (p *PollingService) UpdateCommand(pollingCommandVector *map[string]interfac
 func (p *PollingService) ReportBootstrapLog(PollingContinuousReportVector *map[string]interface{}) (command *types.PollingContinuousReport, status int, err error) {
 	log.Debug("ReportBootstrapLog")
 
-	payload := make(map[string]interface{})
-	data, status, err := p.concertoService.Post("/command_polling/bootstrap_logs", &payload)
+	data, status, err := p.concertoService.Post("/command_polling/bootstrap_logs", PollingContinuousReportVector)
 	if err != nil {
 		return nil, status, err
 	}

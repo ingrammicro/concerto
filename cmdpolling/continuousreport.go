@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"os"
+	"encoding/json"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
@@ -44,12 +46,12 @@ func cmdContinuousReportRun(c *cli.Context) error {
 			command := types.PollingContinuousReport{
 				Stdout: chunk,
 			}
-			commandIn, err := utils.ItemConvertParamsWithTagAsID(command)
-			if err != nil {
-				return fmt.Errorf("error parsing payload %v", err)
-			}
 
-			_, statusCode, err := pollingSvc.ReportBootstrapLog(commandIn)
+			var commandIn map[string]interface{}
+			inRec, _ := json.Marshal(command)
+			json.Unmarshal(inRec, &commandIn)
+
+			_, statusCode, err := pollingSvc.ReportBootstrapLog(&commandIn)
 			switch {
 			// 0<100 error cases??
 			case statusCode == 0:
@@ -69,11 +71,13 @@ func cmdContinuousReportRun(c *cli.Context) error {
 		return nil
 	}
 
-	if err := utils.RunContinuousReportRun(fn, cmdArg, thresholds); err != nil {
+	exitCode, err := utils.RunContinuousReportRun(fn, cmdArg, thresholds)
+	if err != nil {
 		formatter.PrintFatal("cannot process continuous report command", err)
 	}
 
-	log.Info("completed")
+	log.Info("completed: ", exitCode)
+	os.Exit(exitCode)
 	return nil
 }
 
