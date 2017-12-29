@@ -3,21 +3,20 @@ package cmdpolling
 import (
 	"errors"
 	"fmt"
-	"time"
 	"os"
-	"encoding/json"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/cmd"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
 
 const (
-	RetriesNumber = 5
-	RetriesFactor = 3
+	RetriesNumber        = 5
+	RetriesFactor        = 3
+	DefaultThresholdTime = 10
 )
 
 func cmdContinuousReportRun(c *cli.Context) error {
@@ -34,22 +33,22 @@ func cmdContinuousReportRun(c *cli.Context) error {
 		formatter.PrintFatal("argument missing", errors.New("a script or command is required"))
 	}
 
-	// cli command thresholds flags
-	thresholds := utils.Thresholds{Lines: c.Int("lines"), Time: c.Int("time"), Bytes: c.Int("bytes")}
+	// cli command threshold flag
+	thresholdTime := c.Int("time")
+	if !(thresholdTime > 0) {
+		thresholdTime = DefaultThresholdTime
+	}
+	log.Debug("Time threshold:", thresholdTime)
 
 	// Custom method for chunks processing
 	fn := func(chunk string) error {
 		log.Debug("sendChunks")
-
 		err := retry(RetriesNumber, time.Second, func() error {
 			log.Debug("Sending: ", chunk)
-			command := types.PollingContinuousReport{
-				Stdout: chunk,
-			}
 
-			var commandIn map[string]interface{}
-			inRec, _ := json.Marshal(command)
-			json.Unmarshal(inRec, &commandIn)
+			commandIn := map[string]interface{}{
+				"stdout": chunk,
+			}
 
 			_, statusCode, err := pollingSvc.ReportBootstrapLog(&commandIn)
 			switch {
@@ -71,7 +70,7 @@ func cmdContinuousReportRun(c *cli.Context) error {
 		return nil
 	}
 
-	exitCode, err := utils.RunContinuousReportRun(fn, cmdArg, thresholds)
+	exitCode, err := utils.RunContinuousCmd(fn, cmdArg, thresholdTime)
 	if err != nil {
 		formatter.PrintFatal("cannot process continuous report command", err)
 	}

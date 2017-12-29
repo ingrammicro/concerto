@@ -19,16 +19,7 @@ import (
 const (
 	TimeStampLayout          = "2006-01-02T15:04:05.000000-07:00"
 	TimeLayoutYYYYMMDDHHMMSS = "20060102150405"
-	DefaultThresholdLines    = 10
-	DefaultThresholdTime     = 10
-	DefaultThresholdBytes    = 500
 )
-
-type Thresholds struct {
-	Lines int
-	Time  int
-	Bytes int
-}
 
 func extractExitCode(err error) int {
 	if err != nil {
@@ -148,20 +139,75 @@ func RunCmd(command string) (output string, exitCode int, startedAt time.Time, f
 	return
 }
 
-func RunContinuousReportRun(fn func(chunk string) error, cmdArg string, thresholds Thresholds) (int, error) {
-	log.Debug("RunContinuousReportRun")
+// RunTracedCmd executes the received command and manages two output pipes (output and error)
+// It shouldn't throw any exception/error or stop the process.
+func RunTracedCmd(command string) (exitCode int, stdOut string, stdErr string, startedAt time.Time, finishedAt time.Time) {
 
-	// command thresholds flags
-	if !(thresholds.Lines > 0) {
-		thresholds.Lines = DefaultThresholdLines
+	var cmd *exec.Cmd
+
+	if runtime.GOOS == "windows" {
+		log.Infof("Command: %s", command)
+		cmd = exec.Command("cmd", "/C", command)
+	} else {
+		log.Infof("Command: %s %s", "/bin/sh -c", command)
+		cmd = exec.Command("/bin/sh", "-c", command)
 	}
-	if !(thresholds.Time > 0) {
-		thresholds.Time = DefaultThresholdTime
+
+	stdoutIn, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Error("cmd.StdoutPipe() failed: ", err)
 	}
-	if !(thresholds.Bytes > 0) {
-		thresholds.Bytes = DefaultThresholdBytes
+
+	stderrIn, err := cmd.StderrPipe()
+	if err != nil {
+		log.Error("cmd.StderrPipe() failed: ", err)
 	}
-	log.Debug("Threshold", thresholds)
+
+	var errStdout, errStderr error
+	var stdoutBuf, stderrBuf bytes.Buffer
+	stdout := io.MultiWriter(os.Stdout, &stdoutBuf)
+	stderr := io.MultiWriter(os.Stderr, &stderrBuf)
+
+	if err = cmd.Start(); err != nil {
+		log.Error("cmd.Start() failed: ", err)
+	}
+
+	go func() {
+		_, errStdout = io.Copy(stdout, stdoutIn)
+	}()
+
+	go func() {
+		_, errStderr = io.Copy(stderr, stderrIn)
+	}()
+
+	if err = cmd.Wait(); err != nil {
+		log.Error("cmd.Wait() failed: ", err)
+	}
+
+	if errStdout != nil {
+		log.Error("failed to capture stdout: ", errStdout)
+	}
+
+	if errStderr != nil {
+		log.Error("failed to capture stderr: ", errStderr)
+	}
+
+	exitCode = extractExitCode(err)
+	stdOut = string(stdoutBuf.Bytes())
+	stdErr = string(stderrBuf.Bytes())
+	startedAt = time.Now()
+	finishedAt = time.Now()
+
+	log.Infof("Exit Code: %d", exitCode)
+	log.Debugf("Stdout: %s", stdOut)
+	log.Debugf("Stderr: %s", stdErr)
+	log.Debugf("Starting Time: %s", startedAt.Format(TimeStampLayout))
+	log.Debugf("End Time: %s", finishedAt.Format(TimeStampLayout))
+	return
+}
+
+func RunContinuousCmd(fn func(chunk string) error, cmdArg string, thresholdTime int) (int, error) {
+	log.Debug("RunContinuousCmd")
 
 	// Saves script/command in a temp file
 	cmdFileName := strings.Join([]string{time.Now().Format(TimeLayoutYYYYMMDDHHMMSS), "_", RandomString(10)}, "")
@@ -203,24 +249,21 @@ func RunContinuousReportRun(fn func(chunk string) error, cmdArg string, threshol
 	}
 
 	chunk := ""
-	nLines, nTime, nBytes := 0, 0, 0
+	nTime := 0
 	timeStart := time.Now()
 
 	scanner := bufio.NewScanner(bufio.NewReader(stdout))
 	for scanner.Scan() {
 		chunk = strings.Join([]string{chunk, scanner.Text(), "\n"}, "")
-		nLines++
 		nTime = int(time.Now().Sub(timeStart).Seconds())
-		nBytes = len(chunk)
-		if nLines >= thresholds.Lines || nTime >= thresholds.Time || nBytes >= thresholds.Bytes {
+		if nTime >= thresholdTime {
 			if err := fn(chunk); err != nil {
-				nLines, nTime = 0, 0
-				timeStart = time.Now()
+				nTime = 0
 			} else {
 				chunk = ""
-				nLines, nTime, nBytes = 0, 0, 0
-				timeStart = time.Now()
+				nTime = 0
 			}
+			timeStart = time.Now()
 		}
 	}
 
@@ -230,9 +273,9 @@ func RunContinuousReportRun(fn func(chunk string) error, cmdArg string, threshol
 	}
 
 	if len(chunk) > 0 {
-		log.Debug("Sending the last pending chunk")
+		log.Debug("Processing the last pending chunk")
 		if err := fn(chunk); err != nil {
-			log.Error("Cannot send the last chunk", err.Error())
+			log.Error("Cannot process the last chunk", err.Error())
 		}
 	}
 
