@@ -139,19 +139,46 @@ func RunCmd(command string) (output string, exitCode int, startedAt time.Time, f
 	return
 }
 
+// Save script/command in a temp file
+func createCommandWithFilename(command string) (cmd *exec.Cmd, cmdFileName string) {
+
+	cmdFileName = strings.Join([]string{time.Now().Format(TimeLayoutYYYYMMDDHHMMSS), "_", RandomString(10)}, "")
+	if runtime.GOOS == "windows" {
+		cmdFileName = strings.Join([]string{cmdFileName, ".bat"}, "")
+	}
+
+	// Writes content to file
+	if err := ioutil.WriteFile(cmdFileName, []byte(command), 0600); err != nil {
+		log.Fatalf("Error creating temp file: %v", err)
+	}
+
+	// Creates command
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/C", cmdFileName)
+	} else {
+		cmd = exec.Command("/bin/sh", cmdFileName)
+	}
+	return
+}
+
+// Remove temp file
+func deleteTmpCommandFilename(cmdFileName string) {
+	err := os.Remove(cmdFileName)
+	if err != nil {
+		log.Warn("Temp file cannot be removed", err.Error())
+	}
+}
+
 // RunTracedCmd executes the received command and manages two output pipes (output and error)
 // It shouldn't throw any exception/error or stop the process.
 func RunTracedCmd(command string) (exitCode int, stdOut string, stdErr string, startedAt time.Time, finishedAt time.Time) {
+	log.Debug("RunTracedCmd")
 
-	var cmd *exec.Cmd
+	// Saves script/command in a temp file
+	var cmd, cmdFileName = createCommandWithFilename(command)
 
-	if runtime.GOOS == "windows" {
-		log.Infof("Command: %s", command)
-		cmd = exec.Command("cmd", "/C", command)
-	} else {
-		log.Infof("Command: %s %s", "/bin/sh -c", command)
-		cmd = exec.Command("/bin/sh", "-c", command)
-	}
+	// Removes temp file
+	defer deleteTmpCommandFilename(cmdFileName)
 
 	stdoutIn, err := cmd.StdoutPipe()
 	if err != nil {
@@ -206,45 +233,24 @@ func RunTracedCmd(command string) (exitCode int, stdOut string, stdErr string, s
 	return
 }
 
-func RunContinuousCmd(fn func(chunk string) error, cmdArg string, thresholdTime int) (int, error) {
+func RunContinuousCmd(fn func(chunk string) error, command string, thresholdTime int) (int, error) {
 	log.Debug("RunContinuousCmd")
 
 	// Saves script/command in a temp file
-	cmdFileName := strings.Join([]string{time.Now().Format(TimeLayoutYYYYMMDDHHMMSS), "_", RandomString(10)}, "")
-	if runtime.GOOS == "windows" {
-		cmdFileName = strings.Join([]string{cmdFileName, ".bat"}, "")
-	}
-
-	// Writes content
-	if err := ioutil.WriteFile(cmdFileName, []byte(cmdArg), 0600); err != nil {
-		log.Fatalf("Error creating temp file : ", err)
-	}
-
-	// Creates command
-	var newCmd *exec.Cmd
-	if runtime.GOOS == "windows" {
-		newCmd = exec.Command("cmd", "/C", cmdFileName)
-	} else {
-		newCmd = exec.Command("/bin/sh", cmdFileName)
-	}
+	var cmd, cmdFileName = createCommandWithFilename(command)
 
 	// Removes temp file
-	defer func() {
-		err := os.Remove(cmdFileName)
-		if err != nil {
-			log.Warn("Temp file cannot be removed", err.Error())
-		}
-	}()
+	defer deleteTmpCommandFilename(cmdFileName)
 
 	// Gets the pipe command
-	stdout, err := newCmd.StdoutPipe()
+	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return 1, fmt.Errorf("cannot get pipe command %v", err)
 	}
-	log.Info("==> Executing: ", strings.Join(newCmd.Args, " "))
+	log.Info("==> Executing: ", strings.Join(cmd.Args, " "))
 
 	// Start command asynchronously
-	if err = newCmd.Start(); err != nil {
+	if err = cmd.Start(); err != nil {
 		return 1, fmt.Errorf("cannot start the specified command %v", err)
 	}
 
@@ -279,7 +285,7 @@ func RunContinuousCmd(fn func(chunk string) error, cmdArg string, thresholdTime 
 		}
 	}
 
-	err = newCmd.Wait()
+	err = cmd.Wait()
 	exitCode := extractExitCode(err)
 
 	return exitCode, nil

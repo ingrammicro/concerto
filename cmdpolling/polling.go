@@ -22,10 +22,6 @@ const (
 	ProcessIdFile                         = "imco-polling.pid"
 )
 
-var (
-	commandProcessed = make(chan bool, 1)
-)
-
 // Handle signals
 func handleSysSignals(cancelFunc context.CancelFunc) {
 	log.Debug("handleSysSignals")
@@ -91,69 +87,52 @@ func pingRoutine(ctx context.Context, c *cli.Context, longTimePeriod int64, shor
 
 	formatter := format.GetFormatter()
 	pollingSvc := cmd.WireUpPolling(c)
+	commandProcessed := make(chan bool, 1)
 
 	// initialization
 	isRunningCommandRoutine := false
 	longTicker := time.NewTicker(time.Duration(longTimePeriod) * time.Second)
-	shortTicker := time.NewTicker(time.Duration(shortTimePeriod) * time.Second)
 	currentTicker := longTicker
 	for {
-		// no need to request until current command ends
-		if !isRunningCommandRoutine {
-			log.Debug("Requesting for candidate commands status")
-			ping, status, err := pollingSvc.Ping()
-			if err != nil {
-				formatter.PrintError("Couldn't receive polling ping data", err)
-				// in low level error, should the ticker set as the the longest time interval?
-			} else {
-				// One command is available
-				if status == 201 {
-					if ping.PendingCommands {
-						log.Debug("Detected a candidate command")
-						isRunningCommandRoutine = true
-						// set short interval timing!?
-						// - by default this implies next interval timing sil be short.
-						// - If command routine has a over delay, long interval timing will be assigned later
-						if currentTicker != shortTicker {
-							log.Debug("Ticker assigned: Short")
-							shortTicker = time.NewTicker(time.Duration(shortTimePeriod) * time.Second)
-							currentTicker = shortTicker
-						}
-						go processingCommandRoutine(pollingSvc, formatter)
-					} else {
-						// Since no pending command, long interval timing
-						log.Debug("Ticker assigned: Long")
-						currentTicker = time.NewTicker(time.Duration(longTimePeriod) * time.Second)
-					}
-				}
+		log.Debug("Requesting for candidate commands status")
+		ping, status, err := pollingSvc.Ping()
+		if err != nil {
+			formatter.PrintError("Couldn't receive polling ping data", err)
+		} else {
+			// One command is available, and no process running
+			if status == 201 && ping.PendingCommands && !isRunningCommandRoutine {
+				log.Debug("Detected a candidate command")
+				isRunningCommandRoutine = true
+				go processingCommandRoutine(pollingSvc, formatter, commandProcessed)
 			}
 		}
 
 		log.Debug("Waiting...", currentTicker)
 
 		select {
+		case <-commandProcessed:
+			isRunningCommandRoutine = false
+			if currentTicker != longTicker {
+				currentTicker.Stop()
+			}
+			log.Debug("Ticker assigned: short")
+			currentTicker = time.NewTicker(time.Duration(shortTimePeriod) * time.Second)
 		case <-currentTicker.C:
+			if currentTicker != longTicker {
+				currentTicker.Stop()
+				log.Debug("Ticker assigned: Long")
+				currentTicker = longTicker
+			}
 		case <-ctx.Done():
 			log.Debug(ctx.Err())
 			log.Debug("closing polling")
 			return
 		}
-
-		select {
-		case <-commandProcessed:
-			isRunningCommandRoutine = false
-		default:
-			// if command routine is currently running and short interval timing runs out, a long interval timing is assigned
-			if isRunningCommandRoutine && currentTicker == shortTicker {
-				log.Debug("Ticker re-assigned: Long")
-				currentTicker = time.NewTicker(time.Duration(longTimePeriod) * time.Second)
-			}
-		}
 	}
 }
 
 // Subsidiary routine for commands processing
-func processingCommandRoutine(pollingSvc *polling.PollingService, formatter format.Formatter) {
+func processingCommandRoutine(pollingSvc *polling.PollingService, formatter format.Formatter, commandProcessed chan bool) {
 	log.Debug("processingCommandRoutine")
 
 	// 1. Request for the new command available
