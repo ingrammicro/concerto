@@ -341,3 +341,116 @@ func UpdateCommandFailJSONMocked(t *testing.T, commandIn *types.PollingCommand) 
 
 	return commandOut
 }
+
+
+// ReportBootstrapLogMocked test mocked function
+func ReportBootstrapLogMocked(t *testing.T, commandIn *types.PollingContinuousReport) *types.PollingContinuousReport {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewPollingService(cs)
+	assert.Nil(err, "Couldn't load polling service")
+	assert.NotNil(ds, "Polling service not instanced")
+
+	// to json
+	dOut, err := json.Marshal(commandIn)
+	assert.Nil(err, "ReportBootstrapLog test data corrupted")
+
+	// call service
+	payload := make(map[string]interface{})
+	cs.On("Post", fmt.Sprintf("/command_polling/bootstrap_logs"), &payload).Return(dOut, 201, nil)
+	commandOut, status, err := ds.ReportBootstrapLog(&payload)
+
+	assert.Nil(err, "Error posting report command")
+	assert.Equal(status, 201, "ReportBootstrapLog returned invalid response")
+	assert.Equal(commandOut.Stdout, "Bootstrap log created", "ReportBootstrapLog returned unexpected message")
+
+	return commandOut
+}
+
+// ReportBootstrapLogFailErrMocked test mocked function
+func ReportBootstrapLogFailErrMocked(t *testing.T, commandIn *types.PollingContinuousReport) *types.PollingContinuousReport {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewPollingService(cs)
+	assert.Nil(err, "Couldn't load polling service")
+	assert.NotNil(ds, "Polling service not instanced")
+
+	// to json
+	dIn, err := json.Marshal(commandIn)
+	assert.Nil(err, "ReportBootstrapLog test data corrupted")
+
+	dIn = nil
+
+	// call service
+	payload := make(map[string]interface{})
+	cs.On("Post", fmt.Sprintf("/command_polling/bootstrap_logs"), &payload).Return(dIn, 400, fmt.Errorf("Mocked error"))
+	commandOut, _, err := ds.ReportBootstrapLog(&payload)
+
+	assert.NotNil(err, "We are expecting an error")
+	assert.Nil(commandOut, "Expecting nil output")
+	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+
+	return commandOut
+}
+
+// ReportBootstrapLogFailStatusMocked test mocked function
+func ReportBootstrapLogFailStatusMocked(t *testing.T, commandIn *types.PollingContinuousReport) *types.PollingContinuousReport {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewPollingService(cs)
+	assert.Nil(err, "Couldn't load polling service")
+	assert.NotNil(ds, "Polling service not instanced")
+
+	// to json
+	dIn, err := json.Marshal(commandIn)
+	assert.Nil(err, "ReportBootstrapLog test data corrupted")
+
+	dIn = nil
+
+	// call service
+	payload := make(map[string]interface{})
+	cs.On("Post", fmt.Sprintf("/command_polling/bootstrap_logs"), &payload).Return(dIn, 499, fmt.Errorf("Error 499 Mocked error"))
+	commandOut, status, err := ds.ReportBootstrapLog(&payload)
+
+	assert.Equal(status, 499, "ReportBootstrapLog returned an unexpected status code")
+	assert.NotNil(err, "We are expecting a status code error")
+	assert.Nil(commandOut, "Expecting nil output")
+	assert.Contains(err.Error(), "499", "Error should contain http code 499")
+
+	return commandOut
+}
+
+// ReportBootstrapLogFailJSONMocked test mocked function
+func ReportBootstrapLogFailJSONMocked(t *testing.T, commandIn *types.PollingContinuousReport) *types.PollingContinuousReport {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewPollingService(cs)
+	assert.Nil(err, "Couldn't load polling service")
+	assert.NotNil(ds, "Polling service not instanced")
+
+	// wrong json
+	dIn := []byte{10, 20, 30}
+
+	// call service
+	payload := make(map[string]interface{})
+	cs.On("Post", fmt.Sprintf("/command_polling/bootstrap_logs"), &payload).Return(dIn, 201, nil)
+	commandOut, _, err := ds.ReportBootstrapLog(&payload)
+
+	assert.NotNil(err, "We are expecting a marshalling error")
+	assert.Nil(commandOut, "Expecting nil output")
+	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
+
+	return commandOut
+}

@@ -69,18 +69,6 @@ func ItemConvertParams(item interface{}) (*map[string]interface{}, error) {
 	return &v, nil
 }
 
-// ItemConvertParamsWithTagAsID converts param items into map of interface with json tags
-func ItemConvertParamsWithTagAsID(item interface{}) (*map[string]interface{}, error) {
-	it := reflect.ValueOf(item)
-	nf := it.NumField()
-	v := make(map[string]interface{})
-
-	for i := 0; i < nf; i++ {
-		v[it.Type().Field(i).Tag.Get("json")] = fmt.Sprintf("%s", it.Field(i).Interface())
-	}
-	return &v, nil
-}
-
 // JSONParam parses parameter as json structure
 func JSONParam(param string) (interface{}, error) {
 	var p interface{}

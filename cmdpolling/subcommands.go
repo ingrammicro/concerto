@@ -17,9 +17,14 @@ func SubCommands() []cli.Command {
 			Action: cmdStart,
 			Flags: []cli.Flag{
 				cli.Int64Flag{
-					Name:  "time, t",
-					Usage: "Polling ping time interval (seconds)",
-					Value: 30,
+					Name:  "longTime, l",
+					Usage: "Polling ping long time interval (seconds)",
+					Value: DefaultPollingPingTimingIntervalLong,
+				},
+				cli.Int64Flag{
+					Name:  "shortTime, s",
+					Usage: "Polling ping short time interval (seconds)",
+					Value: DefaultPollingPingTimingIntervalShort,
 				},
 			},
 		},
@@ -27,6 +32,19 @@ func SubCommands() []cli.Command {
 			Name:   "stop",
 			Usage:  "Stops the running polling process",
 			Action: cmdStop,
+		},
+		{
+			Name:      "continuous-report-run",
+			Usage:     "Runs a script and gradually report its output",
+			Action:    cmdContinuousReportRun,
+			ArgsUsage: "script",
+			Flags: []cli.Flag{
+				cli.IntFlag{
+					Name:  "time, t",
+					Usage: "Maximum time -seconds- threshold per response chunk",
+					Value: DefaultThresholdTime,
+				},
+			},
 		},
 	}
 }

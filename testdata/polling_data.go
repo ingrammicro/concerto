@@ -27,3 +27,13 @@ func GetPollingCommandData() *types.PollingCommand {
 
 	return &testPollingCommand
 }
+
+// GetPollingContinuousReportData loads test data
+func GetPollingContinuousReportData() *types.PollingContinuousReport {
+
+	testPollingContinuousReport := types.PollingContinuousReport{
+		Stdout: "Bootstrap log created",
+	}
+
+	return &testPollingContinuousReport
+}
