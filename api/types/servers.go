@@ -1,16 +1,16 @@
 package types
 
 type Server struct {
-	Id             string `json:"id" header:"ID"`
-	Name           string `json:"name" header:"NAME"`
-	Fqdn           string `json:"fqdn" header:"FQDN"`
-	State          string `json:"state" header:"STATE"`
-	Public_ip      string `json:"public_ip" header:"PUBLIC_IP"`
-	Workspace_id   string `json:"workspace_id" header:"WORKSPACE_ID"`
-	Template_id    string `json:"template_id" header:"TEMPLATE_ID"`
-	Server_plan_id string `json:"server_plan_id" header:"SERVER_PLAN_ID"`
+	Id               string `json:"id" header:"ID"`
+	Name             string `json:"name" header:"NAME"`
+	Fqdn             string `json:"fqdn" header:"FQDN"`
+	State            string `json:"state" header:"STATE"`
+	Public_ip        string `json:"public_ip" header:"PUBLIC_IP"`
+	Workspace_id     string `json:"workspace_id" header:"WORKSPACE_ID"`
+	Template_id      string `json:"template_id" header:"TEMPLATE_ID"`
+	Server_plan_id   string `json:"server_plan_id" header:"SERVER_PLAN_ID"`
 	Cloud_account_id string `json:"cloud_account_id" header:"CLOUD_ACCOUNT_ID"`
-	Ssh_profile_id string `json:"ssh_profile_id" header:"SSH_PROFILE_ID"`
+	Ssh_profile_id   string `json:"ssh_profile_id" header:"SSH_PROFILE_ID"`
 }
 
 type Dns struct {

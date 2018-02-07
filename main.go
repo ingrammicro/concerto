@@ -387,7 +387,7 @@ func main() {
 	app.Email = "https://github.com/ingrammicro/concerto"
 
 	app.CommandNotFound = cmdNotFound
-	app.Usage = "Manages comunication between Host and Concerto Platform"
+	app.Usage = "Manages communication between Host and Concerto Platform"
 	app.Version = utils.VERSION
 
 	app.Before = prepareFlags

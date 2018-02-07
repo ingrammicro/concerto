@@ -52,7 +52,6 @@ func SubCommands() []cli.Command {
 					Name:  "cloud_account_id",
 					Usage: "Identifier of the cloud account in which the server shall be registered",
 				},
-
 			},
 		},
 		{
