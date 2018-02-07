@@ -85,6 +85,8 @@ func cmdApply(c *cli.Context) error {
 	// Only apply firewall if we get a non-empty set of rules
 	if len(policy.Rules) > 0 {
 		apply(policy)
+	} else {
+		flush()
 	}
 	return nil
 }
