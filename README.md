@@ -91,7 +91,7 @@ Extract the contents with your zip compressor of choice and continue using the s
 
 ## Linux and OSX
 ### Configuration
-Concerto configuration will usually be located in your personal folder under `.concerto`. If you are using root, concerto will look for contiguration files under `/etc/concerto`.
+Concerto configuration will usually be located in your personal folder under `.concerto`. If you are using root, concerto will look for contiguration files under `/etc/imco`.
 We will assume that you are not root, so create the folder and drop the certificates to this location:
 ```
 $ mkdir -p ~/.concerto/ssl/
@@ -181,7 +181,7 @@ If you got an error executing concerto CLI:
  - check that your internet connection can reach clients.concerto.io
  - make sure that your firewall lets you access to https://clients.concerto.io:886
  - check that  client.xml is pointing to the correct certificates location
- - if concerto executes but only shows server commands, you are probably trying to use concerto from a commissioned server, and the configuration is being read from `/etc/concerto`. If that's the case, you should leave concerto configuration untouched so that server commands are available for our remote management.
+ - if concerto executes but only shows server commands, you are probably trying to use concerto from a commissioned server, and the configuration is being read from `/etc/imco`. If that's the case, you should leave concerto configuration untouched so that server commands are available for our remote management.
 
 
 # Usage
