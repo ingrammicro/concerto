@@ -14,6 +14,7 @@ import (
 
 const (
 	characterizationsEndpoint = "blueprint/script_characterizations?type=%s"
+	characterizationEndpoint  = "blueprint/script_characterizations/%s"
 	conclusionsEndpoint       = "blueprint/script_conclusions"
 )
 
@@ -46,17 +47,17 @@ func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
 			Name:   "boot",
-			Usage:  "Executes scripts characterization associated to booting state of host",
+			Usage:  "Executes script characterizations associated to booting state of host",
 			Action: cmdBoot,
 		},
 		{
 			Name:   "operational",
-			Usage:  "Executes scripts characterization associated to operational state of host",
+			Usage:  "Executes all script characterizations associated to operational state of host or the one with the given id",
 			Action: cmdOperational,
 		},
 		{
 			Name:   "shutdown",
-			Usage:  "Executes scripts characterization associated to shutdown state of host",
+			Usage:  "Executes script characterizations associated to shutdown state of host",
 			Action: cmdShutdown,
 		},
 	}
@@ -74,22 +75,30 @@ func executeScriptCharacterization(script ScriptCharacterization, directoryPath 
 	return conclusion
 }
 
-func execute(phase string) {
+func execute(phase string, scriptScharacterizationUUID string) {
 	var scriptChars []ScriptCharacterization
 	webservice, err := webservice.NewWebService()
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Debugf("Current Script Characterization %s", phase)
-	err, data, _ := webservice.Get(fmt.Sprintf(characterizationsEndpoint, phase))
+	if scriptScharacterizationUUID == "" {
+		log.Debugf("Current Script Characterization %s", phase)
+		err, data, _ := webservice.Get(fmt.Sprintf(characterizationsEndpoint, phase))
+		log.Debugf(string(data))
 
-	json.Unmarshal(data, &scriptChars)
-
-	log.Debugf(string(data))
-
-	err = json.Unmarshal(data, &scriptChars)
-	if err != nil {
-		log.Fatal(err)
+		err = json.Unmarshal(data, &scriptChars)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		log.Debugf("%s Script Characterization %s", phase, scriptScharacterizationUUID)
+		err, data, _ := webservice.Get(fmt.Sprintf(characterizationEndpoint, scriptScharacterizationUUID))
+		log.Debugf(string(data))
+		scriptChars = make([]ScriptCharacterization, 1)
+		err = json.Unmarshal(data, &scriptChars[0])
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	scripts := ByOrder(scriptChars)
 
@@ -147,16 +156,16 @@ func execute(phase string) {
 }
 
 func cmdBoot(c *cli.Context) error {
-	execute("boot")
+	execute("boot", "")
 	return nil
 }
 
 func cmdOperational(c *cli.Context) error {
-	execute("operational")
+	execute("operational", c.Args().Get(0))
 	return nil
 }
 
 func cmdShutdown(c *cli.Context) error {
-	execute("shutdown")
+	execute("shutdown", "")
 	return nil
 }
