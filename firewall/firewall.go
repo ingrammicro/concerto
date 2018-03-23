@@ -26,6 +26,7 @@ type Policy struct {
 }
 
 type Rule struct {
+	Name     string `json:"name,omitempty"`
 	Protocol string `json:"ip_protocol"`
 	Cidr     string `json:"cidr_ip"`
 	MinPort  int    `json:"min_port"`
@@ -110,10 +111,10 @@ func cmdCheck(c *cli.Context) error {
 	utils.FlagsRequired(c, []string{"cidr", "minPort", "maxPort", "ipProtocol"})
 
 	newRule := &Rule{
-		c.String("ipProtocol"),
-		c.String("cidr"),
-		c.Int("minPort"),
-		c.Int("maxPort"),
+		Protocol: c.String("ipProtocol"),
+		Cidr:     c.String("cidr"),
+		MinPort:  c.Int("minPort"),
+		MaxPort:  c.Int("maxPort"),
 	}
 	policy := get()
 
@@ -126,10 +127,10 @@ func cmdAdd(c *cli.Context) error {
 
 	// API accepts only 1 rule
 	newRule := &Rule{
-		c.String("ipProtocol"),
-		c.String("cidr"),
-		c.Int("minPort"),
-		c.Int("maxPort"),
+		Protocol: c.String("ipProtocol"),
+		Cidr:     c.String("cidr"),
+		MinPort:  c.Int("minPort"),
+		MaxPort:  c.Int("maxPort"),
 	}
 	policy := get()
 
@@ -186,10 +187,10 @@ func cmdRemove(c *cli.Context) error {
 	utils.FlagsRequired(c, []string{"cidr", "minPort", "maxPort", "ipProtocol"})
 
 	existingRule := &Rule{
-		c.String("ipProtocol"),
-		c.String("cidr"),
-		c.Int("minPort"),
-		c.Int("maxPort"),
+		Protocol: c.String("ipProtocol"),
+		Cidr:     c.String("cidr"),
+		MinPort:  c.Int("minPort"),
+		MaxPort:  c.Int("maxPort"),
 	}
 	policy := get()
 

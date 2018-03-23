@@ -55,7 +55,7 @@ func obtainServerKeys(config *utils.Config) (rootCAcert string, cert string, key
 		return
 	}
 	if status == 403 {
-		err = fmt.Errorf("server responded with 403 code: the brownfield token is not valid, maybe it expired...")
+		err = fmt.Errorf("server responded with 403 code: the brownfield token is not valid, maybe it expired")
 		return
 	}
 	if status >= 300 {
