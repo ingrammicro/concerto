@@ -131,7 +131,7 @@ func intersectFirewallRuleSource(s1, s2 string) (string, error) {
 	if net1.Contains(ip2) {
 		if net2.Contains(ip1) {
 			net1Size, _ := net1.Mask.Size()
-			net2Size, _ := net1.Mask.Size()
+			net2Size, _ := net2.Mask.Size()
 			if net1Size > net2Size {
 				return s1, nil
 			}
