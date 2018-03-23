@@ -23,7 +23,6 @@ import (
 	"github.com/ingrammicro/concerto/cmdpolling"
 	"github.com/ingrammicro/concerto/converge"
 	"github.com/ingrammicro/concerto/dispatcher"
-	"github.com/ingrammicro/concerto/dns"
 	"github.com/ingrammicro/concerto/firewall"
 	"github.com/ingrammicro/concerto/licensee"
 	"github.com/ingrammicro/concerto/network/firewall_profiles"
@@ -281,14 +280,6 @@ var ClientCommands = []cli.Command{
 		Usage:     "Manages cloud related commands for workspaces, servers, generic images, ssh profiles, cloud providers, server plans and Saas providers",
 		Subcommands: append(
 			CloudCommands,
-		),
-	},
-	{
-		Name:      "dns_domains",
-		ShortName: "dns",
-		Usage:     "Provides information about DNS records",
-		Subcommands: append(
-			dns.SubCommands(),
 		),
 	},
 	{

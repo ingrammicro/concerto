@@ -129,17 +129,6 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "list_dns_records",
-			Usage:  "This action returns information on the DNS records associated to the server with the given id.",
-			Action: cmd.DNSList,
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "id",
-					Usage: "Server Id",
-				},
-			},
-		},
-		{
 			Name:   "list_events",
 			Usage:  "This action returns information about the events related to the server with the given id.",
 			Action: cmd.EventsList,
