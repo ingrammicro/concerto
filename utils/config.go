@@ -47,6 +47,7 @@ type Config struct {
 	BrownfieldToken     string
 	CommandPollingToken string
 	ServerID            string
+	CurrentUserName     string
 	CurrentUserIsAdmin  bool
 }
 
@@ -266,6 +267,7 @@ func (config *Config) evaluateCurrentUser() (*user.User, error) {
 	} else {
 		config.CurrentUserIsAdmin = (currUser.Uid == "0" || currUser.Username == "root")
 	}
+	config.CurrentUserName = currUser.Username
 	return currUser, nil
 }
 

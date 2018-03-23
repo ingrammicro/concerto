@@ -26,7 +26,7 @@ func cmdConfigure(c *cli.Context) error {
 			f.PrintFatal("Must run as super-user", fmt.Errorf("running as non-administrator user"))
 		}
 	}
-	applyConcertoSettings(cs, f)
+	applyConcertoSettings(cs, f, config.CurrentUserName, c.String("admin-password"))
 	configureConcertoFirewall(cs, f)
 	return nil
 }
