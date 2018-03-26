@@ -4,7 +4,6 @@ type Workspace struct {
 	Id                  string `json:"id" header:"ID"`
 	Name                string `json:"name" header:"NAME"`
 	Default             bool   `json:"default" header:"DEFAULT"`
-	Domain_id           string `json:"domain_id" header:"DOMAIN_ID"`
 	Ssh_profile_id      string `json:"ssh_profile_id" header:"SSH_PROFILE_ID"`
 	Firewall_profile_id string `json:"firewall_profile_id" header:"FIREWALL_PROFILE_ID"`
 }

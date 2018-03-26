@@ -37,10 +37,6 @@ func SubCommands() []cli.Command {
 					Name:  "hostname",
 					Usage: "A hostname for the cloud server to deploy",
 				},
-				cli.StringFlag{
-					Name:  "domain_id",
-					Usage: "Identifier of the Domain under which the App will be deployed",
-				},
 			},
 		},
 	}

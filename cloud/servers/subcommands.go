@@ -33,10 +33,6 @@ func SubCommands() []cli.Command {
 					Usage: "Name of the server",
 				},
 				cli.StringFlag{
-					Name:  "fqdn",
-					Usage: "Fully qualified domain name (FQDN) of the server",
-				},
-				cli.StringFlag{
 					Name:  "workspace_id",
 					Usage: "Identifier of the workspace to which the server shall belong",
 				},
@@ -66,10 +62,6 @@ func SubCommands() []cli.Command {
 				cli.StringFlag{
 					Name:  "name",
 					Usage: "Name of the server",
-				},
-				cli.StringFlag{
-					Name:  "fqdn",
-					Usage: "Fully qualified domain name (FQDN) of the server",
 				},
 			},
 		},
