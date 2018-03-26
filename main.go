@@ -26,7 +26,6 @@ import (
 	"github.com/ingrammicro/concerto/firewall"
 	"github.com/ingrammicro/concerto/licensee"
 	"github.com/ingrammicro/concerto/network/firewall_profiles"
-	"github.com/ingrammicro/concerto/network/load_balancers"
 	"github.com/ingrammicro/concerto/node"
 	"github.com/ingrammicro/concerto/settings/cloud_accounts"
 	"github.com/ingrammicro/concerto/settings/reports"
@@ -160,13 +159,6 @@ var NetCommands = []cli.Command{
 			firewall_profiles.SubCommands(),
 		),
 	},
-	{
-		Name:  "load_balancers",
-		Usage: "Provides information about load balancers",
-		Subcommands: append(
-			load_balancers.SubCommands(),
-		),
-	},
 }
 
 var SettingsCommands = []cli.Command{
@@ -293,7 +285,7 @@ var ClientCommands = []cli.Command{
 	{
 		Name:      "network",
 		ShortName: "net",
-		Usage:     "Manages network related commands for firewall profiles and load balancers",
+		Usage:     "Manages network related commands for firewall profiles",
 		Subcommands: append(
 			NetCommands,
 		),
