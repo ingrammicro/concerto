@@ -33,10 +33,6 @@ func SubCommands() []cli.Command {
 					Usage: "Name of the workspace",
 				},
 				cli.StringFlag{
-					Name:  "domain_id",
-					Usage: "Identifier of the DNS domain to which the workspace ascribes its servers",
-				},
-				cli.StringFlag{
 					Name:  "ssh_profile_id",
 					Usage: "Identifier of the ssh profile which the workspace ascribes its servers",
 				},
@@ -58,10 +54,6 @@ func SubCommands() []cli.Command {
 				cli.StringFlag{
 					Name:  "name",
 					Usage: "Logical name of the workspace ",
-				},
-				cli.StringFlag{
-					Name:  "domain_id",
-					Usage: "Identifier of the DNS domain to which the workspace ascribes its servers",
 				},
 				cli.StringFlag{
 					Name:  "ssh_profile_id",
@@ -86,7 +78,7 @@ func SubCommands() []cli.Command {
 		},
 		{
 			Name:   "list_workspace_servers",
-			Usage:  "Shows  the servers belonging to the workspace identified by the given id.",
+			Usage:  "Shows the servers belonging to the workspace identified by the given id.",
 			Action: cmd.WorkspaceServerList,
 			Flags: []cli.Flag{
 				cli.StringFlag{

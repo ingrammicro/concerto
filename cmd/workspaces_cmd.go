@@ -64,7 +64,7 @@ func WorkspaceCreate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	workspaceSvc, formatter := WireUpWorkspace(c)
 
-	checkRequiredFlags(c, []string{"name", "domain_id", "ssh_profile_id", "firewall_profile_id"}, formatter)
+	checkRequiredFlags(c, []string{"name", "ssh_profile_id", "firewall_profile_id"}, formatter)
 	workspace, err := workspaceSvc.CreateWorkspace(utils.FlagConvertParams(c))
 	if err != nil {
 		formatter.PrintFatal("Couldn't create workspace", err)

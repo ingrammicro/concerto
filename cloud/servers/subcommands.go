@@ -33,10 +33,6 @@ func SubCommands() []cli.Command {
 					Usage: "Name of the server",
 				},
 				cli.StringFlag{
-					Name:  "fqdn",
-					Usage: "Fully qualified domain name (FQDN) of the server",
-				},
-				cli.StringFlag{
 					Name:  "workspace_id",
 					Usage: "Identifier of the workspace to which the server shall belong",
 				},
@@ -66,10 +62,6 @@ func SubCommands() []cli.Command {
 				cli.StringFlag{
 					Name:  "name",
 					Usage: "Name of the server",
-				},
-				cli.StringFlag{
-					Name:  "fqdn",
-					Usage: "Fully qualified domain name (FQDN) of the server",
 				},
 			},
 		},
@@ -121,17 +113,6 @@ func SubCommands() []cli.Command {
 			Name:   "delete",
 			Usage:  "This action decommissions the server with the given id. The server must be in a inactive, stalled or commission_stalled state.",
 			Action: cmd.ServerDelete,
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "id",
-					Usage: "Server Id",
-				},
-			},
-		},
-		{
-			Name:   "list_dns_records",
-			Usage:  "This action returns information on the DNS records associated to the server with the given id.",
-			Action: cmd.DNSList,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "id",

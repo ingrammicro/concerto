@@ -1,6 +1,10 @@
 package brownfield
 
-import "github.com/codegangsta/cli"
+import (
+	"runtime"
+
+	"github.com/codegangsta/cli"
+)
 
 func SubCommands() []cli.Command {
 	return []cli.Command{
@@ -13,6 +17,19 @@ func SubCommands() []cli.Command {
 			Name:   "configure",
 			Usage:  "Configures an imported brownfield Host's FQDN, SSH access, agent services and firewall",
 			Action: cmdConfigure,
+			Flags:  configureFlags(),
+		},
+	}
+}
+
+func configureFlags() []cli.Flag {
+	if runtime.GOOS != "windows" {
+		return nil
+	}
+	return []cli.Flag{
+		cli.StringFlag{
+			Name:  "admin-password",
+			Usage: "The password for your current (administrator) user",
 		},
 	}
 }

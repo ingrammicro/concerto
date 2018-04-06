@@ -47,6 +47,7 @@ type Config struct {
 	BrownfieldToken     string
 	CommandPollingToken string
 	ServerID            string
+	CurrentUserName     string
 	CurrentUserIsAdmin  bool
 }
 
@@ -262,10 +263,11 @@ func (config *Config) evaluateCurrentUser() (*user.User, error) {
 	if runtime.GOOS == "windows" {
 		currUser.Username = currUser.Username[strings.LastIndex(currUser.Username, "\\")+1:]
 		log.Debugf("Windows username is %s", currUser.Username)
-		config.CurrentUserIsAdmin = (currUser.Gid == "S-1-5-32-544" || isWinAdministrator(currUser.Username))
+		config.CurrentUserIsAdmin = (currUser.Gid == "S-1-5-32-544" || isWinAdministrator(currUser.Username) || canPerformAdministratorTasks())
 	} else {
 		config.CurrentUserIsAdmin = (currUser.Uid == "0" || currUser.Username == "root")
 	}
+	config.CurrentUserName = currUser.Username
 	return currUser, nil
 }
 
@@ -345,6 +347,15 @@ func isWinAdministrator(user string) bool {
 		user == "Administrator" ||
 		user == "SYSTEM" ||
 		user == "imco"
+}
+
+func canPerformAdministratorTasks() bool {
+	f, err := os.Open("\\\\.\\PHYSICALDRIVE0")
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+	return true
 }
 
 // readConcertoURL reads URL from CONCERTO_URL envrionment or calculates using API URL
