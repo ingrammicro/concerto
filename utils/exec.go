@@ -100,12 +100,13 @@ func RunFile(command string) (output string, exitCode int, startedAt time.Time, 
 
 	err = buffer.Flush()
 	CheckError(err)
+	output = b.String()
 
 	log.Debugf("Starting Time: %s", startedAt.Format(TimeStampLayout))
 	log.Debugf("End Time: %s", finishedAt.Format(TimeStampLayout))
 	log.Debugf("Output")
 	log.Debugf("")
-	log.Debugf("%s", b.String())
+	log.Debugf("%s", output)
 	log.Debugf("")
 	log.Infof("Exit Code: %d", exitCode)
 	return

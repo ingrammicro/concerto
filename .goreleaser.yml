@@ -10,4 +10,6 @@ builds:
 archive:
   name_template: "{{ .ProjectName }}.{{ .Arch }}.{{ .Os }}"
   format: binary
-
+release:
+  prerelease: true
+  name_template: "{{.ProjectName}}-v{{.Version}}"
