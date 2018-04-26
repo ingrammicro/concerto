@@ -22,11 +22,7 @@ func GetAdminReportsData() *[]types.Report {
 			Closed:        true,
 			AccountGroup: types.AccountGroup{
 				ID:   "55b0911810c0ecc351000016",
-<<<<<<< aa96f40d7e24cead3e5ba4512c2c0907ebc58758
 				Name: "IMCO Test1",
-=======
-				Name: "Concerto Test1",
->>>>>>> Update concerto cli name and logo. Issue #5
 			},
 		},
 		{
@@ -39,11 +35,7 @@ func GetAdminReportsData() *[]types.Report {
 			Closed:        true,
 			AccountGroup: types.AccountGroup{
 				ID:   "55b0911810c0ecc351000017",
-<<<<<<< aa96f40d7e24cead3e5ba4512c2c0907ebc58758
 				Name: "IMCO Test2",
-=======
-				Name: "Concerto Test2",
->>>>>>> Update concerto cli name and logo. Issue #5
 			},
 		},
 		{
@@ -56,11 +48,7 @@ func GetAdminReportsData() *[]types.Report {
 			Closed:        true,
 			AccountGroup: types.AccountGroup{
 				ID:   "55b0911810c0ecc351000018",
-<<<<<<< aa96f40d7e24cead3e5ba4512c2c0907ebc58758
 				Name: "IMCO Test3",
-=======
-				Name: "Concerto Test3",
->>>>>>> Update concerto cli name and logo. Issue #5
 			},
 		},
 	}
