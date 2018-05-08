@@ -5,6 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands provides operations about apps
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
@@ -19,7 +20,7 @@ func SubCommands() []cli.Command {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "id",
-					Usage: "App Id",
+					Usage: "Identifier of the App which will be deployed",
 				},
 				cli.StringFlag{
 					Name:  "location_id",
