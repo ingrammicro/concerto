@@ -11,5 +11,5 @@ archive:
   name_template: "{{ .ProjectName }}.{{ .Arch }}.{{ .Os }}"
   format: binary
 release:
-  prerelease: true
+  prerelease: false
   name_template: "{{.ProjectName}}-v{{.Version}}"

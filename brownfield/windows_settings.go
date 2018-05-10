@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
@@ -75,11 +76,11 @@ func sendUsernamePassword(cs *utils.HTTPConcertoservice, username, password stri
 	return nil
 }
 
-var scriptTemplate = `
-winrm quickconfig -q
-winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
-winrm set winrm/config @{MaxTimeoutms="1800000"}
-winrm set winrm/config/service @{AllowUnencrypted="true"}
-winrm set winrm/config/service/auth @{Basic="true"}
-netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-In)" profile=public protocol=tcp localport=5985 remoteip=localsubnet new remoteip=any
-`
+var scriptTemplate = strings.Join([]string{
+	`winrm quickconfig -q`,
+	`winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}`,
+	`winrm set winrm/config @{MaxTimeoutms="1800000"}`,
+	`winrm set winrm/config/service @{AllowUnencrypted="true"}`,
+	`winrm set winrm/config/service/auth @{Basic="true"}`,
+	`netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-In)" profile=public protocol=tcp localport=5985 remoteip=localsubnet new remoteip=any`,
+}, " && ")
