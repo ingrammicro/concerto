@@ -3,9 +3,13 @@
 
 [[projects]]
   name = "github.com/DATA-DOG/godog"
-  packages = [".","colors","gherkin"]
-  revision = "70f777599da0f5de682b8848d356611c1738b695"
-  version = "v0.7.3"
+  packages = [
+    ".",
+    "colors",
+    "gherkin"
+  ]
+  revision = "0371765570d36374bef4ab9f62ed0491f0862a3c"
+  version = "v0.7.6"
 
 [[projects]]
   name = "github.com/Sirupsen/logrus"
@@ -22,8 +26,8 @@
 [[projects]]
   name = "github.com/codegangsta/cli"
   packages = ["."]
-  revision = "0bdeddeeb0f650497d603c4ad7b20cfe685682f6"
-  version = "v1.19.1"
+  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
+  version = "v1.20.0"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -43,16 +47,19 @@
   version = "v1.0.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/stretchr/objx"
   packages = ["."]
-  revision = "1a9d0bb9f541897e62256577b352fdbc1fb4fd94"
+  revision = "facf9a85c22f48d2f52f2380e4efce1768749a89"
+  version = "v0.1"
 
 [[projects]]
   name = "github.com/stretchr/testify"
-  packages = ["assert","mock"]
-  revision = "69483b4bd14f5845b5a1e55bca19e954e827f1d0"
-  version = "v1.1.4"
+  packages = [
+    "assert",
+    "mock"
+  ]
+  revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
+  version = "v1.2.1"
 
 [[projects]]
   name = "golang.org/x/crypto"
@@ -61,14 +68,19 @@
 
 [[projects]]
   name = "golang.org/x/net"
-  packages = ["html","html/atom","idna","publicsuffix"]
+  packages = [
+    "html",
+    "html/atom",
+    "idna",
+    "publicsuffix"
+  ]
   revision = "0c607074acd38c5f23d1344dfe74c977464d1257"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "6faef541c73732f438fb660a212750a9ba9f9362"
+  revision = "7db1c3b1a98089d0071c84f646ff5c96aad43682"
 
 [[projects]]
   name = "gopkg.in/cucumber/gherkin-go.v3"
@@ -79,6 +91,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "49df42a3b53303a32b5bda964eed5ac2ad9e71a28ab533cd7098e2170afa86d1"
+  inputs-digest = "92b7325f6a94cda806d124a617bcc6703c943d68c51e2be3182ef4ed42dc35a7"
   solver-name = "gps-cdcl"
   solver-version = 1

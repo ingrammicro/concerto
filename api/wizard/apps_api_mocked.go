@@ -133,8 +133,8 @@ func DeployAppMocked(t *testing.T, appIn *types.WizardApp) *types.WizardApp {
 	assert.Nil(err, "App test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/wizard/apps/", mapIn).Return(dOut, 200, nil)
-	appOut, err := ds.DeployApp(mapIn)
+	cs.On("Post", fmt.Sprintf("/v1/wizard/apps/%s/deploy", appIn.Id), mapIn).Return(dOut, 200, nil)
+	appOut, err := ds.DeployApp(mapIn, appIn.Id)
 	assert.Nil(err, "Error creating app list")
 	assert.Equal(appIn, appOut, "DeployApp returned different apps")
 
@@ -161,8 +161,8 @@ func DeployAppFailErrMocked(t *testing.T, appIn *types.WizardApp) *types.WizardA
 	assert.Nil(err, "App test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/wizard/apps/", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
-	appOut, err := ds.DeployApp(mapIn)
+	cs.On("Post", fmt.Sprintf("/v1/wizard/apps/%s/deploy", appIn.Id), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	appOut, err := ds.DeployApp(mapIn, appIn.Id)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(appOut, "Expecting nil output")
@@ -191,8 +191,8 @@ func DeployAppFailStatusMocked(t *testing.T, appIn *types.WizardApp) *types.Wiza
 	assert.Nil(err, "App test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/wizard/apps/", mapIn).Return(dOut, 499, nil)
-	appOut, err := ds.DeployApp(mapIn)
+	cs.On("Post", fmt.Sprintf("/v1/wizard/apps/%s/deploy", appIn.Id), mapIn).Return(dOut, 499, nil)
+	appOut, err := ds.DeployApp(mapIn, appIn.Id)
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(appOut, "Expecting nil output")
@@ -220,8 +220,8 @@ func DeployAppFailJSONMocked(t *testing.T, appIn *types.WizardApp) *types.Wizard
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Post", "/v1/wizard/apps/", mapIn).Return(dIn, 200, nil)
-	appOut, err := ds.DeployApp(mapIn)
+	cs.On("Post", fmt.Sprintf("/v1/wizard/apps/%s/deploy", appIn.Id), mapIn).Return(dIn, 200, nil)
+	appOut, err := ds.DeployApp(mapIn, appIn.Id)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(appOut, "Expecting nil output")
