@@ -1,14 +1,20 @@
 # Documentation for a publication procedure of the CLI binaries
 
-In order to generate a new release for IMCO Cloud Orchestrator Command Line Interface, several stages could take place as release candidates - RCn - depending on planning time and release needs of project goals.
+In order to generate stable releases for IMCO Cloud Orchestrator Command Line Interface, the IMCO team proceeds based on the Software Development Life Cycle (SDLC) guidelines that complement the current procedure:
 
-The succesive release candidates will be a set of different release no published and identified as non-production ready.
+- Link to Confluence space: [Software Development Life Cycle](https://cloudteam.atlassian.net/wiki/spaces/COAL/pages/357369124/Software+Development+Life+Cycle#SoftwareDevelopmentLifeCycle-Releases)
+
+> Note: Consider current "Go Releaser Procedure" document as a complementary helpful guide for CLI in addition to SDLC document; which is the main guide used in IMCO platform.
+
+So, along development life cycle, several stages could take place from prereleases to stable releases; which mainly differ in stability and depending on planning time and release needs of project goals.
+
+The succesive releases will be a set of different releases no published and identified as non-production ready.
 
 Finally, a new release will published and identified as production ready.
 
-This publication procedure mechanism requires to install and configure goreleaser tool. The 'goreleaser' tool is added in order to automate the release generation process.
+This publication procedure mechanism requires to install and configure "goreleaser" tool. The 'goreleaser' tool is added in order to automate the release generation process.
 
-"GoReleaser is a release automation tool for Go projects, the goal is to simplify the build, release and publish steps while providing variant customization options for all steps."
+>"GoReleaser is a release automation tool for Go projects, the goal is to simplify the build, release and publish steps while providing variant customization options for all steps."
 
 - <https://goreleaser.com/>
 - <https://github.com/goreleaser/goreleaser>
@@ -17,15 +23,19 @@ This publication procedure mechanism requires to install and configure gorelease
 
 ## Procedure
 
-A release can travel along different release candidates(RC) until final release (RTM):
+A release generation process can travel along different stages: 'Alpha', 'Beta', 'Candidates'(RC) until final 'Stable' releases (RTM):
 
 Id | Case | VERSION | Production Ready
 ------------------------|---------------------|---------------------|---------------------
+ALPHA | Alpha Prerelease -First- | 0.6.0-alpha | No
+ALPHA.n | Alpha Prerelease -Successives- | 0.6.0-alpha.n | No
+BETA | Beta Prerelease -First- | 0.6.0-beta | No
+BETA.n | Beta Prerelease -Successives- | 0.6.0-beta.n | No
 RC | Release Candidate -First- | 0.6.0-rc | No
 RCn | Release Candidates -Successives- | 0.6.0-rc[n] | No
 RTM | Latest Release | 0.6.0 | Yes
 
-> Note: for a better document comprehension and depending on release generation context, the version will be evaluated: [CURRENT_VERSION] = [RC | RCn | RTM]
+> Note: for a better document comprehension and depending on release generation context, the version will be evaluated: [CURRENT_VERSION] = [ALPHA | ALPHA.n | BETA | BETA.n | RC | RCn | RTM]
 
 ### 1. Init path
 
@@ -33,40 +43,11 @@ RTM | Latest Release | 0.6.0 | Yes
 
 ### 2. Checkout and prepare adequate branch
 
-- Checkout adequate branch.
+- The release branch has to be created as defined in SDLC procedure; taking into account to be up to date from develop branch.
 
-    The first time for current release, the release branch has to be created.
+  Then, and in terms of the current release stage, the adequate branch should be created and published.
 
-  - RC case:
-    - Checkout the develop branch
-      ```bash
-      git checkout origin/develop
-      ```
-    - Update with the latest changes
-      ```bash
-      git pull -r
-      ```
-
-    - Create the new release branch
-      ```bash
-      git checkout -b release/0.6.0
-      ```
-
-    - Publish the new release branch
-      ```bash
-      git push --set-upstream origin release/0.6.0
-      ```
-
-  - RCn / RTM cases:
-    - Checkout the release branch
-      ```bash
-      git checkout origin/release/0.6.0
-      ```
-
-    - Update with the latest changes
-      ```bash
-      git pull -r
-      ```
+  So, checkout adequate branch for current release and update with latest changes.
 
 ### 3. Set adequate "VERSION" in code file
 
@@ -76,7 +57,11 @@ RTM | Latest Release | 0.6.0 | Yes
 
   Samples:
 
-  ```bash
+  ```go
+  const VERSION = "0.6.0-alpha"
+  const VERSION = "0.6.0-alpha.1"
+  const VERSION = "0.6.0-beta"
+  const VERSION = "0.6.0-beta.1"
   const VERSION = "0.6.0-rc"
   const VERSION = "0.6.0-rc1"
   const VERSION = "0.6.0"
@@ -89,9 +74,17 @@ RTM | Latest Release | 0.6.0 | Yes
   git commit -m "Update version to [CURRENT_VERSION]"
   ```
 
-- Publish the release branch
+- Publish the release branch, depending of current case:
+
+  Samples:
 
   ```bash
+  git push release/0.6.0-alpha
+  git push release/0.6.0-alpha.1
+  git push release/0.6.0-beta
+  git push release/0.6.0-beta.1
+  git push release/0.6.0-rc
+  git push release/0.6.0-rc1
   git push release/0.6.0
   ```
 
@@ -123,8 +116,13 @@ Once approved and merged:
   git tag -a v[CURRENT_VERSION] -m "Concerto v[CURRENT_VERSION]"
   ```
 
-  ```bash
   Samples:
+
+  ```bash  
+  git tag -a v0.6.0-alpha -m "Concerto v0.6.0-alpha"
+  git tag -a v0.6.0-alpha.1 -m "Concerto v0.6.0-alpha.1"
+  git tag -a v0.6.0-beta -m "Concerto v0.6.0-beta"
+  git tag -a v0.6.0-beta.1 -m "Concerto v0.6.0-beta.1"
   git tag -a v0.6.0-rc -m "Concerto v0.6.0-rc"
   git tag -a v0.6.0-rc1 -m "Concerto v0.6.0-rc1"
   git tag -a v0.6.0 -m "Concerto v0.6.0"
@@ -136,14 +134,25 @@ Once approved and merged:
   git push origin v[CURRENT_VERSION]
   ```
 
+  Samples:
+
   ```bash
-    Samples:
+    git push origin v0.6.0-alpha
+    git push origin v0.6.0-alpha.1
+    git push origin v0.6.0-beta
+    git push origin v0.6.0-beta.1
     git push origin v0.6.0-rc
     git push origin v0.6.0-rc1
     git push origin v0.6.0
   ```
 
-### 6. Configure goreleaser
+### 6. ONLY IN RTM CASE. Merge into develop branch
+
+In addition, and once the final stable release has been merged into master branch as well as tagged; the master branch must be merged into develop and this should be done through a PR.
+
+  > Note: see more details in SDLC
+
+### 7. Configure goreleaser
 
 - Set environment variable
 
@@ -154,20 +163,20 @@ Once approved and merged:
 - Check the '.goreleaser.yml' file and set:
 
   - "prerelease": Identify the release as production ready or not.
-    - RC / RCn:
+    - ALPHA / BETA / RC:
 
-      ```bash
+      ```yaml
       prerelease: true
       ```
 
     - RTM:
-      ```bash
+      ```yaml
       prerelease: false
       ```
 
     > Note: this parameter can be changed later editing the release in <https://github.com/ingrammicro/concerto/releases>
 
-### 7. RUN GORELEASER
+### 8. RUN GORELEASER
 
 Once the scenario is ready:
 

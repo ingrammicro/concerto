@@ -1,8 +1,7 @@
 #!/bin/bash
 
-
 cli_url=https://github.com/ingrammicro/concerto/raw/master/binaries/concerto.x64
-api_url=${CONCERTO_ENDPOINT:=https://clients.concerto.io:886/}
+api_url=${CONCERTO_ENDPOINT:=https://clients.IMCO_DOMAIN:886/}
 cli_command=concerto
 cli_fullpath=/usr/local/bin/$cli_command
 conf_path=$HOME/.concerto
@@ -19,9 +18,8 @@ verbose=false
 LOGO_H_SIZE=127
 
 parseArgs(){
-
-
 	printf "Parse arguments ..."
+
 	for arg in "$@"
 	do
     if [ "$arg" == "fb" ]; then force_bin=true; fi
@@ -33,13 +31,14 @@ parseArgs(){
 	printf " OK\n"
 }
 
-concertoInitialize(){
+initializeIMCOCLI(){
 	printf "Initializing ..."
+
 	case "$(uname -m)" in
 		*64)
 			;;
 		*)
-			echo >&2 -e "Concerto CLI is available for 64 bit systems only\n"
+			echo >&2 -e "IMCO CLI is available for 64 bit systems only\n"
 			exit 1
 			;;
 	esac
@@ -72,11 +71,11 @@ getInstallationState(){
 }
 
 writeDefaultConfig(){
+	printf "Writing IMCO CLI configuration ..."
 
-	printf "Writing concerto configuration ..."
 	if ! $force_conf && $cli_conf_exists;
 	then
-		$verbose && printf " (configuration found at '$cli_conf'. Use '-fc' to force update concerto binary)"
+		$verbose && printf " (configuration found at '$cli_conf'. Use '-fc' to force update binary)"
 		printf " Skipped\n"
 		return
 	fi
@@ -91,35 +90,36 @@ EOF
 	printf " OK\n"
 }
 
-installConcertoCLI(){
-	printf "Installing Concerto CLI ..."
+installIMCOCLI(){
+	printf "Installing IMCO CLI ..."
+
 	if ! $force_bin && $cli_fullpath_exists;
 	then
-		$verbose && printf " (concerto CLI exists. Use '-fb' to force update concerto binary)"
+		$verbose && printf " (IMCO CLI exists. Use '-fb' to force update binary)"
 		printf " Skipped\n"
 		return
 	fi
 
 	command -v curl > /dev/null &&  dwld="curl -sSL -o" || \
-	{	command -v wget > /dev/null && dwld="wget -qO"; } || \
-	{ echo ' (curl or wget are needed to install Concerto CLI.) Failed'; exit 1; }
+	{ command -v wget > /dev/null && dwld="wget -qO"; } || \
+	{ echo ' (curl or wget are needed to install IMCO CLI.) Failed'; exit 1; }
 	printf " (you might be asked for your password to sudo now)\n"
 	if ! sudo $dwld  $cli_fullpath $cli_url;
 	then
-		echo "(Concerto CLI Binary download failed). Failed"
+		echo "(IMCO CLI Binary download failed). Failed"
 		exit 1
 	fi
 
 	if ! sudo chmod +x $cli_fullpath;
 	then
-		echo "(Concerto CLI Binary execution flag assigment failed). Failed"
+		echo "(IMCO CLI Binary execution flag assigment failed). Failed"
 		exit 1
 	fi
 
 	echo "Binary has been installed. OK"
 
 	current_concerto=$(command -v $cli_fullpath)
-	[ $current_concerto != $cli_fullpath ] && echo "WARNING: concerto is being run from '$current_concerto'. Please, update your path to execute from $cli_fullpath"
+	[ $current_concerto != $cli_fullpath ] && echo "WARNING: IMCO CLI is being run from '$current_concerto'. Please, update your path to execute from $cli_fullpath"
 
 }
 
@@ -128,7 +128,7 @@ installAPIKeys(){
 
 	if ! $force_keys && $cacert_exists && $cert_exists && $key_exists;
 	then
-	 	$verbose && printf " (Concerto keys already exists. Use '-fk' to force update API keys)"
+	 	$verbose && printf " (IMCO CLI keys already exists. Use '-fk' to force update API keys)"
 		printf " Skipped\n"
 	else
 		echo
@@ -136,7 +136,7 @@ installAPIKeys(){
 
 		if [ $? -ne 0 ];
 		then
-			printf " (error downloading Concerto keys. Try downloading manually). Failed\n"
+			printf " (error downloading IMCO CLI keys. Try downloading manually). Failed\n"
 			certsInstructions
 			exit 1
 		fi
@@ -145,13 +145,13 @@ installAPIKeys(){
 	# # if certs not there
 	#  ! $cacert_exists || ! $cert_exists || ! $key_exists ] && ! $cert_exists && concerto setup api_keys
 	#  getInstallationState
-	#  ! $cacert_exists || ! $cert_exists || ! $cert_exists ] && ! $cert_exists && certsInstructions || echo "Concerto installed. Type 'concerto' to access CLI help"
+	#  ! $cacert_exists || ! $cert_exists || ! $cert_exists ] && ! $cert_exists && certsInstructions || echo "IMCO CLI installed. Type 'concerto' to access CLI help"
 
 }
 
 certsInstructions(){
 cat <<EOF
-Concerto CLI uses an API Key that you can download from Concerto's Web through 'Settings' > 'User Detail' > 'New API Key'
+IMCO CLI uses an API Key that you can download from IMCO's Web through 'Settings' > 'User Details' > 'New API Key'
 Uncompress the downloaded file and copy as follows:
 $cli_conf
 └── ssl
@@ -163,41 +163,48 @@ EOF
 }
 
 installedMessage(){
-	printf "\n Concerto CLI is installed.\n Type 'concerto' to access Concerto commands\n\n"
+	printf "\n IMCO CLI is installed.\n Type 'concerto' to access IMCO commands\n\n"
 }
+
 showLogo(){
 	[ $LOGO_H_SIZE -lt $(tput cols) ] && logoSimple || logoSimple
-	echo "Executing IMCO Cloud Orchestrator CLI install"
+	echo "Executing IM Cloud Orchestrator CLI install"
 }
 
 logoSimple(){
 cat <<EOF
-        ',,,'
-       ';;;;;     ',,,'
-       ';;;;;   ;;;;;;;;;
-       ';;;;; .;;;;;;;;;;;.
-       ';;;;;:;;;;;;;;;;;;;.
-       ';;;;;;;;;;;;;;;;;;;;
-       ';;;;;;;;;;,,;;;;;;;;;
-       ';;;;;;;;      ;;;;;;;
-       ';;;;;;;        ;;;;;;,
-       ';;;;;;          ;;;;;;
-       ';;;;;:          ;;;;;;
-       ';;;;;           :;;;;;
-       ';;;;;           ,;;;;;
-       ';;;;;           ,;;;;;
-       ';;;;;         ,;;;;;;;
-       ';;;;;        ;;;;;;;;;
-       ';;;;;       ;;;;;;;;;;
-       ';;;;;;       ;;;;;;;;;;
-     ;;;;;;;;       ;;;;;;;;;;
-    ;;;;;;;;;       ;;;;;;;;;
-   ;;;;;;;;;;       .;;;;;;;
-   ;;;;;;;;;;         :;;:
-   ;;;;;;;;;,  Ingram Cloud Orchestrator  
-   ;;;;;;;;;   https://start.concerto.io 
-    ;;;;;;.
-
+                                 :::::::::::                    
+                              :::::::::::::::::                 
+                            :::::::::::::::::::::               
+                           ::::::           .::::::             
+                    .::::::::::                :::::            
+                 :::::::::::::                  ::::            
+               :::::::::  :::                   :::::           
+              ::::::                            ::::            
+       :::::::::::                              :::::::::       
+    :::::::::::::               :: ::::::      :::::::::::::    
+  :::::::                      ::::::::::::::.         :::::::  
+ :::::                        ::::::::::::::::.           ::::: 
+:::::                       ::::::::    ::::::             :::::
+::::                        ::::::        ::::::            ::::
+::::                         ::::::      .::::::            ::::
+::::                         ::::::::::::::::::             ::::
+:::::                        :::::::::::::::::             .::::
+::::::                .:::::: .::::::::::::::             ::::::
+ :::::::      ::::::::::::::::     :::::. : ::          ::::::: 
+   ::::::::: :::::::::::::::::::::::   .:::::::::: ::::::::::   
+     ::::::: ::::::::::::::::::::::::.:::::::::::: ::::::::     
+         :::::::::::::::::::::::::::: ::::    .::::::::         
+         :::::::::::        :::::::::  ::::   :::::             
+         :::::::::            :::::::: ::::::::::               
+         :::::::::            :::::::::.  :::::::               
+          ::::::::            :::::::::                         
+           :::::::::         ::::::::::                         
+           :::::::::::::::::::::::::    Ingram Micro Cloud Orchestrator
+           ::::::::::::::::::::::::     https://start.concerto.io                       
+            :::::::::::::::::::::::                             
+                  ::::::::::::::::                              
+                   :::::::                                      
 EOF
 }
 
@@ -208,8 +215,8 @@ EOF
 
 showLogo
 parseArgs $@
-concertoInitialize
-installConcertoCLI
+initializeIMCOCLI
+installIMCOCLI
 writeDefaultConfig
 installAPIKeys
 installedMessage
