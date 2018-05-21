@@ -16,7 +16,7 @@ script:
   - go get github.com/pmezard/go-difflib/difflib
   - go get github.com/stretchr/objx
   - go get github.com/360EntSecGroup-Skylar/goreporter
-  - go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
+  - ./test.sh
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
