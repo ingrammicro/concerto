@@ -1,15 +1,22 @@
 language: go
 
 go:
-  - 1.5
-  - tip
+  - "1.8"
+  - "1.9"
 
 notifications:
   email: false
 
-
 script:
-  - ./go-test.sh
+  - go get -v ./...
+  - go get github.com/DATA-DOG/godog
+  - go get gopkg.in/cucumber/gherkin-go.v3
+  - go get github.com/2tvenom/go-test-teamcity
+  - go get github.com/davecgh/go-spew/spew
+  - go get github.com/pmezard/go-difflib/difflib
+  - go get github.com/stretchr/objx
+  - go get github.com/360EntSecGroup-Skylar/goreport
+  - go test  -v ./...
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
