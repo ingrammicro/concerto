@@ -15,7 +15,7 @@ script:
   - go get github.com/davecgh/go-spew/spew
   - go get github.com/pmezard/go-difflib/difflib
   - go get github.com/stretchr/objx
-  - go get github.com/360EntSecGroup-Skylar/goreport
+  - go get github.com/360EntSecGroup-Skylar/goreporter
   - go test  -v ./...
 
 after_success:
