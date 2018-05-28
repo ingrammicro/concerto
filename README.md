@@ -1,17 +1,13 @@
 # IMCO CLI / Go Library
 
-[![Go Report Card](http://goreportcard.com/badge/ingrammicro/concerto)](http://goreportcard.com/report/ingrammicro/concerto)
-[![Build Status](https://drone.io/github.com/ingrammicro/concerto/status.png)][cli_build] [![GoDoc](https://godoc.org/github.com/ingrammicro/concerto?status.png)](https://godoc.org/github.com/ingrammicro/concerto)
+[![GoDoc](https://godoc.org/github.com/ingrammicro/concerto?status.png)](https://godoc.org/github.com/ingrammicro/concerto)
 [![codecov.io](https://codecov.io/github/ingrammicro/concerto/coverage.svg?branch=master)](https://codecov.io/github/ingrammicro/concerto?branch=master)
 [![Build Status](https://travis-ci.org/ingrammicro/concerto.svg?branch=master)](https://travis-ci.org/ingrammicro/concerto)
+[![Go Report Card](http://goreportcard.com/badge/ingrammicro/concerto)](http://goreportcard.com/report/ingrammicro/concerto)
 
 Ingram Micro Cloud Orchestrator Command Line Interface (aka IMCO CLI) allows you to interact with IMCO features, and build your own scripts calling IMCO's API.
 
-If you are already using IMCO CLI, and only want to obtain the latest version, download IMCO CLI for:
-
-- [Linux][cli_linux]
-- [OSX][cli_darwin]
-- [Windows][cli_windows]
+If you are already using IMCO CLI, and only want to obtain the latest version, download IMCO CLI from <https://github.com/ingrammicro/concerto/releases/latest>
 
 > NOTE: IMCO CLI is named as `concerto` in terms of the binary and executable.
 
@@ -119,6 +115,8 @@ $ cat <<EOF > ~/.concerto/client.xml
 EOF
 ```
 
+> NOTE: Please, remember to replace `IMCO_DOMAIN` with the right domain of your IMCO platform.
+
 We should have in your `.concerto` folder this structure:
 
 ```bash
@@ -133,7 +131,7 @@ $HOME/.concerto
 
 ### Binaries
 
-Download linux binaries for [Linux][cli_linux] or for [OSX][cli_darwin] and place it in your path.
+Download linux binaries for `Linux` or for `OSX` and place it in your path.
 
 Linux:
 
@@ -216,7 +214,7 @@ If you got an error executing IMCO CLI:
 
 ## Usage
 
-We include the most common use cases here. If you feel there is a missing a use case here, open an issue or contact us at <enquiries@concerto.io>.
+We include the most common use cases here. If you feel there is a missing a use case here, open an github issue <https://github.com/ingrammicro/concerto/issues/new>.
 
 ## Wizard
 
@@ -244,11 +242,9 @@ COMMANDS:
 
 IMCO CLI Wizard lets you select the application layer, the location, the cloud provider account for that location, and finally the hostname. IMCO CLI Wizard takes care of the details.
 
-If you haven't configured your cloud provider accounts yet, you can do it from the IMCO's Web UI, or using `concerto settings cloud_accounts` commands
-
 ### Wizard Use Case
 
-Let's type `concerto wizard apps list` to check what servers can I instantiate using IMCO CLI wizard.
+Let's type `concerto wizard apps list` to check what applications we can instantiate as cloud servers using IMCO CLI wizard.
 
 ```bash
 $ concerto wizard apps list
@@ -278,8 +274,8 @@ ID                         NAME
 
 Take note of your preferred location. We will use `5aabb7551de0240abb000060` for `North America`.
 
-When using IMCO's Web UI, the wizard takes care of filtering appropriate cloud accounts for that provider and location. However, using the CLI is the user's responsibility to chose a provider cloud account for that application/stack and location; and a server plan capable of instantiating the stack in that location.
-To show all possible cloud accounts execute this command:
+When using IMCO's Web UI, the wizard may take care of filtering appropriate cloud accounts for that provider and location. However, by using the CLI, it is the user's responsibility to chose a provider cloud account for that application/stack and location; and a server plan capable of instantiating the stack in that location.
+To show all possible cloud providers execute this command:
 
 ```bash
 $ concerto wizard cloud_providers list --app_id 5aabb75b1de0240abb00018b --location_id 5aabb7551de0240abb000060
@@ -290,9 +286,8 @@ ID                         NAME                  REQUIRED_CREDENTIALS
 5aabb7511de0240abb000005   Microsoft Azure       [tenant_id subscription_id]
 ```
 
-Take also into account that you should have configured your credentials before, using the Web UI or `concerto settings cloud_accounts create`. We will choose `Microsoft Azure`, whose ID is `5aabb7511de0240abb000005`.
-
-It's necessary to retrive the adequeate Cloud Account ID for `Microsoft Azure` Cloud Provider, in our case `5aabb7531de0240abb000024`:
+It's necessary to retrieve the adequeate Cloud Account ID for `Microsoft Azure` Cloud Provider, in our case `5aabb7531de0240abb000024`.
+We will choose `Microsoft Azure`, whose ID is `5aabb7511de0240abb000005`:
 
 ```bash
 $ concerto settings cloud_accounts list
@@ -372,13 +367,13 @@ IMCO blueprints are the compendium of:
 
 A template must be created with an OS target, a service list, and a list of custom attributes for those services.
 
-#### Template OS
+#### Template OS
 
 Blueprints are associated with an Operative System, and each cloud provider has a different way of identifying the OS that a machine is running.
 
 IMCO takes care of the gap, and lets you select a cloud provider independent OS, and find out later which image is appropriate for the chosen cloud provider account and location. Hence blueprints are bound to OS, but cloud provider and location independent.
 
-For our case we will be using Ubuntu 14.04. Let's find its IMCO ID
+For our case we will be using Ubuntu 16.04. Let's find its IMCO ID
 
 ```bash
 $ concerto cloud generic_images list
@@ -392,7 +387,7 @@ ID                         NAME
 5aabb7551de0240abb00006a   Debian 9 x86_64
 ```
 
-Take note of Ubuntu 14.04 ID, `5aabb7551de0240abb000064`.
+Take note of Ubuntu 16.04 ID, `5aabb7551de0240abb000064`.
 
 #### Service List
 
@@ -556,7 +551,7 @@ CLOUD_ACCOUNT_ID:   5aabb7531de0240abb000024
 SSH_PROFILE_ID:     5aabb7521de0240abb00000d
 ```
 
-You can request for status and see how server is transitioning along service statuses (booting, bootstrapping, operational). Then, after a brief amount of time the final status is reached:
+You can retrieve the current status of the server and see how it transitions along different statuses (booting, bootstrapping, operational). Then, after a brief amount of time the final status is reached:
 
 ```bash
 $ concerto cloud servers show --id 5af9acedea7a1a000d000012
@@ -706,8 +701,3 @@ To contribute
 - Let the maintainers give you the LGTM.
 
 Please, use gofmt, golint, go vet, and follow [go style](https://github.com/golang/go/wiki/CodeReviewComments) advices
-
-[cli_build]: https://drone.io/github.com/ingrammicro/concerto/latest
-[cli_linux]: https://github.com/ingrammicro/concerto/raw/master/binaries/concerto.x64.linux
-[cli_darwin]: https://github.com/ingrammicro/concerto/raw/master/binaries/concerto.x64.darwin
-[cli_windows]: https://github.com/ingrammicro/concerto/raw/master/binaries/concerto.x64.windows.exe
