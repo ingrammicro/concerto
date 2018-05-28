@@ -29,7 +29,7 @@ func cmdExecuteScript(c *cli.Context) error {
 
 	w := tabwriter.NewWriter(os.Stdout, 15, 1, 3, ' ', 0)
 	fmt.Fprintln(w, "ID\tTIMESTAMP\tLEVEL\tHEADER\tDESCRIPTION\r")
-	fmt.Fprintf(w, "%s\t%s\t%t\t%s\t%t\n", event.Id, event.Timestamp, event.Level, event.Header, event.Description)
+	fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n", event.Id, event.Timestamp, event.Level, event.Header, event.Description)
 
 	w.Flush()
 	return nil
