@@ -6,7 +6,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	"github.com/ingrammicro/concerto/admin"
 	"github.com/ingrammicro/concerto/audit"
 	"github.com/ingrammicro/concerto/blueprint/scripts"
 	"github.com/ingrammicro/concerto/blueprint/services"
@@ -24,11 +23,9 @@ import (
 	"github.com/ingrammicro/concerto/converge"
 	"github.com/ingrammicro/concerto/dispatcher"
 	"github.com/ingrammicro/concerto/firewall"
-	"github.com/ingrammicro/concerto/licensee"
 	"github.com/ingrammicro/concerto/network/firewall_profiles"
 	"github.com/ingrammicro/concerto/node"
 	"github.com/ingrammicro/concerto/settings/cloud_accounts"
-	"github.com/ingrammicro/concerto/settings/reports"
 	"github.com/ingrammicro/concerto/settings/saas_accounts"
 	"github.com/ingrammicro/concerto/setup"
 	"github.com/ingrammicro/concerto/utils"
@@ -170,13 +167,6 @@ var SettingsCommands = []cli.Command{
 		),
 	},
 	{
-		Name:  "reports",
-		Usage: "Provides information about reports",
-		Subcommands: append(
-			reports.SubCommands(),
-		),
-	},
-	{
 		Name:  "saas_accounts",
 		Usage: "Provides information about SaaS accounts",
 		Subcommands: append(
@@ -242,14 +232,6 @@ var ClientCommands = []cli.Command{
 		),
 	},
 	{
-		Name:      "reports",
-		ShortName: "rep",
-		Usage:     "Provides historical uptime of servers",
-		Subcommands: append(
-			admin.SubCommands(),
-		),
-	},
-	{
 		Name:      "events",
 		ShortName: "ev",
 		Usage:     "Events allow the user to track their actions and the state of their servers",
@@ -275,14 +257,6 @@ var ClientCommands = []cli.Command{
 		),
 	},
 	{
-		Name:      "licensee_reports",
-		ShortName: "lic",
-		Usage:     "Provides information about licensee reports",
-		Subcommands: append(
-			licensee.SubCommands(),
-		),
-	},
-	{
 		Name:      "network",
 		ShortName: "net",
 		Usage:     "Manages network related commands for firewall profiles",
@@ -293,7 +267,7 @@ var ClientCommands = []cli.Command{
 	{
 		Name:      "settings",
 		ShortName: "set",
-		Usage:     "Provides settings for cloud and Saas accounts as well as reports",
+		Usage:     "Provides settings for cloud and Saas accounts",
 		Subcommands: append(
 			SettingsCommands,
 		),
