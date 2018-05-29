@@ -18,13 +18,11 @@ import (
 	"github.com/ingrammicro/concerto/cloud/servers"
 	"github.com/ingrammicro/concerto/cloud/ssh_profiles"
 	"github.com/ingrammicro/concerto/cloud/workspaces"
-	"github.com/ingrammicro/concerto/cluster"
 	"github.com/ingrammicro/concerto/cmdpolling"
 	"github.com/ingrammicro/concerto/converge"
 	"github.com/ingrammicro/concerto/dispatcher"
 	"github.com/ingrammicro/concerto/firewall"
 	"github.com/ingrammicro/concerto/network/firewall_profiles"
-	"github.com/ingrammicro/concerto/node"
 	"github.com/ingrammicro/concerto/settings/cloud_accounts"
 	"github.com/ingrammicro/concerto/setup"
 	"github.com/ingrammicro/concerto/utils"
@@ -205,22 +203,6 @@ var ClientCommands = []cli.Command{
 		Usage:     "Configures and setups concerto cli enviroment",
 		Subcommands: append(
 			setup.SubCommands(),
-		),
-	},
-	{
-		Name:      "nodes",
-		ShortName: "no",
-		Usage:     "Manages Docker Nodes",
-		Subcommands: append(
-			node.SubCommands(),
-		),
-	},
-	{
-		Name:      "cluster",
-		ShortName: "clu",
-		Usage:     "Manages a Kubernetes Cluster",
-		Subcommands: append(
-			cluster.SubCommands(),
 		),
 	},
 	{
