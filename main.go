@@ -26,7 +26,6 @@ import (
 	"github.com/ingrammicro/concerto/network/firewall_profiles"
 	"github.com/ingrammicro/concerto/node"
 	"github.com/ingrammicro/concerto/settings/cloud_accounts"
-	"github.com/ingrammicro/concerto/settings/saas_accounts"
 	"github.com/ingrammicro/concerto/setup"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
@@ -166,13 +165,6 @@ var SettingsCommands = []cli.Command{
 			cloud_accounts.SubCommands(),
 		),
 	},
-	{
-		Name:  "saas_accounts",
-		Usage: "Provides information about SaaS accounts",
-		Subcommands: append(
-			saas_accounts.SubCommands(),
-		),
-	},
 }
 
 var WizardCommands = []cli.Command{
@@ -267,7 +259,7 @@ var ClientCommands = []cli.Command{
 	{
 		Name:      "settings",
 		ShortName: "set",
-		Usage:     "Provides settings for cloud and Saas accounts",
+		Usage:     "Provides settings for cloud accounts",
 		Subcommands: append(
 			SettingsCommands,
 		),
