@@ -5,7 +5,7 @@ type FirewallProfile struct {
 	Name        string `json:"name,omitempty" header:"NAME"`
 	Description string `json:"description,omitempty" header:"DESCRIPTION"`
 	Default     bool   `json:"default,omitempty" header:"DEFAULT"`
-	Rules       []Rule `json:"rules,omitempty" header:"RULES"`
+	Rules       []Rule `json:"rules,omitempty" header:"RULES" show:"nolist"`
 }
 
 type Rule struct {
