@@ -37,6 +37,31 @@ func ServerPlanList(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive serverPlan data", err)
 	}
+
+	cloudProvidersSvc, formatter := WireUpCloudProvider(c)
+	cloudProviders, err := cloudProvidersSvc.GetCloudProviderList()
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive cloudProvider data", err)
+	}
+	cloudProviderMap := make(map[string]string)
+	for _, cloudProvider := range cloudProviders {
+		cloudProviderMap[cloudProvider.Id] = cloudProvider.Name
+	}
+
+	locationSvc, formatter := WireUpLocation(c)
+	locations, err := locationSvc.GetLocationList()
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive location data", err)
+	}
+	locationsMap := make(map[string]string)
+	for _, location := range locations {
+		locationsMap[location.Id] = location.Name
+	}
+	for id, sp := range serverPlans {
+		serverPlans[id].CloudProviderName = cloudProviderMap[sp.CloudProviderId]
+		serverPlans[id].LocationName = locationsMap[sp.LocationId]
+	}
+
 	if err = formatter.PrintList(serverPlans); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -53,6 +78,30 @@ func ServerPlanShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive serverPlan data", err)
 	}
+
+	cloudProvidersSvc, formatter := WireUpCloudProvider(c)
+	cloudProviders, err := cloudProvidersSvc.GetCloudProviderList()
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive cloudProvider data", err)
+	}
+	cloudProviderMap := make(map[string]string)
+	for _, cloudProvider := range cloudProviders {
+		cloudProviderMap[cloudProvider.Id] = cloudProvider.Name
+	}
+
+	locationSvc, formatter := WireUpLocation(c)
+	locations, err := locationSvc.GetLocationList()
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive location data", err)
+	}
+	locationsMap := make(map[string]string)
+	for _, location := range locations {
+		locationsMap[location.Id] = location.Name
+	}
+
+	serverPlan.CloudProviderName = cloudProviderMap[serverPlan.CloudProviderId]
+	serverPlan.LocationName = locationsMap[serverPlan.LocationId]
+
 	if err = formatter.PrintItem(*serverPlan); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
