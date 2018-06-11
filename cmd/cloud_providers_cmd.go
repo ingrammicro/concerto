@@ -42,3 +42,20 @@ func CloudProviderList(c *cli.Context) error {
 	}
 	return nil
 }
+
+// LoadcloudProvidersMapping retrieves Cloud Providers and create a map between ID and Name
+func LoadcloudProvidersMapping(c *cli.Context) map[string]string {
+	debugCmdFuncInfo(c)
+
+	cloudProvidersSvc, formatter := WireUpCloudProvider(c)
+	cloudProviders, err := cloudProvidersSvc.GetCloudProviderList()
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive cloudProvider data", err)
+	}
+	cloudProvidersMap := make(map[string]string)
+	for _, cloudProvider := range cloudProviders {
+		cloudProvidersMap[cloudProvider.Id] = cloudProvider.Name
+	}
+
+	return cloudProvidersMap
+}
