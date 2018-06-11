@@ -6,5 +6,5 @@ type Service struct {
 	Description string   `json:"description" header:"DESCRIPTION"`
 	Public      bool     `json:"public" header:"PUBLIC"`
 	License     string   `json:"license" header:"LICENSE"`
-	Recipes     []string `json:"recipes"  header:"RECIPES"`
+	Recipes     []string `json:"recipes"  header:"RECIPES" show:"nolist"`
 }
