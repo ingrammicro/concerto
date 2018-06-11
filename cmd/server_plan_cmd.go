@@ -37,6 +37,15 @@ func ServerPlanList(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive serverPlan data", err)
 	}
+
+	cloudProvidersMap := LoadcloudProvidersMapping(c)
+	locationsMap := LoadLocationsMapping(c)
+
+	for id, sp := range serverPlans {
+		serverPlans[id].CloudProviderName = cloudProvidersMap[sp.CloudProviderId]
+		serverPlans[id].LocationName = locationsMap[sp.LocationId]
+	}
+
 	if err = formatter.PrintList(serverPlans); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -53,6 +62,13 @@ func ServerPlanShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive serverPlan data", err)
 	}
+
+	cloudProvidersMap := LoadcloudProvidersMapping(c)
+	locationsMap := LoadLocationsMapping(c)
+
+	serverPlan.CloudProviderName = cloudProvidersMap[serverPlan.CloudProviderId]
+	serverPlan.LocationName = locationsMap[serverPlan.LocationId]
+
 	if err = formatter.PrintItem(*serverPlan); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
