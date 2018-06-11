@@ -154,7 +154,7 @@ To test the binary execute `concerto` without parameters
 ```bash
 $ concerto
 NAME:
-   concerto - Manages communication between Host and Concerto Platform
+   concerto - Manages communication between Host and IMCO Platform
 
 USAGE:
    concerto [global options] command [command options] [arguments...]
@@ -166,12 +166,12 @@ AUTHOR:
    Concerto Contributors <https://github.com/ingrammicro/concerto>
 
 COMMANDS:
-     setup, se      Configures and setups concerto cli enviroment
-     events, ev     Events allow the user to track their actions and the state of their servers
      blueprint, bl  Manages blueprint commands for scripts, services and templates
      cloud, clo     Manages cloud related commands for workspaces, servers, generic images, ssh profiles, cloud providers, server plans and Saas providers
+     events, ev     Events allow the user to track their actions and the state of their servers
      network, net   Manages network related commands for firewall profiles
      settings, set  Provides settings for cloud accounts
+     setup, se      Configures and setups concerto cli enviroment
      wizard, wiz    Manages wizard related commands for apps, locations, cloud providers, server plans
 ...
 ```
@@ -190,11 +190,11 @@ When using IMCO CLI you can override configuration parameters using the followin
 
 Env. Variable | Descripcion
 ------------------------|---------------------
-`CONCERTO_ENDPOINT` | IMCO API endpoint
 `CONCERTO_CA_CERT` | CA certificate used with the API endpoint.
 `CONCERTO_CLIENT_CERT` | Client certificate used with the API endpoint.
 `CONCERTO_CLIENT_KEY` | Client key used with the API endpoint.
 `CONCERTO_CONFIG` | Config file to be read by Concerto CLI.
+`CONCERTO_ENDPOINT` | IMCO API endpoint
 `CONCERTO_URL` | IMCO web site URL.
 
 ## Troubleshooting
@@ -288,16 +288,16 @@ We will choose `Microsoft Azure`, whose ID is `5aabb7511de0240abb000005`:
 
 ```bash
 $ concerto settings cloud_accounts list
-ID                         CLOUD_PROVIDER_ID
-5aabb7521de0240abb00001b   5aabb7511de0240abb000001
-5aabb7521de0240abb00001c   5aabb7511de0240abb000002
-5aabb7531de0240abb00001d   5aabb7511de0240abb000002
-5aabb7531de0240abb00001e   5aabb7511de0240abb000002
-5aabb7531de0240abb000020   5aabb7511de0240abb000003
-5aabb7531de0240abb000022   5aabb7511de0240abb000004
-5aabb7531de0240abb000024   5aabb7511de0240abb000005
-5aba0656425b5d0c64000001   5aba04be425b5d0c16000000
-5aba066c425b5d0c64000002   5aba04be425b5d0c16000000
+ID                         NAME                                     CLOUD_PROVIDER_ID          CLOUD_PROVIDER_NAME
+5aabb7521de0240abb00001b   AWS-cloud_account-name                   5aabb7511de0240abb000001   AWS
+5aabb7521de0240abb00001c   Mock-cloud_account-name-0                5aabb7511de0240abb000002   Mock
+5aabb7531de0240abb00001d   Mock-cloud_account-name-1                5aabb7511de0240abb000002   Mock
+5aabb7531de0240abb00001e   Mock-cloud_account-name-2                5aabb7511de0240abb000002   Mock
+5aabb7531de0240abb000020   DigitalOcean-cloud_account-name          5aabb7511de0240abb000003   DigitalOcean
+5aabb7531de0240abb000022   Microsoft Azure ARM-cloud_account-name   5aabb7511de0240abb000004   Microsoft Azure ARM
+5aabb7531de0240abb000024   Microsoft Azure-cloud_account-name       5aabb7511de0240abb000005   Microsoft Azure
+5aba0656425b5d0c64000001   VMWare-cloud_account-name                5aba04be425b5d0c16000000   VCloud
+5aba066c425b5d0c64000002   VMWare-Routed-cloud_account-name         5aba04be425b5d0c16000000   VCloud
 ```
 
 Now that we have all the data that we need, commission the server:
@@ -398,8 +398,8 @@ We want to use IMCO's curated Joomla cookbook. Use `concerto blueprint services`
 
 ```bash
 $ concerto blueprint services list | awk 'NR==1 || /joomla/'
-ID                         NAME                  DESCRIPTION                               PUBLIC         LICENSE               RECIPES
-5aabb871e4997809f700000e   joomla                Installs/Configures joomla environment    false          All rights reserved   [joomla@0.10.0 joomla::appserver@0.10.0 joomla::database@0.10.0]
+ID                         NAME                  DESCRIPTION                               PUBLIC         LICENSE
+5aabb871e4997809f700000e   joomla                Installs/Configures joomla environment    false          All rights reserved
 ```
 
 Joomla curated cookbooks creates a local mysql database. We only have to tell our cookbook that we should override the `joomla.db.hostname` to `127.0.0.1`. Execute the following command to create the Joomla template.
@@ -445,33 +445,33 @@ We want to use `Microsoft Azure` with ID `5aabb7511de0240abb000005` and filterin
 
 ```bash
 $ concerto cloud server_plans list --cloud_provider_id 5aabb7511de0240abb000005 | awk 'NR==1 || /Basic_A0/'
-ID                         NAME                  MEMORY         CPUS           STORAGE        LOCATION_ID                CLOUD_PROVIDER_ID
-5aac0bff348f190b3e001030   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
-5aac0c02348f190b3e0010db   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
-5aac0c04348f190b3e001186   Basic_A0              768            1              20             5aabb7551de0240abb000060   5aabb7511de0240abb000005
-5aac0c06348f190b3e001231   Basic_A0              768            1              20             5aabb7551de0240abb000060   5aabb7511de0240abb000005
-5aac0c09348f190b3e0012dc   Basic_A0              768            1              20             5aabb7551de0240abb000060   5aabb7511de0240abb000005
-5aac0c0b348f190b3e001387   Basic_A0              768            1              20             5aabb7551de0240abb000060   5aabb7511de0240abb000005
-5aac0c0e348f190b3e001432   Basic_A0              768            1              20             5aabb7551de0240abb000060   5aabb7511de0240abb000005
-5aac0c10348f190b3e0014dd   Basic_A0              768            1              20             5aabb7551de0240abb000060   5aabb7511de0240abb000005
-5aac0c13348f190b3e001588   Basic_A0              768            1              20             5aabb7551de0240abb000061   5aabb7511de0240abb000005
-5aac0c15348f190b3e001633   Basic_A0              768            1              20             5aabb7551de0240abb000061   5aabb7511de0240abb000005
-5aac0c18348f190b3e0016de   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
-5aac0c1b348f190b3e001789   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
-5aac0c1d348f190b3e001834   Basic_A0              768            1              20             5aabb7551de0240abb000063   5aabb7511de0240abb000005
-5aac0c20348f190b3e0018df   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
-5aac0c23348f190b3e00198a   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
-5aac0c26348f190b3e001a35   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
-5aac0c29348f190b3e001ae0   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
-5aac0c2c348f190b3e001b8b   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
-5aac0c2f348f190b3e001c36   Basic_A0              768            1              20             5aabb7551de0240abb000060   5aabb7511de0240abb000005
-5aac0c32348f190b3e001ce1   Basic_A0              768            1              20             5aabb7551de0240abb000060   5aabb7511de0240abb000005
-5aac0c35348f190b3e001d8c   Basic_A0              768            1              20             5aabb7551de0240abb000061   5aabb7511de0240abb000005
-5aac0c38348f190b3e001e37   Basic_A0              768            1              20             5aabb7551de0240abb000061   5aabb7511de0240abb000005
-5aac0c3c348f190b3e001ee2   Basic_A0              768            1              20             5aabb7551de0240abb000060   5aabb7511de0240abb000005
-5aac0c3f348f190b3e001f8d   Basic_A0              768            1              20             5aabb7551de0240abb000060   5aabb7511de0240abb000005
-5aac0c42348f190b3e002038   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
-5aac0c45348f190b3e0020e3   Basic_A0              768            1              20             5aabb7551de0240abb000062   5aabb7511de0240abb000005
+ID                         NAME                  MEMORY         CPUS           STORAGE        LOCATION_ID                LOCATION_NAME   CLOUD_PROVIDER_ID          CLOUD_PROVIDER_NAME
+5aac0bff348f190b3e001030   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
+5aac0c02348f190b3e0010db   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
+5aac0c04348f190b3e001186   Basic_A0              768            1              20             5aabb7551de0240abb000060   North America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c06348f190b3e001231   Basic_A0              768            1              20             5aabb7551de0240abb000060   North America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c09348f190b3e0012dc   Basic_A0              768            1              20             5aabb7551de0240abb000060   North America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c0b348f190b3e001387   Basic_A0              768            1              20             5aabb7551de0240abb000060   North America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c0e348f190b3e001432   Basic_A0              768            1              20             5aabb7551de0240abb000060   North America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c10348f190b3e0014dd   Basic_A0              768            1              20             5aabb7551de0240abb000060   North America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c13348f190b3e001588   Basic_A0              768            1              20             5aabb7551de0240abb000061   Europe          5aabb7511de0240abb000005   Microsoft Azure
+5aac0c15348f190b3e001633   Basic_A0              768            1              20             5aabb7551de0240abb000061   Europe          5aabb7511de0240abb000005   Microsoft Azure
+5aac0c18348f190b3e0016de   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
+5aac0c1b348f190b3e001789   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
+5aac0c1d348f190b3e001834   Basic_A0              768            1              20             5aabb7551de0240abb000063   South America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c20348f190b3e0018df   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
+5aac0c23348f190b3e00198a   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
+5aac0c26348f190b3e001a35   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
+5aac0c29348f190b3e001ae0   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
+5aac0c2c348f190b3e001b8b   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
+5aac0c2f348f190b3e001c36   Basic_A0              768            1              20             5aabb7551de0240abb000060   North America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c32348f190b3e001ce1   Basic_A0              768            1              20             5aabb7551de0240abb000060   North America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c35348f190b3e001d8c   Basic_A0              768            1              20             5aabb7551de0240abb000061   Europe          5aabb7511de0240abb000005   Microsoft Azure
+5aac0c38348f190b3e001e37   Basic_A0              768            1              20             5aabb7551de0240abb000061   Europe          5aabb7511de0240abb000005   Microsoft Azure
+5aac0c3c348f190b3e001ee2   Basic_A0              768            1              20             5aabb7551de0240abb000060   North America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c3f348f190b3e001f8d   Basic_A0              768            1              20             5aabb7551de0240abb000060   North America   5aabb7511de0240abb000005   Microsoft Azure
+5aac0c42348f190b3e002038   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
+5aac0c45348f190b3e0020e3   Basic_A0              768            1              20             5aabb7551de0240abb000062   Asia Pacific    5aabb7511de0240abb000005   Microsoft Azure
 ```
 
 ##### Find Template ID
@@ -506,16 +506,16 @@ It's necessary to retrive the adequeate Cloud Account ID for `Microsoft Azure` C
 
 ```bash
 $ concerto settings cloud_accounts list
-ID                         CLOUD_PROVIDER_ID
-5aabb7521de0240abb00001b   5aabb7511de0240abb000001
-5aabb7521de0240abb00001c   5aabb7511de0240abb000002
-5aabb7531de0240abb00001d   5aabb7511de0240abb000002
-5aabb7531de0240abb00001e   5aabb7511de0240abb000002
-5aabb7531de0240abb000020   5aabb7511de0240abb000003
-5aabb7531de0240abb000022   5aabb7511de0240abb000004
-5aabb7531de0240abb000024   5aabb7511de0240abb000005
-5aba0656425b5d0c64000001   5aba04be425b5d0c16000000
-5aba066c425b5d0c64000002   5aba04be425b5d0c16000000
+ID                         NAME                                     CLOUD_PROVIDER_ID          CLOUD_PROVIDER_NAME
+5aabb7521de0240abb00001b   AWS-cloud_account-name                   5aabb7511de0240abb000001   AWS
+5aabb7521de0240abb00001c   Mock-cloud_account-name-0                5aabb7511de0240abb000002   Mock
+5aabb7531de0240abb00001d   Mock-cloud_account-name-1                5aabb7511de0240abb000002   Mock
+5aabb7531de0240abb00001e   Mock-cloud_account-name-2                5aabb7511de0240abb000002   Mock
+5aabb7531de0240abb000020   DigitalOcean-cloud_account-name          5aabb7511de0240abb000003   DigitalOcean
+5aabb7531de0240abb000022   Microsoft Azure ARM-cloud_account-name   5aabb7511de0240abb000004   Microsoft Azure ARM
+5aabb7531de0240abb000024   Microsoft Azure-cloud_account-name       5aabb7511de0240abb000005   Microsoft Azure
+5aba0656425b5d0c64000001   VMWare-cloud_account-name                5aba04be425b5d0c16000000   VCloud
+5aba066c425b5d0c64000002   VMWare-Routed-cloud_account-name         5aba04be425b5d0c16000000   VCloud
 ```
 
 ##### Create our Joomla Server
