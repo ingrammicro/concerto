@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
@@ -256,6 +257,80 @@ var ClientCommands = []cli.Command{
 	},
 }
 
+var appFlags = []cli.Flag{
+	cli.BoolFlag{
+		Name:  "debug, D",
+		Usage: "Enable debug mode",
+	},
+	cli.StringFlag{
+		EnvVar: "CONCERTO_CA_CERT",
+		Name:   "ca-cert",
+		Usage:  "CA to verify remote connections",
+	},
+	cli.StringFlag{
+		EnvVar: "CONCERTO_CLIENT_CERT",
+		Name:   "client-cert",
+		Usage:  "Client cert to use for Concerto",
+	},
+	cli.StringFlag{
+		EnvVar: "CONCERTO_CLIENT_KEY",
+		Name:   "client-key",
+		Usage:  "Private key used in client Concerto auth",
+	},
+	cli.StringFlag{
+		EnvVar: "CONCERTO_CONFIG",
+		Name:   "concerto-config",
+		Usage:  "Concerto Config File",
+	},
+	cli.StringFlag{
+		EnvVar: "CONCERTO_ENDPOINT",
+		Name:   "concerto-endpoint",
+		Usage:  "Concerto Endpoint",
+	},
+	cli.StringFlag{
+		EnvVar: "CONCERTO_URL",
+		Name:   "concerto-url",
+		Usage:  "Concerto Web URL",
+	},
+	cli.StringFlag{
+		EnvVar: "CONCERTO_BROWNFIELD_TOKEN",
+		Name:   "concerto-brownfield-token",
+		Usage:  "Concerto Brownfield Token",
+	},
+	cli.StringFlag{
+		EnvVar: "CONCERTO_COMMAND_POLLING_TOKEN",
+		Name:   "concerto-command-polling-token",
+		Usage:  "Concerto Command Polling Token",
+	},
+	cli.StringFlag{
+		EnvVar: "CONCERTO_SERVER_ID",
+		Name:   "concerto-server-id",
+		Usage:  "Concerto Server ID",
+	},
+	cli.StringFlag{
+		EnvVar: "CONCERTO_FORMATTER",
+		Name:   "formatter",
+		Usage:  "Output formatter [ text | json ] ",
+		Value:  "text",
+	},
+}
+
+func excludeFlags(visibleFlags []cli.Flag, arr []string) (flags []cli.Flag) {
+	for _, flag := range visibleFlags {
+		bFound := false
+		for _, a := range arr {
+			if a == flag.GetName() {
+				bFound = true
+				break
+			}
+		}
+		if !bFound {
+			flags = append(flags, flag)
+		}
+	}
+	return
+}
+
 func cmdNotFound(c *cli.Context, command string) {
 	log.Fatalf(
 		"%s: '%s' is not a %s command. See '%s --help'.",
@@ -288,13 +363,19 @@ func prepareFlags(c *cli.Context) error {
 	}
 	format.InitializeFormatter(c.String("formatter"), os.Stdout)
 
-	if config.IsHost || config.BrownfieldToken != "" || config.CommandPollingToken != "" {
+	if config.IsAgentMode() {
 		log.Debug("Setting server commands to concerto")
 		c.App.Commands = ServerCommands
 	} else {
 		log.Debug("Setting client commands to concerto")
 		c.App.Commands = ClientCommands
+
+		// Excluding Server/Agent contextual flags
+		c.App.Flags = excludeFlags(c.App.VisibleFlags(), []string{"concerto-brownfield-token", "concerto-command-polling-token", "concerto-server-id"})
 	}
+
+	sort.Sort(cli.CommandsByName(c.App.Commands))
+	sort.Sort(cli.FlagsByName(c.App.Flags))
 
 	// hack: substitute commands in category ... we should evaluate cobra/viper
 	cat := c.App.Categories()
@@ -306,7 +387,6 @@ func prepareFlags(c *cli.Context) error {
 	for _, command := range c.App.Commands {
 		cat = cat.AddCommand(command.Category, command)
 	}
-
 	return nil
 }
 
@@ -318,72 +398,18 @@ func main() {
 	app.Email = "https://github.com/ingrammicro/concerto"
 
 	app.CommandNotFound = cmdNotFound
-	app.Usage = "Manages communication between Host and Concerto Platform"
+	app.Usage = "Manages communication between Host and IMCO Platform"
 	app.Version = utils.VERSION
-
-	app.Before = prepareFlags
 
 	// set client commands by default to populate categories
 	app.Commands = ClientCommands
 
-	app.Flags = []cli.Flag{
-		cli.BoolFlag{
-			Name:  "debug, D",
-			Usage: "Enable debug mode",
-		},
-		cli.StringFlag{
-			EnvVar: "CONCERTO_CA_CERT",
-			Name:   "ca-cert",
-			Usage:  "CA to verify remote connections",
-		},
-		cli.StringFlag{
-			EnvVar: "CONCERTO_CLIENT_CERT",
-			Name:   "client-cert",
-			Usage:  "Client cert to use for Concerto",
-		},
-		cli.StringFlag{
-			EnvVar: "CONCERTO_CLIENT_KEY",
-			Name:   "client-key",
-			Usage:  "Private key used in client Concerto auth",
-		},
-		cli.StringFlag{
-			EnvVar: "CONCERTO_CONFIG",
-			Name:   "concerto-config",
-			Usage:  "Concerto Config File",
-		},
-		cli.StringFlag{
-			EnvVar: "CONCERTO_ENDPOINT",
-			Name:   "concerto-endpoint",
-			Usage:  "Concerto Endpoint",
-		},
-		cli.StringFlag{
-			EnvVar: "CONCERTO_URL",
-			Name:   "concerto-url",
-			Usage:  "Concerto Web URL",
-		},
-		cli.StringFlag{
-			EnvVar: "CONCERTO_BROWNFIELD_TOKEN",
-			Name:   "concerto-brownfield-token",
-			Usage:  "Concerto Brownfield Token",
-		},
-		cli.StringFlag{
-			EnvVar: "CONCERTO_COMMAND_POLLING_TOKEN",
-			Name:   "concerto-command-polling-token",
-			Usage:  "Concerto Command Polling Token",
-		},
-		cli.StringFlag{
-			EnvVar: "CONCERTO_SERVER_ID",
-			Name:   "concerto-server-id",
-			Usage:  "Concerto Server ID",
-		},
-		cli.StringFlag{
-			EnvVar: "CONCERTO_FORMATTER",
-			Name:   "formatter",
-			Usage:  "Output formatter [ text | json ] ",
-			Value:  "text",
-		},
+	app.Flags = appFlags
+
+	app.Before = prepareFlags
+
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	app.Run(os.Args)
-
 }

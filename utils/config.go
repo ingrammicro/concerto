@@ -156,6 +156,11 @@ func debugStruct(prefix string, item interface{}) {
 	}
 }
 
+// IsAgentMode returns whether CLI is acting as Server Or Client mode
+func (config *Config) IsAgentMode() bool {
+	return config.IsHost || config.BrownfieldToken != "" || config.CommandPollingToken != ""
+}
+
 // IsConfigReady returns whether configurations items are filled
 func (config *Config) IsConfigReady() bool {
 	if config.APIEndpoint == "" ||
