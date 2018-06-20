@@ -17,7 +17,6 @@ If you want to build the CLI using the source code, please, take into account th
 
 - [Setup](#setup)
   - [Pre-requisites](#pre-requisites)
-  - [Setup script](#setup-script)
   - [Manual Setup](#manual-setup)
   - [Linux and OSX](#linux-and-osx)
     - [Configuration](#configuration)
@@ -46,35 +45,7 @@ Before setting up the CLI, you will need a IMCO account, and an API key associat
 
 > NOTE: The API Endpoint server value depends on the targeted IMCO platform domain: <https://clients.{IMCO_DOMAIN}:886>
 
-Once your account have been provisioned, if you are a linux or OS X, we recommend you to execute the automated setup script. Otherwise, follow the [manual process](#manual-setup)
-
-### Setup script
-
-Open a terminal window and execute
-
-```bash
-$ curl -sSL goo.gl/ujPLzA | sh
-```
-
-The script will drive you through:
-
-- IMCO CLI Binary download
-- Configuration
-- API keys creation
-
-The setup script can take these arguments:
-
-- `fb` forces the binary to be overwriten
-- `fc` forces the configuration file to be overwriten
-- `fk` forces the API keys to be overwriten
-- `f` forces binary, configuration and API keys to be overwriten
-- `v` verbose mode
-
-Example
-
-```bash
-$ curl -sSL goo.gl/ujPLzA | sh -s f
-```
+Once your account has been provisioned, we recommend you to follow the configuration guide indicated below: [manual setup](#manual-setup)
 
 ## Manual Setup
 
