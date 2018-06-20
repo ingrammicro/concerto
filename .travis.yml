@@ -1,15 +1,18 @@
 language: go
 
 go:
-  - 1.5
-  - tip
+  - "1.10"
 
 notifications:
   email: false
 
+before_script:                                                                 
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  
+  - dep ensure
 
 script:
-  - ./go-test.sh
+  - go get -v ./...
+  - ./test.sh
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
