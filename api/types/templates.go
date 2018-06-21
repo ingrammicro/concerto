@@ -30,7 +30,6 @@ type TemplateServer struct {
 	Fqdn         string `json:"fqdn" header:"FQDN"`
 	State        string `json:"state" header:"STATE"`
 	PublicIP     string `json:"public_ip" header:"PUBLIC IP"`
-	WorkspaceID  string `json:"workspace_id" header:"WORKSPACE ID"`
 	TemplateID   string `json:"template_id" header:"TEMPLATE ID"`
 	ServerPlanID string `json:"server_plan_id" header:"SERVER PLAN ID"`
 	SSHProfileID string `json:"ssh_profile_id" header:"SSH PROFILE ID"`

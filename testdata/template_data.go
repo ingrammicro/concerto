@@ -2,6 +2,7 @@ package testdata
 
 import (
 	"encoding/json"
+
 	"github.com/ingrammicro/concerto/api/types"
 )
 
@@ -92,7 +93,6 @@ func GetTemplateServerData() *[]types.TemplateServer {
 			Fqdn:         "fakeFqdn0",
 			State:        "fakeState0",
 			PublicIP:     "fakePublicIP0",
-			WorkspaceID:  "fakeWorkspaceID0",
 			TemplateID:   "fakeTemplateID0",
 			ServerPlanID: "fakeServerPlanID0",
 			SSHProfileID: "fakeSSHProfileID0",
@@ -103,7 +103,6 @@ func GetTemplateServerData() *[]types.TemplateServer {
 			Fqdn:         "fakeFqdn1",
 			State:        "fakeState1",
 			PublicIP:     "fakePublicIP1",
-			WorkspaceID:  "fakeWorkspaceID1",
 			TemplateID:   "fakeTemplateID1",
 			ServerPlanID: "fakeServerPlanID1",
 			SSHProfileID: "fakeSSHProfileID1",
