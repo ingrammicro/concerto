@@ -25,14 +25,15 @@ type TemplateScript struct {
 
 // TemplateServer stores servers associated with the template
 type TemplateServer struct {
-	ID           string `json:"id"  header:"ID"`
-	Name         string `json:"name" header:"NAME"`
-	Fqdn         string `json:"fqdn" header:"FQDN"`
-	State        string `json:"state" header:"STATE"`
-	PublicIP     string `json:"public_ip" header:"PUBLIC IP"`
-	TemplateID   string `json:"template_id" header:"TEMPLATE ID"`
-	ServerPlanID string `json:"server_plan_id" header:"SERVER PLAN ID"`
-	SSHProfileID string `json:"ssh_profile_id" header:"SSH PROFILE ID"`
+	ID                string `json:"id"  header:"ID"`
+	Name              string `json:"name" header:"NAME"`
+	Fqdn              string `json:"fqdn" header:"FQDN"`
+	State             string `json:"state" header:"STATE"`
+	PublicIP          string `json:"public_ip" header:"PUBLIC IP"`
+	TemplateID        string `json:"template_id" header:"TEMPLATE ID"`
+	ServerPlanID      string `json:"server_plan_id" header:"SERVER PLAN ID"`
+	SSHProfileID      string `json:"ssh_profile_id" header:"SSH PROFILE ID"`
+	FirewallProfileID string `json:"firewall_profile_id" header:"FIREWALL_PROFILE_ID"`
 }
 
 // TemplateScriptCredentials stores credentials to servers
