@@ -1,10 +1,13 @@
 package format
 
 import (
-	log "github.com/Sirupsen/logrus"
 	"io"
 	"os"
+
+	log "github.com/Sirupsen/logrus"
 )
+
+var osExit = os.Exit
 
 // Formatter defines output printing interface
 type Formatter interface {
