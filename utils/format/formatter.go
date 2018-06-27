@@ -7,6 +7,9 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
+// Required workaround for testing os.Exit(1) scenarios in Go with coverage.
+// Otherwise, PrintFatal cannot be evaluated due to os.Exit() cannot be captured.
+// Implemented in test files (json/text)
 var osExit = os.Exit
 
 // Formatter defines output printing interface
