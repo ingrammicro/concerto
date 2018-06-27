@@ -41,7 +41,7 @@ func CloudAccountList(c *cli.Context) error {
 	cloudProvidersMap := LoadcloudProvidersMapping(c)
 
 	for id, ca := range cloudAccounts {
-		cloudAccounts[id].CloudProvName = cloudProvidersMap[ca.CloudProvId]
+		cloudAccounts[id].CloudProviderName = cloudProvidersMap[ca.CloudProviderID]
 	}
 
 	if err = formatter.PrintList(cloudAccounts); err != nil {

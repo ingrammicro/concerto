@@ -9,26 +9,26 @@ func GetServerData() *[]types.Server {
 
 	testServers := []types.Server{
 		{
-			Id:                  "fakeID0",
-			Name:                "fakeName0",
-			Fqdn:                "fakeFqdn0",
-			State:               "fakeState0",
-			Public_ip:           "fakePublicIP0",
-			Template_id:         "fakeTemplateID0",
-			Server_plan_id:      "fakeServerPlanID0",
-			Ssh_profile_id:      "fakeSSHProfileID0",
-			Firewall_profile_id: "fakeFirewallProfileID0",
+			ID:                "fakeID0",
+			Name:              "fakeName0",
+			Fqdn:              "fakeFqdn0",
+			State:             "fakeState0",
+			PublicIP:          "fakePublicIP0",
+			TemplateID:        "fakeTemplateID0",
+			ServerPlanID:      "fakeServerPlanID0",
+			SSHProfileID:      "fakeSSHProfileID0",
+			FirewallProfileID: "fakeFirewallProfileID0",
 		},
 		{
-			Id:                  "fakeID1",
-			Name:                "fakeName1",
-			Fqdn:                "fakeFqdn1",
-			State:               "fakeState1",
-			Public_ip:           "fakePublicIP1",
-			Template_id:         "fakeTemplateID1",
-			Server_plan_id:      "fakeServerPlanID1",
-			Ssh_profile_id:      "fakeSSHProfileID1",
-			Firewall_profile_id: "fakeFirewallProfileID1",
+			ID:                "fakeID1",
+			Name:              "fakeName1",
+			Fqdn:              "fakeFqdn1",
+			State:             "fakeState1",
+			PublicIP:          "fakePublicIP1",
+			TemplateID:        "fakeTemplateID1",
+			ServerPlanID:      "fakeServerPlanID1",
+			SSHProfileID:      "fakeSSHProfileID1",
+			FirewallProfileID: "fakeFirewallProfileID1",
 		},
 	}
 
@@ -40,20 +40,20 @@ func GetDNSData() *[]types.Dns {
 
 	testDnss := []types.Dns{
 		{
-			Id:        "fakeID0",
-			Name:      "fakeName0",
-			Content:   "fakeContent0",
-			Type:      "fakeType0",
-			IsFQDN:    true,
-			Domain_id: "fakeDomainID0",
+			ID:       "fakeID0",
+			Name:     "fakeName0",
+			Content:  "fakeContent0",
+			Type:     "fakeType0",
+			IsFQDN:   true,
+			DomainID: "fakeDomainID0",
 		},
 		{
-			Id:        "fakeID1",
-			Name:      "fakeName1",
-			Content:   "fakeContent1",
-			Type:      "fakeType1",
-			IsFQDN:    false,
-			Domain_id: "fakeDomainID1",
+			ID:       "fakeID1",
+			Name:     "fakeName1",
+			Content:  "fakeContent1",
+			Type:     "fakeType1",
+			IsFQDN:   false,
+			DomainID: "fakeDomainID1",
 		},
 	}
 
@@ -65,18 +65,18 @@ func GetScriptCharData() *[]types.ScriptChar {
 
 	testScriptChars := []types.ScriptChar{
 		{
-			Id:   "fakeID0",
+			ID:   "fakeID0",
 			Type: "fakeType0",
 			// Parameter_values: struct{"fakeInst0", "fakeInst1"},
-			Template_id: "fakeTemplateID0",
-			Script_id:   "fakeScriptID0",
+			TemplateID: "fakeTemplateID0",
+			ScriptID:   "fakeScriptID0",
 		},
 		{
-			Id:   "fakeID1",
+			ID:   "fakeID1",
 			Type: "fakeType1",
 			// Parameter_values: struct{"fakeInst2", "fakeInst2", "fakeInst3"},
-			Template_id: "fakeTemplateID1",
-			Script_id:   "fakeScriptID1",
+			TemplateID: "fakeTemplateID1",
+			ScriptID:   "fakeScriptID1",
 		},
 	}
 

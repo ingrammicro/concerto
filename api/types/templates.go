@@ -8,7 +8,7 @@ import (
 type Template struct {
 	ID                      string           `json:"id,omitempty" header:"ID"`
 	Name                    string           `json:"name,omitempty" header:"NAME"`
-	GenericImgID            string           `json:"generic_image_id,omitempty" header:"GENERIC IMAGE ID"`
+	GenericImageID          string           `json:"generic_image_id,omitempty" header:"GENERIC IMAGE ID"`
 	ServiceList             []string         `json:"service_list,omitempty" header:"SERVICE LIST" show:"nolist"`
 	ConfigurationAttributes *json.RawMessage `json:"configuration_attributes,omitempty" header:"CONFIGURATION ATTRIBUTES" show:"nolist"`
 }

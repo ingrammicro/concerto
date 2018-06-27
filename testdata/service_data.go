@@ -9,7 +9,7 @@ func GetServiceData() *[]types.Service {
 
 	testServices := []types.Service{
 		{
-			Id:          "fakeID0",
+			ID:          "fakeID0",
 			Name:        "fakeName0",
 			Description: "fakeDescription0",
 			Public:      true,
@@ -17,7 +17,7 @@ func GetServiceData() *[]types.Service {
 			Recipes:     []string{"fakeRecipe01", "fakeRecipe02"},
 		},
 		{
-			Id:          "fakeID1",
+			ID:          "fakeID1",
 			Name:        "fakeName1",
 			Description: "fakeDescription1",
 			Public:      true,

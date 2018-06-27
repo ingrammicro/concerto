@@ -1,31 +1,31 @@
 package types
 
 type Server struct {
-	Id                  string `json:"id" header:"ID"`
-	Name                string `json:"name" header:"NAME"`
-	Fqdn                string `json:"fqdn" header:"FQDN"`
-	State               string `json:"state" header:"STATE"`
-	Public_ip           string `json:"public_ip" header:"PUBLIC_IP"`
-	Template_id         string `json:"template_id" header:"TEMPLATE_ID"`
-	Server_plan_id      string `json:"server_plan_id" header:"SERVER_PLAN_ID"`
-	Cloud_account_id    string `json:"cloud_account_id" header:"CLOUD_ACCOUNT_ID"`
-	Ssh_profile_id      string `json:"ssh_profile_id" header:"SSH_PROFILE_ID"`
-	Firewall_profile_id string `json:"firewall_profile_id" header:"FIREWALL_PROFILE_ID"`
+	ID                string `json:"id" header:"ID"`
+	Name              string `json:"name" header:"NAME"`
+	Fqdn              string `json:"fqdn" header:"FQDN"`
+	State             string `json:"state" header:"STATE"`
+	PublicIP          string `json:"public_ip" header:"PUBLIC_IP"`
+	TemplateID        string `json:"template_id" header:"TEMPLATE_ID"`
+	ServerPlanID      string `json:"server_plan_id" header:"SERVER_PLAN_ID"`
+	CloudAccountID    string `json:"cloud_account_id" header:"CLOUD_ACCOUNT_ID"`
+	SSHProfileID      string `json:"ssh_profile_id" header:"SSH_PROFILE_ID"`
+	FirewallProfileID string `json:"firewall_profile_id" header:"FIREWALL_PROFILE_ID"`
 }
 
 type Dns struct {
-	Id        string `json:"id" header:"ID"`
-	Name      string `json:"name" header:"NAME"`
-	Content   string `json:"content" header:"CONTENT"`
-	Type      string `json:"type" header:"TYPE"`
-	IsFQDN    bool   `json:"is_fqdn" header:"IS_FQDN"`
-	Domain_id string `json:"domain_id" header:"DOMAIN_ID"`
+	ID       string `json:"id" header:"ID"`
+	Name     string `json:"name" header:"NAME"`
+	Content  string `json:"content" header:"CONTENT"`
+	Type     string `json:"type" header:"TYPE"`
+	IsFQDN   bool   `json:"is_fqdn" header:"IS_FQDN"`
+	DomainID string `json:"domain_id" header:"DOMAIN_ID"`
 }
 
 type ScriptChar struct {
-	Id               string   `json:"id" header:"ID"`
-	Type             string   `json:"type" header:"TYPE"`
-	Parameter_values struct{} `json:"parameter_values" header:"PARAMETER_VALUES"`
-	Template_id      string   `json:"template_id" header:"TEMPLATE_ID"`
-	Script_id        string   `json:"script_id" header:"SCRIPT_ID"`
+	ID              string   `json:"id" header:"ID"`
+	Type            string   `json:"type" header:"TYPE"`
+	ParameterValues struct{} `json:"parameter_values" header:"PARAMETER_VALUES"`
+	TemplateID      string   `json:"template_id" header:"TEMPLATE_ID"`
+	ScriptID        string   `json:"script_id" header:"SCRIPT_ID"`
 }

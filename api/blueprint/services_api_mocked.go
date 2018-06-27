@@ -129,8 +129,8 @@ func GetServiceMocked(t *testing.T, service *types.Service) *types.Service {
 	assert.Nil(err, "Service test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.Id)).Return(dIn, 200, nil)
-	serviceOut, err := ds.GetService(service.Id)
+	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.ID)).Return(dIn, 200, nil)
+	serviceOut, err := ds.GetService(service.ID)
 	assert.Nil(err, "Error getting service")
 	assert.Equal(*service, *serviceOut, "GetService returned different services")
 
@@ -153,8 +153,8 @@ func GetServiceFailErrMocked(t *testing.T, service *types.Service) *types.Servic
 	assert.Nil(err, "Service test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.Id)).Return(dIn, 200, fmt.Errorf("Mocked error"))
-	serviceOut, err := ds.GetService(service.Id)
+	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	serviceOut, err := ds.GetService(service.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(serviceOut, "Expecting nil output")
@@ -179,8 +179,8 @@ func GetServiceFailStatusMocked(t *testing.T, service *types.Service) *types.Ser
 	assert.Nil(err, "Service test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.Id)).Return(dIn, 499, nil)
-	serviceOut, err := ds.GetService(service.Id)
+	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.ID)).Return(dIn, 499, nil)
+	serviceOut, err := ds.GetService(service.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(serviceOut, "Expecting nil output")
@@ -204,8 +204,8 @@ func GetServiceFailJSONMocked(t *testing.T, service *types.Service) *types.Servi
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.Id)).Return(dIn, 200, nil)
-	serviceOut, err := ds.GetService(service.Id)
+	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.ID)).Return(dIn, 200, nil)
+	serviceOut, err := ds.GetService(service.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(serviceOut, "Expecting nil output")

@@ -44,8 +44,8 @@ func WizServerPlanList(c *cli.Context) error {
 	locationsMap := LoadLocationsMapping(c)
 
 	for id, sp := range serverPlans {
-		serverPlans[id].CloudProviderName = cloudProvidersMap[sp.CloudProviderId]
-		serverPlans[id].LocationName = locationsMap[sp.LocationId]
+		serverPlans[id].CloudProviderName = cloudProvidersMap[sp.CloudProviderID]
+		serverPlans[id].LocationName = locationsMap[sp.LocationID]
 	}
 
 	if err = formatter.PrintList(serverPlans); err != nil {
