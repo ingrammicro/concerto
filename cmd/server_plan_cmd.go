@@ -33,6 +33,7 @@ func ServerPlanList(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	serverPlanSvc, formatter := WireUpServerPlan(c)
 
+	checkRequiredFlags(c, []string{"cloud_provider_id"}, formatter)
 	serverPlans, err := serverPlanSvc.GetServerPlanList(c.String("cloud_provider_id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive serverPlan data", err)
