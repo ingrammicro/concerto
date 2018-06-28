@@ -250,8 +250,8 @@ func UpdateSaasAccountMocked(t *testing.T, saasAccountIn *types.SaasAccount) *ty
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.Id), mapIn).Return(dOut, 200, nil)
-	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.Id)
+	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dOut, 200, nil)
+	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.ID)
 	assert.Nil(err, "Error updating saasAccount list")
 	assert.Equal(saasAccountIn, saasAccountOut, "UpdateSaasAccount returned different saasAccounts")
 
@@ -278,8 +278,8 @@ func UpdateSaasAccountFailErrMocked(t *testing.T, saasAccountIn *types.SaasAccou
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.Id), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
-	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.Id)
+	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(saasAccountOut, "Expecting nil output")
@@ -308,8 +308,8 @@ func UpdateSaasAccountFailStatusMocked(t *testing.T, saasAccountIn *types.SaasAc
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.Id), mapIn).Return(dOut, 499, nil)
-	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.Id)
+	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dOut, 499, nil)
+	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(saasAccountOut, "Expecting nil output")
@@ -336,8 +336,8 @@ func UpdateSaasAccountFailJSONMocked(t *testing.T, saasAccountIn *types.SaasAcco
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.Id), mapIn).Return(dIn, 200, nil)
-	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.Id)
+	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dIn, 200, nil)
+	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(saasAccountOut, "Expecting nil output")
@@ -362,8 +362,8 @@ func DeleteSaasAccountMocked(t *testing.T, saasAccountIn *types.SaasAccount) {
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.Id)).Return(dIn, 200, nil)
-	err = ds.DeleteSaasAccount(saasAccountIn.Id)
+	cs.On("Delete", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID)).Return(dIn, 200, nil)
+	err = ds.DeleteSaasAccount(saasAccountIn.ID)
 	assert.Nil(err, "Error deleting saasAccount")
 }
 
@@ -383,8 +383,8 @@ func DeleteSaasAccountFailErrMocked(t *testing.T, saasAccountIn *types.SaasAccou
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.Id)).Return(dIn, 200, fmt.Errorf("Mocked error"))
-	err = ds.DeleteSaasAccount(saasAccountIn.Id)
+	cs.On("Delete", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	err = ds.DeleteSaasAccount(saasAccountIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
@@ -406,8 +406,8 @@ func DeleteSaasAccountFailStatusMocked(t *testing.T, saasAccountIn *types.SaasAc
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.Id)).Return(dIn, 499, nil)
-	err = ds.DeleteSaasAccount(saasAccountIn.Id)
+	cs.On("Delete", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID)).Return(dIn, 499, nil)
+	err = ds.DeleteSaasAccount(saasAccountIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")

@@ -73,7 +73,7 @@ func TestPrintListDomainsTXT(t *testing.T) {
 	assert.NotNil(f, "Formatter")
 
 	err := f.PrintList(*domainOut)
-	assert.Nil(err, "Text formatter PrintItem error")
+	assert.Nil(err, "Text formatter PrintList error")
 	mockOut.Flush()
 
 	// TODO add more accurate parsing
@@ -93,7 +93,7 @@ func TestPrintListTemplateTXT(t *testing.T) {
 	assert.NotNil(f, "Formatter")
 
 	err := f.PrintList(*templatesOut)
-	assert.Nil(err, "Text formatter PrintItem error")
+	assert.Nil(err, "Text formatter PrintList error")
 	mockOut.Flush()
 
 	// TODO add more accurate parsing
@@ -115,7 +115,7 @@ func TestPrintListTemplateScriptsTXT(t *testing.T) {
 		assert.NotNil(f, "Formatter")
 
 		err := f.PrintList(*tScriptsOut)
-		assert.Nil(err, "Text formatter PrintItem error")
+		assert.Nil(err, "Text formatter PrintList error")
 		mockOut.Flush()
 
 		// TODO add more accurate parsing
@@ -155,4 +155,90 @@ func TestPrintError(t *testing.T) {
 	mockOut.Flush()
 
 	assert.Regexp("^ERROR:.*\n -> .*\n", b.String(), "Text output didn't match regular expression")
+}
+
+func TestPrintListMinifySeconds(t *testing.T) {
+
+	assert := assert.New(t)
+	dummyData := testdata.GetDummyData()
+
+	var b bytes.Buffer
+	mockOut := bufio.NewWriter(&b)
+	InitializeFormatter("text", mockOut)
+	f := GetFormatter()
+	assert.NotNil(f, "Formatter")
+
+	err := f.PrintList(*dummyData)
+	assert.Nil(err, "Text formatter PrintList error")
+	mockOut.Flush()
+}
+
+func TestPrintItemJSONRawMessage(t *testing.T) {
+
+	assert := assert.New(t)
+	dummyData := testdata.GetDummyData()
+
+	for _, dummy := range *dummyData {
+		var b bytes.Buffer
+		mockOut := bufio.NewWriter(&b)
+		InitializeFormatter("text", mockOut)
+		f := GetFormatter()
+		assert.NotNil(f, "Formatter")
+
+		err := f.PrintItem(dummy)
+		assert.Nil(err, "Text formatter PrintItem error")
+		mockOut.Flush()
+	}
+}
+
+func TestPrintListJSONRawMessage(t *testing.T) {
+
+	assert := assert.New(t)
+	dummyData := testdata.GetDummyData()
+
+	var b bytes.Buffer
+	mockOut := bufio.NewWriter(&b)
+	InitializeFormatter("text", mockOut)
+	f := GetFormatter()
+	assert.NotNil(f, "Formatter")
+
+	err := f.PrintList(*dummyData)
+	assert.Nil(err, "Text formatter PrintList error")
+	mockOut.Flush()
+}
+
+func TestPrintListJSONRawMessageNil(t *testing.T) {
+
+	assert := assert.New(t)
+	dummyData := testdata.GetDummyData()
+
+	var b bytes.Buffer
+	mockOut := bufio.NewWriter(&b)
+	InitializeFormatter("text", mockOut)
+	f := GetFormatter()
+	assert.NotNil(f, "Formatter")
+
+	err := f.PrintList(*dummyData)
+	assert.Nil(err, "Text formatter PrintList error")
+	mockOut.Flush()
+}
+
+func TestPrintFatalTXT(t *testing.T) {
+
+	// Save current function and restore at the end:
+	oldOsExit := osExit
+	defer func() { osExit = oldOsExit }()
+
+	var got int
+	osExit = func(code int) {
+		got = code
+	}
+	var b bytes.Buffer
+	mockOut := bufio.NewWriter(&b)
+	InitializeFormatter("text", mockOut)
+	f := GetFormatter()
+	f.PrintFatal("testing fatal", fmt.Errorf("this is a test error %s", "TEST"))
+	if exp := 1; got != exp {
+		t.Errorf("Expected exit code: %d, got: %d", exp, got)
+	}
 }

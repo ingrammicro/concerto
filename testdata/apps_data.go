@@ -2,6 +2,7 @@ package testdata
 
 import (
 	"encoding/json"
+
 	"github.com/ingrammicro/concerto/api/types"
 )
 
@@ -13,16 +14,16 @@ func GetAppData() *[]types.WizardApp {
 
 	testApps := []types.WizardApp{
 		{
-			Id:                   "fakeID0",
-			Name:                 "fakeName0",
-			Flavour_requirements: param0,
-			Generic_image_id:     "fakeGenericImageID0",
+			ID:                  "fakeID0",
+			Name:                "fakeName0",
+			FlavourRequirements: param0,
+			GenericImageID:      "fakeGenericImageID0",
 		},
 		{
-			Id:                   "fakeID1",
-			Name:                 "fakeName1",
-			Flavour_requirements: param1,
-			Generic_image_id:     "fakeGenericImageID1",
+			ID:                  "fakeID1",
+			Name:                "fakeName1",
+			FlavourRequirements: param1,
+			GenericImageID:      "fakeGenericImageID1",
 		},
 	}
 

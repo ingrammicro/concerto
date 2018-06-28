@@ -54,7 +54,7 @@ func LoadLocationsMapping(c *cli.Context) map[string]string {
 	}
 	locationsMap := make(map[string]string)
 	for _, location := range locations {
-		locationsMap[location.Id] = location.Name
+		locationsMap[location.ID] = location.Name
 	}
 
 	return locationsMap

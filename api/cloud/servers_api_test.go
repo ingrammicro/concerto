@@ -119,10 +119,10 @@ func TestGetEventsList(t *testing.T) {
 	serversIn := testdata.GetServerData()
 	eventsIn := testdata.GetEventData()
 	for _, serverIn := range *serversIn {
-		GetServerEventListMocked(t, eventsIn, serverIn.Id)
-		GetServerEventListFailErrMocked(t, eventsIn, serverIn.Id)
-		GetServerEventListFailStatusMocked(t, eventsIn, serverIn.Id)
-		GetServerEventListFailJSONMocked(t, eventsIn, serverIn.Id)
+		GetServerEventListMocked(t, eventsIn, serverIn.ID)
+		GetServerEventListFailErrMocked(t, eventsIn, serverIn.ID)
+		GetServerEventListFailStatusMocked(t, eventsIn, serverIn.ID)
+		GetServerEventListFailJSONMocked(t, eventsIn, serverIn.ID)
 	}
 }
 
@@ -131,10 +131,10 @@ func TestGetOperationalScriptList(t *testing.T) {
 	serversIn := testdata.GetServerData()
 	scriptsIn := testdata.GetScriptCharData()
 	for _, serverIn := range *serversIn {
-		GetOperationalScriptListMocked(t, scriptsIn, serverIn.Id)
-		GetOperationalScriptFailErrMocked(t, scriptsIn, serverIn.Id)
-		GetOperationalScriptFailStatusMocked(t, scriptsIn, serverIn.Id)
-		GetOperationalScriptFailJSONMocked(t, scriptsIn, serverIn.Id)
+		GetOperationalScriptListMocked(t, scriptsIn, serverIn.ID)
+		GetOperationalScriptFailErrMocked(t, scriptsIn, serverIn.ID)
+		GetOperationalScriptFailStatusMocked(t, scriptsIn, serverIn.ID)
+		GetOperationalScriptFailJSONMocked(t, scriptsIn, serverIn.ID)
 	}
 }
 
@@ -143,10 +143,10 @@ func TestExecuteOperationalScript(t *testing.T) {
 	scriptsIn := testdata.GetScriptCharData()
 	for _, serverIn := range *serversIn {
 		for _, scriptIn := range *scriptsIn {
-			ExecuteOperationalScriptListMocked(t, &scriptIn, serverIn.Id)
-			ExecuteOperationalScriptFailErrMocked(t, &scriptIn, serverIn.Id)
-			ExecuteOperationalScriptFailStatusMocked(t, &scriptIn, serverIn.Id)
-			ExecuteOperationalScriptFailJSONMocked(t, &scriptIn, serverIn.Id)
+			ExecuteOperationalScriptListMocked(t, &scriptIn, serverIn.ID)
+			ExecuteOperationalScriptFailErrMocked(t, &scriptIn, serverIn.ID)
+			ExecuteOperationalScriptFailStatusMocked(t, &scriptIn, serverIn.ID)
+			ExecuteOperationalScriptFailJSONMocked(t, &scriptIn, serverIn.ID)
 		}
 	}
 }

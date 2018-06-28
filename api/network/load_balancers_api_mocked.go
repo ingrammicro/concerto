@@ -129,8 +129,8 @@ func GetLoadBalancerMocked(t *testing.T, loadBalancer *types.LoadBalancer) *type
 	assert.Nil(err, "LoadBalancer test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancer.Id)).Return(lbIn, 200, nil)
-	loadBalancerOut, err := lbs.GetLoadBalancer(loadBalancer.Id)
+	cs.On("Get", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancer.ID)).Return(lbIn, 200, nil)
+	loadBalancerOut, err := lbs.GetLoadBalancer(loadBalancer.ID)
 	assert.Nil(err, "Error getting loadBalancer")
 	assert.Equal(*loadBalancer, *loadBalancerOut, "GetLoadBalancer returned different loadBalancers")
 
@@ -153,8 +153,8 @@ func GetLoadBalancerFailErrMocked(t *testing.T, loadBalancer *types.LoadBalancer
 	assert.Nil(err, "LoadBalancer test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancer.Id)).Return(lbIn, 200, fmt.Errorf("Mocked error"))
-	loadBalancerOut, err := lbs.GetLoadBalancer(loadBalancer.Id)
+	cs.On("Get", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancer.ID)).Return(lbIn, 200, fmt.Errorf("Mocked error"))
+	loadBalancerOut, err := lbs.GetLoadBalancer(loadBalancer.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(loadBalancerOut, "Expecting nil output")
@@ -179,8 +179,8 @@ func GetLoadBalancerFailStatusMocked(t *testing.T, loadBalancer *types.LoadBalan
 	assert.Nil(err, "LoadBalancer test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancer.Id)).Return(lbIn, 499, nil)
-	loadBalancerOut, err := lbs.GetLoadBalancer(loadBalancer.Id)
+	cs.On("Get", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancer.ID)).Return(lbIn, 499, nil)
+	loadBalancerOut, err := lbs.GetLoadBalancer(loadBalancer.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(loadBalancerOut, "Expecting nil output")
@@ -204,8 +204,8 @@ func GetLoadBalancerFailJSONMocked(t *testing.T, loadBalancer *types.LoadBalance
 	lbIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancer.Id)).Return(lbIn, 200, nil)
-	loadBalancerOut, err := lbs.GetLoadBalancer(loadBalancer.Id)
+	cs.On("Get", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancer.ID)).Return(lbIn, 200, nil)
+	loadBalancerOut, err := lbs.GetLoadBalancer(loadBalancer.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(loadBalancerOut, "Expecting nil output")
@@ -351,8 +351,8 @@ func UpdateLoadBalancerMocked(t *testing.T, loadBalancerIn *types.LoadBalancer) 
 	assert.Nil(err, "LoadBalancer test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.Id), mapIn).Return(dOut, 200, nil)
-	loadBalancerOut, err := lbs.UpdateLoadBalancer(mapIn, loadBalancerIn.Id)
+	cs.On("Put", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.ID), mapIn).Return(dOut, 200, nil)
+	loadBalancerOut, err := lbs.UpdateLoadBalancer(mapIn, loadBalancerIn.ID)
 	assert.Nil(err, "Error updating loadBalancer list")
 	assert.Equal(loadBalancerIn, loadBalancerOut, "UpdateLoadBalancer returned different loadBalancers")
 
@@ -379,8 +379,8 @@ func UpdateLoadBalancerFailErrMocked(t *testing.T, loadBalancerIn *types.LoadBal
 	assert.Nil(err, "LoadBalancer test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.Id), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
-	loadBalancerOut, err := lbs.UpdateLoadBalancer(mapIn, loadBalancerIn.Id)
+	cs.On("Put", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	loadBalancerOut, err := lbs.UpdateLoadBalancer(mapIn, loadBalancerIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(loadBalancerOut, "Expecting nil output")
@@ -409,8 +409,8 @@ func UpdateLoadBalancerFailStatusMocked(t *testing.T, loadBalancerIn *types.Load
 	assert.Nil(err, "LoadBalancer test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.Id), mapIn).Return(dOut, 499, nil)
-	loadBalancerOut, err := lbs.UpdateLoadBalancer(mapIn, loadBalancerIn.Id)
+	cs.On("Put", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.ID), mapIn).Return(dOut, 499, nil)
+	loadBalancerOut, err := lbs.UpdateLoadBalancer(mapIn, loadBalancerIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(loadBalancerOut, "Expecting nil output")
@@ -437,8 +437,8 @@ func UpdateLoadBalancerFailJSONMocked(t *testing.T, loadBalancerIn *types.LoadBa
 	lbIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.Id), mapIn).Return(lbIn, 200, nil)
-	loadBalancerOut, err := lbs.UpdateLoadBalancer(mapIn, loadBalancerIn.Id)
+	cs.On("Put", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.ID), mapIn).Return(lbIn, 200, nil)
+	loadBalancerOut, err := lbs.UpdateLoadBalancer(mapIn, loadBalancerIn.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(loadBalancerOut, "Expecting nil output")
@@ -463,8 +463,8 @@ func DeleteLoadBalancerMocked(t *testing.T, loadBalancerIn *types.LoadBalancer) 
 	assert.Nil(err, "LoadBalancer test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.Id)).Return(lbIn, 200, nil)
-	err = lbs.DeleteLoadBalancer(loadBalancerIn.Id)
+	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.ID)).Return(lbIn, 200, nil)
+	err = lbs.DeleteLoadBalancer(loadBalancerIn.ID)
 	assert.Nil(err, "Error deleting loadBalancer")
 }
 
@@ -484,8 +484,8 @@ func DeleteLoadBalancerFailErrMocked(t *testing.T, loadBalancerIn *types.LoadBal
 	assert.Nil(err, "LoadBalancer test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.Id)).Return(lbIn, 200, fmt.Errorf("Mocked error"))
-	err = lbs.DeleteLoadBalancer(loadBalancerIn.Id)
+	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.ID)).Return(lbIn, 200, fmt.Errorf("Mocked error"))
+	err = lbs.DeleteLoadBalancer(loadBalancerIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
@@ -507,8 +507,8 @@ func DeleteLoadBalancerFailStatusMocked(t *testing.T, loadBalancerIn *types.Load
 	assert.Nil(err, "LoadBalancer test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.Id)).Return(lbIn, 499, nil)
-	err = lbs.DeleteLoadBalancer(loadBalancerIn.Id)
+	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s", loadBalancerIn.ID)).Return(lbIn, 499, nil)
+	err = lbs.DeleteLoadBalancer(loadBalancerIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
@@ -748,8 +748,8 @@ func DeleteLBNodeMocked(t *testing.T, lbn *types.LBNode, lbId string) {
 	assert.Nil(err, "lbNode test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s/nodes/%s", lbId, lbn.Id)).Return(lbnIn, 200, nil)
-	err = lbs.DeleteLBNode(lbId, lbn.Id)
+	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s/nodes/%s", lbId, lbn.ID)).Return(lbnIn, 200, nil)
+	err = lbs.DeleteLBNode(lbId, lbn.ID)
 	assert.Nil(err, "Error deleting lbNode")
 }
 
@@ -769,8 +769,8 @@ func DeleteLBNodeFailErrMocked(t *testing.T, loadBalancerNodeIn *types.LBNode, l
 	assert.Nil(err, "LBNode test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s/nodes/%s", loadBalancerId, loadBalancerNodeIn.Id)).Return(dIn, 200, fmt.Errorf("Mocked error"))
-	err = ds.DeleteLBNode(loadBalancerId, loadBalancerNodeIn.Id)
+	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s/nodes/%s", loadBalancerId, loadBalancerNodeIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	err = ds.DeleteLBNode(loadBalancerId, loadBalancerNodeIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
@@ -792,8 +792,8 @@ func DeleteLBNodeFailStatusMocked(t *testing.T, loadBalancerNodeIn *types.LBNode
 	assert.Nil(err, "LBNode test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s/nodes/%s", loadBalancerId, loadBalancerNodeIn.Id)).Return(dIn, 499, nil)
-	err = ds.DeleteLBNode(loadBalancerId, loadBalancerNodeIn.Id)
+	cs.On("Delete", fmt.Sprintf("/v1/network/load_balancers/%s/nodes/%s", loadBalancerId, loadBalancerNodeIn.ID)).Return(dIn, 499, nil)
+	err = ds.DeleteLBNode(loadBalancerId, loadBalancerNodeIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")

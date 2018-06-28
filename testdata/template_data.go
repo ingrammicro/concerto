@@ -2,6 +2,7 @@ package testdata
 
 import (
 	"encoding/json"
+
 	"github.com/ingrammicro/concerto/api/types"
 )
 
@@ -13,21 +14,21 @@ func GetTemplateData() *[]types.Template {
 		{
 			ID:                      "fakeID0",
 			Name:                    "fakeName0",
-			GenericImgID:            "fakeGenericImgID0",
+			GenericImageID:          "fakeGenericImageID0",
 			ServiceList:             []string{"fakeServiceList01", "fakeServiceList02"},
 			ConfigurationAttributes: &conf0,
 		},
 		{
 			ID:                      "fakeID1",
 			Name:                    "fakeName1",
-			GenericImgID:            "fakeGenericImgID1",
+			GenericImageID:          "fakeGenericImageID1",
 			ServiceList:             []string{"fakeServiceList11", "fakeServiceList12", "fakeServiceList13"},
 			ConfigurationAttributes: &conf1,
 		},
 		{
 			ID:                      "fakeID2",
 			Name:                    "fakeName2",
-			GenericImgID:            "fakeGenericImgID2",
+			GenericImageID:          "fakeGenericImageID2",
 			ServiceList:             []string{"fakeServiceList21", "fakeServiceList22", "fakeServiceList23"},
 			ConfigurationAttributes: nil,
 		},
@@ -87,26 +88,26 @@ func GetTemplateServerData() *[]types.TemplateServer {
 
 	testTemplateServers := []types.TemplateServer{
 		{
-			ID:           "fakeID0",
-			Name:         "fakeName0",
-			Fqdn:         "fakeFqdn0",
-			State:        "fakeState0",
-			PublicIP:     "fakePublicIP0",
-			WorkspaceID:  "fakeWorkspaceID0",
-			TemplateID:   "fakeTemplateID0",
-			ServerPlanID: "fakeServerPlanID0",
-			SSHProfileID: "fakeSSHProfileID0",
+			ID:                "fakeID0",
+			Name:              "fakeName0",
+			Fqdn:              "fakeFqdn0",
+			State:             "fakeState0",
+			PublicIP:          "fakePublicIP0",
+			TemplateID:        "fakeTemplateID0",
+			ServerPlanID:      "fakeServerPlanID0",
+			SSHProfileID:      "fakeSSHProfileID0",
+			FirewallProfileID: "fakeFirewallProfileID0",
 		},
 		{
-			ID:           "fakeID1",
-			Name:         "fakeName1",
-			Fqdn:         "fakeFqdn1",
-			State:        "fakeState1",
-			PublicIP:     "fakePublicIP1",
-			WorkspaceID:  "fakeWorkspaceID1",
-			TemplateID:   "fakeTemplateID1",
-			ServerPlanID: "fakeServerPlanID1",
-			SSHProfileID: "fakeSSHProfileID1",
+			ID:                "fakeID1",
+			Name:              "fakeName1",
+			Fqdn:              "fakeFqdn1",
+			State:             "fakeState1",
+			PublicIP:          "fakePublicIP1",
+			TemplateID:        "fakeTemplateID1",
+			ServerPlanID:      "fakeServerPlanID1",
+			SSHProfileID:      "fakeSSHProfileID1",
+			FirewallProfileID: "fakeFirewallProfileID1",
 		},
 	}
 

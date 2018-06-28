@@ -3,9 +3,9 @@ package format
 import (
 	"encoding/json"
 	"fmt"
-	log "github.com/Sirupsen/logrus"
 	"io"
-	"os"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // JSONFormatter prints items and lists in JSON format
@@ -23,6 +23,7 @@ type JSONMessage struct {
 // NewJSONFormatter creates a new JSONFormatter
 func NewJSONFormatter(out io.Writer) *JSONFormatter {
 	log.Debug("Creating JSON formatter")
+
 	return &JSONFormatter{
 		output: out,
 	}
@@ -31,6 +32,7 @@ func NewJSONFormatter(out io.Writer) *JSONFormatter {
 // PrintItem prints an item
 func (f *JSONFormatter) PrintItem(item interface{}) error {
 	log.Debug("PrintItem")
+
 	b, err := json.Marshal(item)
 	if err != nil {
 		return err
@@ -44,6 +46,7 @@ func (f *JSONFormatter) PrintItem(item interface{}) error {
 // PrintList prints item list
 func (f *JSONFormatter) PrintList(items interface{}) error {
 	log.Debug("PrintList")
+
 	b, err := json.Marshal(items)
 	if err != nil {
 		return err
@@ -56,6 +59,7 @@ func (f *JSONFormatter) PrintList(items interface{}) error {
 
 // PrintError prints an error
 func (f *JSONFormatter) PrintError(context string, err error) {
+	log.Debug("PrintError")
 
 	msg := JSONMessage{
 		Type:    "Error",
@@ -75,7 +79,8 @@ func (f *JSONFormatter) PrintError(context string, err error) {
 
 // PrintFatal prints an error and exists
 func (f *JSONFormatter) PrintFatal(context string, err error) {
-	// TODO JSON
+	log.Debug("PrintFatal")
+
 	f.PrintError(context, err)
-	os.Exit(1)
+	osExit(1)
 }

@@ -3,10 +3,11 @@ package cloud
 import (
 	"encoding/json"
 	"fmt"
+	"testing"
+
 	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 // TODO exclude from release compile
@@ -128,8 +129,8 @@ func GetServerPlanMocked(t *testing.T, serverPlan *types.ServerPlan) *types.Serv
 	assert.Nil(err, "ServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.Id)).Return(dIn, 200, nil)
-	serverPlanOut, err := ds.GetServerPlan(serverPlan.Id)
+	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 200, nil)
+	serverPlanOut, err := ds.GetServerPlan(serverPlan.ID)
 	assert.Nil(err, "Error getting serverPlan")
 	assert.Equal(*serverPlan, *serverPlanOut, "GetServerPlan returned different serverPlans")
 
@@ -152,8 +153,8 @@ func GetServerPlanFailErrMocked(t *testing.T, serverPlan *types.ServerPlan) *typ
 	assert.Nil(err, "ServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.Id)).Return(dIn, 200, fmt.Errorf("Mocked error"))
-	serverPlanOut, err := ds.GetServerPlan(serverPlan.Id)
+	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	serverPlanOut, err := ds.GetServerPlan(serverPlan.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(serverPlanOut, "Expecting nil output")
@@ -178,8 +179,8 @@ func GetServerPlanFailStatusMocked(t *testing.T, serverPlan *types.ServerPlan) *
 	assert.Nil(err, "ServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.Id)).Return(dIn, 499, nil)
-	serverPlanOut, err := ds.GetServerPlan(serverPlan.Id)
+	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 499, nil)
+	serverPlanOut, err := ds.GetServerPlan(serverPlan.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(serverPlanOut, "Expecting nil output")
@@ -203,8 +204,8 @@ func GetServerPlanFailJSONMocked(t *testing.T, serverPlan *types.ServerPlan) *ty
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.Id)).Return(dIn, 200, nil)
-	serverPlanOut, err := ds.GetServerPlan(serverPlan.Id)
+	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 200, nil)
+	serverPlanOut, err := ds.GetServerPlan(serverPlan.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(serverPlanOut, "Expecting nil output")

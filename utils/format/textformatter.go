@@ -3,7 +3,6 @@ package format
 import (
 	"fmt"
 	"io"
-	"os"
 	"reflect"
 	"strings"
 	"text/tabwriter"
@@ -21,6 +20,7 @@ type TextFormatter struct {
 // NewTextFormatter creates a new TextFormatter
 func NewTextFormatter(out io.Writer) *TextFormatter {
 	log.Debug("Creating Text formatter")
+
 	return &TextFormatter{
 		output: out,
 	}
@@ -28,6 +28,7 @@ func NewTextFormatter(out io.Writer) *TextFormatter {
 
 // PrintItem prints an item
 func (f *TextFormatter) PrintItem(item interface{}) error {
+	log.Debug("PrintItem")
 
 	it := reflect.ValueOf(item)
 	nf := it.NumField()
@@ -52,6 +53,7 @@ func (f *TextFormatter) PrintItem(item interface{}) error {
 
 // PrintList prints item list
 func (f *TextFormatter) PrintList(items interface{}) error {
+	log.Debug("PrintList")
 
 	// should be an array
 	its := reflect.ValueOf(items)
@@ -140,11 +142,15 @@ func (f *TextFormatter) PrintList(items interface{}) error {
 
 // PrintError prints an error
 func (f *TextFormatter) PrintError(context string, err error) {
+	log.Debug("PrintError")
+
 	f.output.Write([]byte(fmt.Sprintf("ERROR: %s\n -> %s\n", context, err)))
 }
 
 // PrintFatal prints an error and exists
 func (f *TextFormatter) PrintFatal(context string, err error) {
+	log.Debug("PrintFatal")
+
 	f.PrintError(context, err)
-	os.Exit(1)
+	osExit(1)
 }

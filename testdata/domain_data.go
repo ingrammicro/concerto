@@ -39,7 +39,7 @@ func GetDomainRecordData() *[]types.DomainRecord {
 			TTL:      300,
 			Prio:     0,
 			ServerID: "56ae7bfd47ac3d0008000066",
-			DomainID: "fakeID0",
+			DomainID: "fakeDomainID0",
 		},
 		{
 			ID:       "fakeID0.1",
@@ -49,7 +49,7 @@ func GetDomainRecordData() *[]types.DomainRecord {
 			TTL:      1800,
 			Prio:     10,
 			ServerID: "56ae7bfd47ac3d0008000066",
-			DomainID: "fakeID0",
+			DomainID: "fakeDomainID0",
 		},
 		{
 			ID:       "fakeID0.2",
@@ -59,7 +59,7 @@ func GetDomainRecordData() *[]types.DomainRecord {
 			TTL:      18800,
 			Prio:     20,
 			ServerID: "56ae7bfd47ac3d0008000066",
-			DomainID: "fakeID0",
+			DomainID: "fakeDomainID0",
 		},
 		{
 			ID:       "fakeID1.0",
@@ -69,7 +69,7 @@ func GetDomainRecordData() *[]types.DomainRecord {
 			TTL:      100,
 			Prio:     0,
 			ServerID: "56ae7bfd47ac3d0008000066",
-			DomainID: "fakeID1",
+			DomainID: "fakeDomainID1",
 		},
 	}
 

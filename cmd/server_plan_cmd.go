@@ -33,6 +33,7 @@ func ServerPlanList(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	serverPlanSvc, formatter := WireUpServerPlan(c)
 
+	checkRequiredFlags(c, []string{"cloud_provider_id"}, formatter)
 	serverPlans, err := serverPlanSvc.GetServerPlanList(c.String("cloud_provider_id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive serverPlan data", err)
@@ -42,8 +43,8 @@ func ServerPlanList(c *cli.Context) error {
 	locationsMap := LoadLocationsMapping(c)
 
 	for id, sp := range serverPlans {
-		serverPlans[id].CloudProviderName = cloudProvidersMap[sp.CloudProviderId]
-		serverPlans[id].LocationName = locationsMap[sp.LocationId]
+		serverPlans[id].CloudProviderName = cloudProvidersMap[sp.CloudProviderID]
+		serverPlans[id].LocationName = locationsMap[sp.LocationID]
 	}
 
 	if err = formatter.PrintList(serverPlans); err != nil {
@@ -66,8 +67,8 @@ func ServerPlanShow(c *cli.Context) error {
 	cloudProvidersMap := LoadcloudProvidersMapping(c)
 	locationsMap := LoadLocationsMapping(c)
 
-	serverPlan.CloudProviderName = cloudProvidersMap[serverPlan.CloudProviderId]
-	serverPlan.LocationName = locationsMap[serverPlan.LocationId]
+	serverPlan.CloudProviderName = cloudProvidersMap[serverPlan.CloudProviderID]
+	serverPlan.LocationName = locationsMap[serverPlan.LocationID]
 
 	if err = formatter.PrintItem(*serverPlan); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)

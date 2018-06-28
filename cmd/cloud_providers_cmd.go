@@ -54,7 +54,7 @@ func LoadcloudProvidersMapping(c *cli.Context) map[string]string {
 	}
 	cloudProvidersMap := make(map[string]string)
 	for _, cloudProvider := range cloudProviders {
-		cloudProvidersMap[cloudProvider.Id] = cloudProvider.Name
+		cloudProvidersMap[cloudProvider.ID] = cloudProvider.Name
 	}
 
 	return cloudProvidersMap

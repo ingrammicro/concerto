@@ -18,7 +18,6 @@ import (
 	"github.com/ingrammicro/concerto/cloud/server_plan"
 	"github.com/ingrammicro/concerto/cloud/servers"
 	"github.com/ingrammicro/concerto/cloud/ssh_profiles"
-	"github.com/ingrammicro/concerto/cloud/workspaces"
 	"github.com/ingrammicro/concerto/cmdpolling"
 	"github.com/ingrammicro/concerto/converge"
 	"github.com/ingrammicro/concerto/dispatcher"
@@ -95,13 +94,6 @@ var BlueprintCommands = []cli.Command{
 }
 
 var CloudCommands = []cli.Command{
-	{
-		Name:  "workspaces",
-		Usage: "Provides information on workspaces",
-		Subcommands: append(
-			workspaces.SubCommands(),
-		),
-	},
 	{
 		Name:  "servers",
 		Usage: "Provides information on servers",
@@ -226,7 +218,7 @@ var ClientCommands = []cli.Command{
 	{
 		Name:      "cloud",
 		ShortName: "clo",
-		Usage:     "Manages cloud related commands for workspaces, servers, generic images, ssh profiles, cloud providers, server plans and Saas providers",
+		Usage:     "Manages cloud related commands for servers, generic images, ssh profiles, cloud providers, server plans and Saas providers",
 		Subcommands: append(
 			CloudCommands,
 		),

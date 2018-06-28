@@ -7,11 +7,11 @@ func GetCloudProviderData() *[]types.CloudProvider {
 
 	testCloudProviders := []types.CloudProvider{
 		{
-			Id:   "fakeID0",
+			ID:   "fakeID0",
 			Name: "fakeName0",
 		},
 		{
-			Id:   "fakeID1",
+			ID:   "fakeID1",
 			Name: "fakeName1",
 		},
 	}
