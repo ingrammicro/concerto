@@ -7,12 +7,16 @@ func GetCloudAccountData() *[]types.CloudAccount {
 
 	testCloudAccounts := []types.CloudAccount{
 		{
-			Id:          "fakeID0",
-			CloudProvId: "fakeProvID0",
+			ID:                "fakeID0",
+			Name:              "fakeName0",
+			CloudProviderID:   "CloudProviderID0",
+			CloudProviderName: "CloudProviderName0",
 		},
 		{
-			Id:          "fakeID1",
-			CloudProvId: "fakeProvID1",
+			ID:                "fakeID1",
+			Name:              "fakeName1",
+			CloudProviderID:   "CloudProviderID1",
+			CloudProviderName: "CloudProviderName1",
 		},
 	}
 

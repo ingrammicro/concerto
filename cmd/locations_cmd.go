@@ -42,3 +42,20 @@ func LocationList(c *cli.Context) error {
 	}
 	return nil
 }
+
+// LoadLocationsMapping retrieves Locations and create a map between ID and Name
+func LoadLocationsMapping(c *cli.Context) map[string]string {
+	debugCmdFuncInfo(c)
+
+	locationSvc, formatter := WireUpLocation(c)
+	locations, err := locationSvc.GetLocationList()
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive location data", err)
+	}
+	locationsMap := make(map[string]string)
+	for _, location := range locations {
+		locationsMap[location.ID] = location.Name
+	}
+
+	return locationsMap
+}

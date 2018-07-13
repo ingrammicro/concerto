@@ -64,7 +64,7 @@ func ServerCreate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	serverSvc, formatter := WireUpServer(c)
 
-	checkRequiredFlags(c, []string{"name", "workspace_id", "template_id", "server_plan_id", "cloud_account_id"}, formatter)
+	checkRequiredFlags(c, []string{"name", "ssh_profile_id", "firewall_profile_id", "template_id", "server_plan_id", "cloud_account_id"}, formatter)
 	server, err := serverSvc.CreateServer(utils.FlagConvertParams(c))
 	if err != nil {
 		formatter.PrintFatal("Couldn't create server", err)

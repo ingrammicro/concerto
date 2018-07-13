@@ -18,10 +18,10 @@ func GetPollingPingData() *types.PollingPing {
 func GetPollingCommandData() *types.PollingCommand {
 
 	testPollingCommand := types.PollingCommand{
-		Id:       "fakeID0",
-		Script:   "fakeScript",
-		Stdout:   "fakeStdout",
-		Stderr:   "fakeStdin",
+		ID:       "fakeID0",
+		Script:   "fakeScript0",
+		Stdout:   "fakeStdout0",
+		Stderr:   "fakeStderr0",
 		ExitCode: 0,
 	}
 

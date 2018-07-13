@@ -7,7 +7,7 @@ func GetFirewallProfileData() *[]types.FirewallProfile {
 
 	testFirewallProfiles := []types.FirewallProfile{
 		{
-			Id:          "fakeId0",
+			ID:          "fakeId0",
 			Name:        "fakeName0",
 			Description: "fakeDescription0",
 			Default:     true,
@@ -16,12 +16,12 @@ func GetFirewallProfileData() *[]types.FirewallProfile {
 					Protocol: "fakeProtocol0",
 					MinPort:  0,
 					MaxPort:  1024,
-					CidrIp:   "fakeCidrIp0",
+					CidrIP:   "fakeCidrIP0",
 				},
 			},
 		},
 		{
-			Id:          "fakeId1",
+			ID:          "fakeId1",
 			Name:        "fakeName1",
 			Description: "fakeDescription1",
 			Default:     false,
@@ -30,13 +30,13 @@ func GetFirewallProfileData() *[]types.FirewallProfile {
 					Protocol: "fakeProtocol1",
 					MinPort:  0,
 					MaxPort:  200,
-					CidrIp:   "fakeCidrIp1",
+					CidrIP:   "fakeCidrIP1",
 				},
 				{
 					Protocol: "fakeProtocol2",
 					MinPort:  0,
 					MaxPort:  2048,
-					CidrIp:   "fakeCidrIp2",
+					CidrIP:   "fakeCidrIP2",
 				},
 			},
 		},

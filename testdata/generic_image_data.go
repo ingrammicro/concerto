@@ -9,11 +9,11 @@ func GetGenericImageData() *[]types.GenericImage {
 
 	testGenericImages := []types.GenericImage{
 		{
-			Id:   "fakeID0",
+			ID:   "fakeID0",
 			Name: "fakeName0",
 		},
 		{
-			Id:   "fakeID1",
+			ID:   "fakeID1",
 			Name: "fakeName1",
 		},
 	}

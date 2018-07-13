@@ -33,8 +33,12 @@ func SubCommands() []cli.Command {
 					Usage: "Name of the server",
 				},
 				cli.StringFlag{
-					Name:  "workspace_id",
-					Usage: "Identifier of the workspace to which the server shall belong",
+					Name:  "ssh_profile_id",
+					Usage: "Identifier of the ssh profile which the server shall use",
+				},
+				cli.StringFlag{
+					Name:  "firewall_profile_id",
+					Usage: "Identifier of the firewall profile to which the server shall use",
 				},
 				cli.StringFlag{
 					Name:  "template_id",

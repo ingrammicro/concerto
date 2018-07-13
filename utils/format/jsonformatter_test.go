@@ -50,7 +50,7 @@ func TestPrintItemTemplateJSON(t *testing.T) {
 		assert.NotNil(f, "Formatter")
 
 		err := f.PrintItem(*templateOut)
-		assert.Nil(err, "Text formatter PrintItem error")
+		assert.Nil(err, "JSON formatter PrintItem error")
 		mockOut.Flush()
 
 		// TODO add more accurate parsing
@@ -71,7 +71,7 @@ func TestPrintListDomainsJSON(t *testing.T) {
 	assert.NotNil(f, "Formatter")
 
 	err := f.PrintList(domainOut)
-	assert.Nil(err, "JSON formatter PrintItem error")
+	assert.Nil(err, "JSON formatter PrintList error")
 	mockOut.Flush()
 
 	// TODO add more accurate parsing
@@ -91,7 +91,7 @@ func TestPrintListTemplateJSON(t *testing.T) {
 	assert.NotNil(f, "Formatter")
 
 	err := f.PrintList(*templatesOut)
-	assert.Nil(err, "Text formatter PrintItem error")
+	assert.Nil(err, "JSON formatter PrintList error")
 	mockOut.Flush()
 
 	// TODO add more accurate parsing
@@ -125,8 +125,8 @@ func TestPrintItemWrongBytesJSON(t *testing.T) {
 	f := GetFormatter()
 	assert.NotNil(f, "Formatter")
 
-	err := f.PrintItem(map[int]string{1: "one"})
-	assert.Error(err, "Should have gotten an error marshaling a number/string tuple to JSON")
+	err := f.PrintItem(make(chan int))
+	assert.Error(err, "Should have gotten an error marshaling a JSON")
 	mockOut.Flush()
 }
 
@@ -140,7 +140,27 @@ func TestPrintListWrongBytesJSON(t *testing.T) {
 	f := GetFormatter()
 	assert.NotNil(f, "Formatter")
 
-	err := f.PrintList(map[int]string{1: "one"})
-	assert.Error(err, "Should have gotten an error marshaling a number/string tuple to JSON")
+	err := f.PrintList(make(chan int))
+	assert.Error(err, "Should have gotten an error marshaling a JSON")
 	mockOut.Flush()
+}
+
+func TestPrintFatalJSON(t *testing.T) {
+
+	// Save current function and restore at the end:
+	oldOsExit := osExit
+	defer func() { osExit = oldOsExit }()
+
+	var got int
+	osExit = func(code int) {
+		got = code
+	}
+	var b bytes.Buffer
+	mockOut := bufio.NewWriter(&b)
+	InitializeFormatter("json", mockOut)
+	f := GetFormatter()
+	f.PrintFatal("testing fatal", fmt.Errorf("this is a test error %s", "TEST"))
+	if exp := 1; got != exp {
+		t.Errorf("Expected exit code: %d, got: %d", exp, got)
+	}
 }

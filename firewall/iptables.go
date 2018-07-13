@@ -4,6 +4,7 @@ package firewall
 
 import (
 	"fmt"
+	"os"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/ingrammicro/concerto/utils"
@@ -43,6 +44,9 @@ func apply(policy Policy) error {
 }
 
 func flush() error {
+	if _, err := os.Stat("/etc/redhat-release"); err == nil {
+		utils.RunCmd("firewall-cmd --set-default-zone=trusted")
+	}
 	utils.RunCmd("/sbin/iptables -w -P INPUT ACCEPT")
 	utils.RunCmd("/sbin/iptables -w -F CONCERTO")
 	utils.RunCmd("/sbin/iptables -w -D INPUT -j CONCERTO")

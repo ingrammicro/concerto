@@ -65,7 +65,11 @@ func FirewallProfileCreate(c *cli.Context) error {
 	firewallProfileSvc, formatter := WireUpFirewallProfile(c)
 
 	checkRequiredFlags(c, []string{"name", "description"}, formatter)
-	firewallProfile, err := firewallProfileSvc.CreateFirewallProfile(utils.FlagConvertParams(c))
+	params, err := utils.FlagConvertParamsJSON(c, []string{"rules"})
+	if err != nil {
+		formatter.PrintFatal("Error parsing parameters", err)
+	}
+	firewallProfile, err := firewallProfileSvc.CreateFirewallProfile(params)
 	if err != nil {
 		formatter.PrintFatal("Couldn't create firewallProfile", err)
 	}
@@ -81,7 +85,11 @@ func FirewallProfileUpdate(c *cli.Context) error {
 	firewallProfileSvc, formatter := WireUpFirewallProfile(c)
 
 	checkRequiredFlags(c, []string{"id"}, formatter)
-	firewallProfile, err := firewallProfileSvc.UpdateFirewallProfile(utils.FlagConvertParams(c), c.String("id"))
+	params, err := utils.FlagConvertParamsJSON(c, []string{"rules"})
+	if err != nil {
+		formatter.PrintFatal("Error parsing parameters", err)
+	}
+	firewallProfile, err := firewallProfileSvc.UpdateFirewallProfile(params, c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't update firewallProfile", err)
 	}

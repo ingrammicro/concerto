@@ -3,6 +3,7 @@ package wizard
 import (
 	"encoding/json"
 	"fmt"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
@@ -45,10 +46,10 @@ func (as *AppService) GetAppList() (apps []types.WizardApp, err error) {
 }
 
 // DeployApp deploys a app
-func (as *AppService) DeployApp(appVector *map[string]interface{}) (app *types.WizardApp, err error) {
+func (as *AppService) DeployApp(appVector *map[string]interface{}, ID string) (app *types.WizardApp, err error) {
 	log.Debug("DeployApp")
 
-	data, status, err := as.concertoService.Post("/v1/wizard/apps/", appVector)
+	data, status, err := as.concertoService.Post(fmt.Sprintf("/v1/wizard/apps/%s/deploy", ID), appVector)
 	if err != nil {
 		return nil, err
 	}

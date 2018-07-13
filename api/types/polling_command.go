@@ -1,7 +1,7 @@
 package types
 
 type PollingCommand struct {
-	Id       string `json:"id" header:"ID"`
+	ID       string `json:"id" header:"ID"`
 	Script   string `json:"script" header:"SCRIPT"`
 	Stdout   string `json:"stdout" header:"STDOUT"`
 	Stderr   string `json:"stderr" header:"STDERR"`

@@ -66,10 +66,10 @@ func TestListLBNodes(t *testing.T) {
 	loadBalancersIn := testdata.GetLoadBalancerData()
 	lbNodesIn := testdata.GetLBNodeData()
 	for _, loadBalancerIn := range *loadBalancersIn {
-		GetLBNodeListMocked(t, lbNodesIn, loadBalancerIn.Id)
-		GetLBNodeListFailErrMocked(t, lbNodesIn, loadBalancerIn.Id)
-		GetLBNodeListFailStatusMocked(t, lbNodesIn, loadBalancerIn.Id)
-		GetLBNodeListFailJSONMocked(t, lbNodesIn, loadBalancerIn.Id)
+		GetLBNodeListMocked(t, lbNodesIn, loadBalancerIn.ID)
+		GetLBNodeListFailErrMocked(t, lbNodesIn, loadBalancerIn.ID)
+		GetLBNodeListFailStatusMocked(t, lbNodesIn, loadBalancerIn.ID)
+		GetLBNodeListFailJSONMocked(t, lbNodesIn, loadBalancerIn.ID)
 	}
 }
 
@@ -80,10 +80,10 @@ func TestCreateLBNode(t *testing.T) {
 	loadBalancerIn := (*loadBalancersIn)[0]
 
 	for _, lbnIn := range *lbnsIn {
-		CreateLBNodeMocked(t, &lbnIn, loadBalancerIn.Id)
-		CreateLBNodeFailErrMocked(t, &lbnIn, loadBalancerIn.Id)
-		CreateLBNodeFailStatusMocked(t, &lbnIn, loadBalancerIn.Id)
-		CreateLBNodeFailJSONMocked(t, &lbnIn, loadBalancerIn.Id)
+		CreateLBNodeMocked(t, &lbnIn, loadBalancerIn.ID)
+		CreateLBNodeFailErrMocked(t, &lbnIn, loadBalancerIn.ID)
+		CreateLBNodeFailStatusMocked(t, &lbnIn, loadBalancerIn.ID)
+		CreateLBNodeFailJSONMocked(t, &lbnIn, loadBalancerIn.ID)
 	}
 }
 
@@ -94,8 +94,8 @@ func TestDeleteLBNodes(t *testing.T) {
 	loadBalancerIn := (*loadBalancersIn)[0]
 
 	for _, lbnIn := range *lbnsIn {
-		DeleteLBNodeMocked(t, &lbnIn, loadBalancerIn.Id)
-		DeleteLBNodeFailErrMocked(t, &lbnIn, loadBalancerIn.Id)
-		DeleteLBNodeFailStatusMocked(t, &lbnIn, loadBalancerIn.Id)
+		DeleteLBNodeMocked(t, &lbnIn, loadBalancerIn.ID)
+		DeleteLBNodeFailErrMocked(t, &lbnIn, loadBalancerIn.ID)
+		DeleteLBNodeFailStatusMocked(t, &lbnIn, loadBalancerIn.ID)
 	}
 }

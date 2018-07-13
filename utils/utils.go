@@ -80,7 +80,7 @@ func CheckReturnCode(res int, mesg []byte) {
 	if res >= 300 {
 
 		message := string(mesg[:])
-		log.Debugf("Concerto API response: %s", message)
+		log.Debugf("IMCO API response: %s", message)
 
 		f := func(c rune) bool {
 			return c == ',' || c == ':' || c == '{' || c == '}' || c == '"' || c == ']' || c == '['
@@ -106,17 +106,6 @@ func CheckReturnCode(res int, mesg []byte) {
 			scrapResponse := "{\"error\":\"(.*?)\"}"
 			message = ScrapeErrorMessage(message, scrapResponse)
 		}
-
-		// temporary fix to replace any mention of fleet or ship with the appropriate counterparts (CARM-296)
-		re := regexp.MustCompile("\\bfleet\\b")
-		message = re.ReplaceAllString(message, "cluster")
-		re = regexp.MustCompile("\\bFleet\\b")
-		message = re.ReplaceAllString(message, "Cluster")
-		re = regexp.MustCompile("\\bship\\b")
-		message = re.ReplaceAllString(message, "node")
-		re = regexp.MustCompile("\\bShip\\b")
-		message = re.ReplaceAllString(message, "Node")
-
 		// if it's not a web page or json-formatted message, return the raw message
 		log.Fatal(fmt.Sprintf("HTTP request failed: (%d) [%s]", res, message))
 	}
@@ -152,19 +141,8 @@ func CheckStandardStatus(status int, mesg []byte) error {
 		message = ScrapeErrorMessage(message, scrapResponse)
 	}
 
-	// temporary fix to replace any mention of fleet or ship with the appropriate counterparts (CARM-296)
-	re := regexp.MustCompile("\\bfleet\\b")
-	message = re.ReplaceAllString(message, "cluster")
-	re = regexp.MustCompile("\\bFleet\\b")
-	message = re.ReplaceAllString(message, "Cluster")
-	re = regexp.MustCompile("\\bship\\b")
-	message = re.ReplaceAllString(message, "node")
-	re = regexp.MustCompile("\\bShip\\b")
-	message = re.ReplaceAllString(message, "Node")
-
 	// if it's not a web page or json-formatted message, return the raw message
 	return fmt.Errorf("HTTP request failed: (%d) [%s]", status, message)
-
 }
 
 // FileExists checks file existence

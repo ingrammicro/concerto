@@ -39,6 +39,15 @@ func WizServerPlanList(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive serverPlan data", err)
 	}
+
+	cloudProvidersMap := LoadcloudProvidersMapping(c)
+	locationsMap := LoadLocationsMapping(c)
+
+	for id, sp := range serverPlans {
+		serverPlans[id].CloudProviderName = cloudProvidersMap[sp.CloudProviderID]
+		serverPlans[id].LocationName = locationsMap[sp.LocationID]
+	}
+
 	if err = formatter.PrintList(serverPlans); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

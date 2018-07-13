@@ -7,12 +7,12 @@ func GetSaasAccountData() *[]types.SaasAccount {
 
 	testSaasAccounts := []types.SaasAccount{
 		{
-			Id:         "fakeID0",
-			SaasProvId: "fakeProvID0",
+			ID:             "fakeID0",
+			SaasProviderID: "fakeSaasProviderID0",
 		},
 		{
-			Id:         "fakeID1",
-			SaasProvId: "fakeProvID1",
+			ID:             "fakeID1",
+			SaasProviderID: "fakeSaasProviderID1",
 		},
 	}
 

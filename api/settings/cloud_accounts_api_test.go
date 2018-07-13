@@ -21,32 +21,3 @@ func TestGetCloudAccountList(t *testing.T) {
 	GetCloudAccountListFailStatusMocked(t, cloudAccountsIn)
 	GetCloudAccountListFailJSONMocked(t, cloudAccountsIn)
 }
-
-func TestCreateCloudAccount(t *testing.T) {
-	cloudAccountsIn := testdata.GetCloudAccountData()
-	for _, cloudAccountIn := range *cloudAccountsIn {
-		CreateCloudAccountMocked(t, &cloudAccountIn)
-		CreateCloudAccountFailErrMocked(t, &cloudAccountIn)
-		CreateCloudAccountFailStatusMocked(t, &cloudAccountIn)
-		CreateCloudAccountFailJSONMocked(t, &cloudAccountIn)
-	}
-}
-
-func TestUpdateCloudAccount(t *testing.T) {
-	cloudAccountsIn := testdata.GetCloudAccountData()
-	for _, cloudAccountIn := range *cloudAccountsIn {
-		UpdateCloudAccountMocked(t, &cloudAccountIn)
-		UpdateCloudAccountFailErrMocked(t, &cloudAccountIn)
-		UpdateCloudAccountFailStatusMocked(t, &cloudAccountIn)
-		UpdateCloudAccountFailJSONMocked(t, &cloudAccountIn)
-	}
-}
-
-func TestDeleteCloudAccount(t *testing.T) {
-	cloudAccountsIn := testdata.GetCloudAccountData()
-	for _, cloudAccountIn := range *cloudAccountsIn {
-		DeleteCloudAccountMocked(t, &cloudAccountIn)
-		DeleteCloudAccountFailErrMocked(t, &cloudAccountIn)
-		DeleteCloudAccountFailStatusMocked(t, &cloudAccountIn)
-	}
-}
