@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/cloud"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
@@ -37,6 +38,19 @@ func ServerList(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive server data", err)
 	}
+
+	filteredResources, err := LabelFiltering(c, servers)
+	if err != nil {
+		formatter.PrintFatal("Couldn't list servers filtered by labels", err)
+	}
+	if filteredResources != nil {
+		servers = nil
+		for _, v := range *filteredResources {
+			servers = append(servers, v.(types.Server))
+		}
+	}
+
+	LabelAssignNamesForIDs(c, servers)
 	if err = formatter.PrintList(servers); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -53,6 +67,8 @@ func ServerShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive server data", err)
 	}
+
+	LabelAssignNamesForIDs(c, server)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -65,10 +81,26 @@ func ServerCreate(c *cli.Context) error {
 	serverSvc, formatter := WireUpServer(c)
 
 	checkRequiredFlags(c, []string{"name", "ssh_profile_id", "firewall_profile_id", "template_id", "server_plan_id", "cloud_account_id"}, formatter)
-	server, err := serverSvc.CreateServer(utils.FlagConvertParams(c))
+	serverIn := map[string]interface{}{
+		"name":                c.String("name"),
+		"ssh_profile_id":      c.String("ssh_profile_id"),
+		"firewall_profile_id": c.String("firewall_profile_id"),
+		"template_id":         c.String("template_id"),
+		"server_plan_id":      c.String("server_plan_id"),
+		"cloud_account_id":    c.String("cloud_account_id"),
+	}
+
+	if c.IsSet("labels") {
+		labelsIdsArr := LabelResolution(c, c.String("labels"))
+		serverIn["label_ids"] = labelsIdsArr
+	}
+
+	server, err := serverSvc.CreateServer(&serverIn)
 	if err != nil {
 		formatter.PrintFatal("Couldn't create server", err)
 	}
+
+	LabelAssignNamesForIDs(c, server)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

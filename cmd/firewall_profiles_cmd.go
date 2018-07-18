@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/network"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
@@ -37,6 +38,19 @@ func FirewallProfileList(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive firewallProfile data", err)
 	}
+
+	filteredResources, err := LabelFiltering(c, firewallProfiles)
+	if err != nil {
+		formatter.PrintFatal("Couldn't list firewall profiles filtered by labels", err)
+	}
+	if filteredResources != nil {
+		firewallProfiles = nil
+		for _, v := range *filteredResources {
+			firewallProfiles = append(firewallProfiles, v.(types.FirewallProfile))
+		}
+	}
+
+	LabelAssignNamesForIDs(c, firewallProfiles)
 	if err = formatter.PrintList(firewallProfiles); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -53,6 +67,8 @@ func FirewallProfileShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive firewallProfile data", err)
 	}
+
+	LabelAssignNamesForIDs(c, firewallProfile)
 	if err = formatter.PrintItem(*firewallProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -69,10 +85,25 @@ func FirewallProfileCreate(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
-	firewallProfile, err := firewallProfileSvc.CreateFirewallProfile(params)
+
+	firewallProfileIn := map[string]interface{}{
+		"name":        c.String("name"),
+		"description": c.String("description"),
+	}
+	if c.String("rules") != "" {
+		firewallProfileIn["rules"] = (*params)["rules"]
+	}
+	if c.IsSet("labels") {
+		labelsIdsArr := LabelResolution(c, c.String("labels"))
+		firewallProfileIn["label_ids"] = labelsIdsArr
+	}
+
+	firewallProfile, err := firewallProfileSvc.CreateFirewallProfile(&firewallProfileIn)
 	if err != nil {
 		formatter.PrintFatal("Couldn't create firewallProfile", err)
 	}
+
+	LabelAssignNamesForIDs(c, firewallProfile)
 	if err = formatter.PrintItem(*firewallProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

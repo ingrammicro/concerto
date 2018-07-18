@@ -1,8 +1,11 @@
 package cmd
 
 import (
+	"strings"
+
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/blueprint"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
@@ -37,6 +40,19 @@ func ScriptsList(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive script data", err)
 	}
+
+	filteredResources, err := LabelFiltering(c, scripts)
+	if err != nil {
+		formatter.PrintFatal("Couldn't list scripts filtered by labels", err)
+	}
+	if filteredResources != nil {
+		scripts = nil
+		for _, v := range *filteredResources {
+			scripts = append(scripts, v.(types.Script))
+		}
+	}
+
+	LabelAssignNamesForIDs(c, scripts)
 	if err = formatter.PrintList(scripts); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -53,6 +69,8 @@ func ScriptShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive script data", err)
 	}
+
+	LabelAssignNamesForIDs(c, script)
 	if err = formatter.PrintItem(*script); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -65,10 +83,25 @@ func ScriptCreate(c *cli.Context) error {
 	scriptSvc, formatter := WireUpScript(c)
 
 	checkRequiredFlags(c, []string{"name", "description", "code"}, formatter)
-	script, err := scriptSvc.CreateScript(utils.FlagConvertParams(c))
+	scriptIn := map[string]interface{}{
+		"name":        c.String("name"),
+		"description": c.String("description"),
+		"code":        c.String("code"),
+	}
+	if c.String("parameters") != "" {
+		scriptIn["parameters"] = strings.Split(c.String("parameters"), ",")
+	}
+	if c.IsSet("labels") {
+		labelsIdsArr := LabelResolution(c, c.String("labels"))
+		scriptIn["label_ids"] = labelsIdsArr
+	}
+
+	script, err := scriptSvc.CreateScript(&scriptIn)
 	if err != nil {
 		formatter.PrintFatal("Couldn't create script", err)
 	}
+
+	LabelAssignNamesForIDs(c, script)
 	if err = formatter.PrintItem(*script); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

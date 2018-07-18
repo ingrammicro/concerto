@@ -11,6 +11,12 @@ func SubCommands() []cli.Command {
 			Name:   "list",
 			Usage:  "Lists all available templates",
 			Action: cmd.TemplateList,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "labels",
+					Usage: "A list of comma separated label as a query filter",
+				},
+			},
 		},
 		{
 			Name:   "show",
@@ -43,6 +49,10 @@ func SubCommands() []cli.Command {
 				cli.StringFlag{
 					Name:  "configuration_attributes",
 					Usage: "The attributes used to configure the services in the service_list",
+				},
+				cli.StringFlag{
+					Name:  "labels",
+					Usage: "A list of comma separated label names to be associated with template",
 				},
 			},
 		},
@@ -198,6 +208,48 @@ func SubCommands() []cli.Command {
 				cli.StringFlag{
 					Name:  "template_id",
 					Usage: "Template Id",
+				},
+			},
+		},
+		{
+			Name:   "add-label",
+			Usage:  "This action assign a single label from a single labelable resource",
+			Action: cmd.LabelAdd,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Template Id",
+				},
+				cli.StringFlag{
+					Name:  "label",
+					Usage: "Label name",
+				},
+				cli.StringFlag{
+					Name:   "resource_type",
+					Usage:  "Resource Type",
+					Value:  "template",
+					Hidden: true,
+				},
+			},
+		},
+		{
+			Name:   "remove-label",
+			Usage:  "This action de-assign a single label from a single labelable resource",
+			Action: cmd.LabelRemove,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Template Id",
+				},
+				cli.StringFlag{
+					Name:  "label",
+					Usage: "Label name",
+				},
+				cli.StringFlag{
+					Name:   "resource_type",
+					Usage:  "Resource Type",
+					Value:  "template",
+					Hidden: true,
 				},
 			},
 		},

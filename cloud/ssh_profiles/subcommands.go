@@ -11,6 +11,12 @@ func SubCommands() []cli.Command {
 			Name:   "list",
 			Usage:  "Lists all available SSH profiles.",
 			Action: cmd.SSHProfileList,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "labels",
+					Usage: "A list of comma separated label as a query filter",
+				},
+			},
 		},
 		{
 			Name:   "show",
@@ -39,6 +45,10 @@ func SubCommands() []cli.Command {
 				cli.StringFlag{
 					Name:  "private_key",
 					Usage: "Private key of the SSH profile",
+				},
+				cli.StringFlag{
+					Name:  "labels",
+					Usage: "A list of comma separated label names to be associated with SSH profile",
 				},
 			},
 		},
@@ -73,6 +83,48 @@ func SubCommands() []cli.Command {
 				cli.StringFlag{
 					Name:  "id",
 					Usage: "SSH profile id",
+				},
+			},
+		},
+		{
+			Name:   "add-label",
+			Usage:  "This action assign a single label from a single labelable resource",
+			Action: cmd.LabelAdd,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "SSH profile id",
+				},
+				cli.StringFlag{
+					Name:  "label",
+					Usage: "Label name",
+				},
+				cli.StringFlag{
+					Name:   "resource_type",
+					Usage:  "Resource Type",
+					Value:  "ssh_profile",
+					Hidden: true,
+				},
+			},
+		},
+		{
+			Name:   "remove-label",
+			Usage:  "This action de-assign a single label from a single labelable resource",
+			Action: cmd.LabelRemove,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "SSH profile id",
+				},
+				cli.StringFlag{
+					Name:  "label",
+					Usage: "Label name",
+				},
+				cli.StringFlag{
+					Name:   "resource_type",
+					Usage:  "Resource Type",
+					Value:  "ssh_profile",
+					Hidden: true,
 				},
 			},
 		},

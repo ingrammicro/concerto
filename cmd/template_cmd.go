@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/blueprint"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
@@ -37,6 +38,19 @@ func TemplateList(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive template data", err)
 	}
+
+	filteredResources, err := LabelFiltering(c, templates)
+	if err != nil {
+		formatter.PrintFatal("Couldn't list templates filtered by labels", err)
+	}
+	if filteredResources != nil {
+		templates = nil
+		for _, v := range *filteredResources {
+			templates = append(templates, v.(types.Template))
+		}
+	}
+
+	LabelAssignNamesForIDs(c, templates)
 	if err = formatter.PrintList(templates); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -53,6 +67,8 @@ func TemplateShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive template data", err)
 	}
+
+	LabelAssignNamesForIDs(c, template)
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -65,17 +81,30 @@ func TemplateCreate(c *cli.Context) error {
 	templateSvc, formatter := WireUpTemplate(c)
 
 	checkRequiredFlags(c, []string{"name", "generic_image_id"}, formatter)
-
 	// parse json parameter values
 	params, err := utils.FlagConvertParamsJSON(c, []string{"service_list", "configuration_attributes"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
 
-	template, err := templateSvc.CreateTemplate(params)
+	templateIn := map[string]interface{}{
+		"name":                     c.String("name"),
+		"generic_image_id":         c.String("generic_image_id"),
+		"service_list":             (*params)["service_list"],
+		"configuration_attributes": (*params)["configuration_attributes"],
+	}
+
+	if c.IsSet("labels") {
+		labelsIdsArr := LabelResolution(c, c.String("labels"))
+		templateIn["label_ids"] = labelsIdsArr
+	}
+
+	template, err := templateSvc.CreateTemplate(&templateIn)
 	if err != nil {
 		formatter.PrintFatal("Couldn't create template", err)
 	}
+
+	LabelAssignNamesForIDs(c, template)
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

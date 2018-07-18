@@ -22,6 +22,7 @@ import (
 	"github.com/ingrammicro/concerto/converge"
 	"github.com/ingrammicro/concerto/dispatcher"
 	"github.com/ingrammicro/concerto/firewall"
+	"github.com/ingrammicro/concerto/labels"
 	"github.com/ingrammicro/concerto/network/firewall_profiles"
 	"github.com/ingrammicro/concerto/settings/cloud_accounts"
 	"github.com/ingrammicro/concerto/setup"
@@ -245,6 +246,14 @@ var ClientCommands = []cli.Command{
 		Usage:     "Manages wizard related commands for apps, locations, cloud providers, server plans",
 		Subcommands: append(
 			WizardCommands,
+		),
+	},
+	{
+		Name:      "labels",
+		ShortName: "lbl",
+		Usage:     "Provides information about labels",
+		Subcommands: append(
+			labels.SubCommands(),
 		),
 	},
 }

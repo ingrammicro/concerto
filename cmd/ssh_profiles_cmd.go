@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/cloud"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
@@ -37,6 +38,19 @@ func SSHProfileList(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive sshProfile data", err)
 	}
+
+	filteredResources, err := LabelFiltering(c, sshProfiles)
+	if err != nil {
+		formatter.PrintFatal("Couldn't list SSH profiles filtered by labels", err)
+	}
+	if filteredResources != nil {
+		sshProfiles = nil
+		for _, v := range *filteredResources {
+			sshProfiles = append(sshProfiles, v.(types.SSHProfile))
+		}
+	}
+
+	LabelAssignNamesForIDs(c, sshProfiles)
 	if err = formatter.PrintList(sshProfiles); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -53,6 +67,8 @@ func SSHProfileShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive sshProfile data", err)
 	}
+
+	LabelAssignNamesForIDs(c, sshProfile)
 	if err = formatter.PrintItem(*sshProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -65,10 +81,24 @@ func SSHProfileCreate(c *cli.Context) error {
 	sshProfileSvc, formatter := WireUpSSHProfile(c)
 
 	checkRequiredFlags(c, []string{"name", "public_key"}, formatter)
-	sshProfile, err := sshProfileSvc.CreateSSHProfile(utils.FlagConvertParams(c))
+	sshProfileIn := map[string]interface{}{
+		"name":       c.String("name"),
+		"public_key": c.String("public_key"),
+	}
+	if c.String("private_key") != "" {
+		sshProfileIn["private_key"] = c.String("private_key")
+	}
+	if c.IsSet("labels") {
+		labelsIdsArr := LabelResolution(c, c.String("labels"))
+		sshProfileIn["label_ids"] = labelsIdsArr
+	}
+
+	sshProfile, err := sshProfileSvc.CreateSSHProfile(&sshProfileIn)
 	if err != nil {
 		formatter.PrintFatal("Couldn't create sshProfile", err)
 	}
+
+	LabelAssignNamesForIDs(c, sshProfile)
 	if err = formatter.PrintItem(*sshProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

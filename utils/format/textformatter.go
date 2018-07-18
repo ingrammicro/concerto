@@ -35,14 +35,25 @@ func (f *TextFormatter) PrintItem(item interface{}) error {
 
 	w := tabwriter.NewWriter(f.output, 15, 1, 3, ' ', 0)
 	for i := 0; i < nf; i++ {
-		// TODO not the best way to use reflection. Check this later
-		switch it.Field(i).Type().String() {
-		case "json.RawMessage":
-			fmt.Fprintf(w, "%s:\t%s\n", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface())
-		case "*json.RawMessage":
-			fmt.Fprintf(w, "%s:\t%s\n", it.Type().Field(i).Tag.Get("header"), it.Field(i).Elem())
-		default:
-			fmt.Fprintf(w, "%s:\t%+v\n", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface())
+		// hide fields
+		bShow := true
+		showTags := strings.Split(it.Type().Field(i).Tag.Get("show"), ",")
+		for _, showTag := range showTags {
+			if showTag == "noshow" {
+				bShow = false
+			}
+		}
+
+		if bShow {
+			// TODO not the best way to use reflection. Check this later
+			switch it.Field(i).Type().String() {
+			case "json.RawMessage":
+				fmt.Fprintf(w, "%s:\t%s\n", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface())
+			case "*json.RawMessage":
+				fmt.Fprintf(w, "%s:\t%s\n", it.Type().Field(i).Tag.Get("header"), it.Field(i).Elem())
+			default:
+				fmt.Fprintf(w, "%s:\t%+v\n", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface())
+			}
 		}
 	}
 	fmt.Fprintln(w)

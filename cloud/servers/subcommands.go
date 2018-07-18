@@ -11,6 +11,12 @@ func SubCommands() []cli.Command {
 			Name:   "list",
 			Usage:  "Lists information about all the servers on this account.",
 			Action: cmd.ServerList,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "labels",
+					Usage: "A list of comma separated label as a query filter",
+				},
+			},
 		},
 		{
 			Name:   "show",
@@ -51,6 +57,10 @@ func SubCommands() []cli.Command {
 				cli.StringFlag{
 					Name:  "cloud_account_id",
 					Usage: "Identifier of the cloud account in which the server shall be registered",
+				},
+				cli.StringFlag{
+					Name:  "labels",
+					Usage: "A list of comma separated label names to be associated with server",
 				},
 			},
 		},
@@ -159,6 +169,48 @@ func SubCommands() []cli.Command {
 				cli.StringFlag{
 					Name:  "script_id",
 					Usage: "Script Id",
+				},
+			},
+		},
+		{
+			Name:   "add-label",
+			Usage:  "This action assign a single label from a single labelable resource",
+			Action: cmd.LabelAdd,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Server Id",
+				},
+				cli.StringFlag{
+					Name:  "label",
+					Usage: "Label name",
+				},
+				cli.StringFlag{
+					Name:   "resource_type",
+					Usage:  "Resource Type",
+					Value:  "server",
+					Hidden: true,
+				},
+			},
+		},
+		{
+			Name:   "remove-label",
+			Usage:  "This action de-assign a single label from a single labelable resource",
+			Action: cmd.LabelRemove,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Server Id",
+				},
+				cli.StringFlag{
+					Name:  "label",
+					Usage: "Label name",
+				},
+				cli.StringFlag{
+					Name:   "resource_type",
+					Usage:  "Resource Type",
+					Value:  "server",
+					Hidden: true,
 				},
 			},
 		},
