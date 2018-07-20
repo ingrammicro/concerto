@@ -118,6 +118,8 @@ func ScriptUpdate(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't update script", err)
 	}
+
+	LabelAssignNamesForIDs(c, script)
 	if err = formatter.PrintItem(*script); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

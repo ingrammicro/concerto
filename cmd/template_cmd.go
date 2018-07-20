@@ -128,6 +128,8 @@ func TemplateUpdate(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't update template", err)
 	}
+
+	LabelAssignNamesForIDs(c, template)
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

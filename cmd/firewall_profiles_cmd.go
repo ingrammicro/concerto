@@ -124,6 +124,8 @@ func FirewallProfileUpdate(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't update firewallProfile", err)
 	}
+
+	LabelAssignNamesForIDs(c, firewallProfile)
 	if err = formatter.PrintItem(*firewallProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

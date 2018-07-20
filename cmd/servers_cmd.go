@@ -117,6 +117,8 @@ func ServerUpdate(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't update server", err)
 	}
+
+	LabelAssignNamesForIDs(c, server)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -133,6 +135,8 @@ func ServerBoot(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't boot server", err)
 	}
+
+	LabelAssignNamesForIDs(c, server)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -149,6 +153,8 @@ func ServerReboot(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't reboot server", err)
 	}
+
+	LabelAssignNamesForIDs(c, server)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -165,6 +171,8 @@ func ServerShutdown(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't shutdown server", err)
 	}
+
+	LabelAssignNamesForIDs(c, server)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -181,6 +189,8 @@ func ServerOverride(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't override server", err)
 	}
+
+	LabelAssignNamesForIDs(c, server)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

@@ -115,6 +115,8 @@ func SSHProfileUpdate(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't update sshProfile", err)
 	}
+
+	LabelAssignNamesForIDs(c, sshProfile)
 	if err = formatter.PrintItem(*sshProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
