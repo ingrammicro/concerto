@@ -11,9 +11,9 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-// SetProcessIdToFile obtains the process id and save it inside a file
-func SetProcessIdToFile(pidFileName string) error {
-	log.Debug("SetProcessIdToFile")
+// SetProcessIDToFile obtains the process id and save it inside a file
+func SetProcessIDToFile(pidFileName string) error {
+	log.Debug("SetProcessIDToFile")
 
 	pidValue := os.Getpid()
 	log.Debug("current pid:", pidValue)
@@ -24,28 +24,29 @@ func SetProcessIdToFile(pidFileName string) error {
 	return nil
 }
 
-// GetProcessIdFromFile reads the process id previously stored in the file
-func GetProcessIdFromFile(pidFileName string) (int, error) {
-	log.Debug("GetProcessIdFromFile")
+// GetProcessIDFromFile reads the process id previously stored in the file
+func GetProcessIDFromFile(pidFileName string) (int, error) {
+	log.Debug("GetProcessIDFromFile")
 
 	var pid int64
 
-	if bytes, err := ioutil.ReadFile(pidFileName); err != nil {
+	bytes, err := ioutil.ReadFile(pidFileName)
+	if err != nil {
 		return 0, err
-	} else {
-		pid, err = strconv.ParseInt(string(bytes), 10, 32)
-		if err != nil {
-			return 0, err
-		}
-		log.Debug("retrieved pid:", pid)
 	}
+
+	pid, err = strconv.ParseInt(string(bytes), 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	log.Debug("retrieved pid:", pid)
 
 	return int(pid), nil
 }
 
-// StopProcessId stops the process by the given id
-func StopProcessId(pid int) error {
-	log.Debug("StopProcessId")
+// StopProcessID stops the process by the given id
+func StopProcessID(pid int) error {
+	log.Debug("StopProcessID")
 
 	if pid <= 0 {
 		return errors.New("invalid pid, a positive value is required")
@@ -84,12 +85,12 @@ func StopProcessId(pid int) error {
 func StopProcess(pidFileName string) error {
 	log.Debug("StopProcess")
 
-	if pid, err := GetProcessIdFromFile(pidFileName); err != nil {
+	pid, err := GetProcessIDFromFile(pidFileName)
+	if err != nil {
 		return errors.New("cannot read the pid file." + err.Error())
-	} else {
-		if err := StopProcessId(pid); err != nil {
-			return err
-		}
+	}
+	if err := StopProcessID(pid); err != nil {
+		return err
 	}
 
 	return nil

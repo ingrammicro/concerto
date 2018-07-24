@@ -37,7 +37,7 @@ func NewHTTPConcertoService(config *Config) (hcs *HTTPConcertoservice, err error
 	}
 
 	if !config.IsConfigReady() {
-		return nil, fmt.Errorf("Configuration is incomplete.")
+		return nil, fmt.Errorf("Configuration is incomplete")
 	}
 
 	// creates HTTP Concerto service with config
@@ -60,7 +60,7 @@ func NewHTTPConcertoService(config *Config) (hcs *HTTPConcertoservice, err error
 	return hcs, nil
 }
 
-// NewHTTPConcertoService creates new http Concerto client based on config
+// NewHTTPConcertoServiceWithBrownfieldToken validates Brownfield configuration and creates new http Concerto client based on config
 func NewHTTPConcertoServiceWithBrownfieldToken(config *Config) (hcs *HTTPConcertoservice, err error) {
 
 	if config == nil {
@@ -68,7 +68,7 @@ func NewHTTPConcertoServiceWithBrownfieldToken(config *Config) (hcs *HTTPConcert
 	}
 
 	if !config.IsConfigReadyBrownfield() {
-		return nil, fmt.Errorf("Configuration is incomplete.")
+		return nil, fmt.Errorf("Configuration is incomplete")
 	}
 
 	// creates HTTP Concerto service with config
@@ -85,6 +85,7 @@ func NewHTTPConcertoServiceWithBrownfieldToken(config *Config) (hcs *HTTPConcert
 	return hcs, nil
 }
 
+// NewHTTPConcertoServiceWithCommandPolling validates Polling configuration and creates new http Concerto client based on config
 func NewHTTPConcertoServiceWithCommandPolling(config *Config) (hcs *HTTPConcertoservice, err error) {
 
 	if config == nil {
@@ -92,7 +93,7 @@ func NewHTTPConcertoServiceWithCommandPolling(config *Config) (hcs *HTTPConcerto
 	}
 
 	if !config.IsConfigReadyCommandPolling() {
-		return nil, fmt.Errorf("Configuration is incomplete.")
+		return nil, fmt.Errorf("Configuration is incomplete")
 	}
 
 	// creates HTTP Concerto service with config
@@ -119,6 +120,9 @@ func (hcs *HTTPConcertoservice) Post(path string, payload *map[string]interface{
 
 	log.Debugf("Sending POST request to %s with payload %s ", url, jsPayload)
 	req, err := http.NewRequest("POST", url, jsPayload)
+	if err != nil {
+		return nil, 0, err
+	}
 	req.Header.Add("Content-Type", "application/json")
 	if hcs.config.BrownfieldToken != "" {
 		log.Debugf("Including brownfield token %s in POST request as X-Concerto-Brownfield-Token header ", hcs.config.BrownfieldToken)

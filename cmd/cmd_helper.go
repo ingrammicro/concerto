@@ -48,7 +48,7 @@ func checkRequiredFlags(c *cli.Context, flags []string, f format.Formatter) {
 	}
 
 	if missing != "" {
-		f.PrintError("Incorrect usage.", fmt.Errorf("Mandatory parameters missing: %s\n", missing))
+		f.PrintError("Incorrect usage.", fmt.Errorf("Mandatory parameters missing: %s", missing))
 		cli.ShowCommandHelp(c, c.Command.Name)
 		os.Exit(2)
 	}
@@ -64,7 +64,7 @@ func checkRequiredFlagsOr(c *cli.Context, flags []string, f format.Formatter) {
 		missing = fmt.Sprintf("%s\n\t--%s", missing, flag)
 	}
 
-	f.PrintError("Incorrect usage.", fmt.Errorf("Please use one of these parameters: %s\n", missing))
+	f.PrintError("Incorrect usage.", fmt.Errorf("Please use one of these parameters: %s", missing))
 	cli.ShowCommandHelp(c, c.Command.Name)
 	os.Exit(2)
 }

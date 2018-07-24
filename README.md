@@ -142,7 +142,7 @@ COMMANDS:
      events, ev     Events allow the user to track their actions and the state of their servers
      network, net   Manages network related commands for firewall profiles
      settings, set  Provides settings for cloud accounts
-     setup, se      Configures and setups concerto cli enviroment
+     setup, se      Configures and setups concerto cli environment
      wizard, wiz    Manages wizard related commands for apps, locations, cloud providers, server plans
 ...
 ```

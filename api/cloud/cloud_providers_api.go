@@ -3,12 +3,13 @@ package cloud
 import (
 	"encoding/json"
 	"fmt"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 )
 
-// CloudProviderService manages cloudProvider operations
+// CloudProviderService manages Cloud Provider Service operations
 type CloudProviderService struct {
 	concertoService utils.ConcertoService
 }

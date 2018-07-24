@@ -5,12 +5,14 @@ import (
 	"net"
 )
 
+// FirewallChain stores Firewall Chain data
 type FirewallChain struct {
 	Name   string
 	Policy string
 	Rules  []*FirewallRule
 }
 
+// FirewallRule stores Firewall Rule data
 type FirewallRule struct {
 	Name     string
 	Target   string
@@ -27,6 +29,7 @@ func (fr *FirewallRule) String() string {
 	return fmt.Sprintf("{target='%s' protocol='%s' source='%s' minPort=%d maxPort=%d}", fr.Target, fr.Protocol, fr.Source, fr.Dports[0], fr.Dports[1])
 }
 
+// FlattenChain resolves an unique firewall rules chain
 func FlattenChain(chainName string, chains []*FirewallChain, affectingRule *FirewallRule) (*FirewallChain, error) {
 	var c *FirewallChain
 	var chainIndex int

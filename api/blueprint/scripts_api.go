@@ -3,6 +3,7 @@ package blueprint
 import (
 	"encoding/json"
 	"fmt"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
@@ -24,7 +25,7 @@ func NewScriptService(concertoService utils.ConcertoService) (*ScriptService, er
 	}, nil
 }
 
-// GetScriptsList returns the list of scripts as an array of Scripts
+// GetScriptList returns the list of scripts as an array of Scripts
 func (sc *ScriptService) GetScriptList() (scripts []types.Script, err error) {
 	log.Debug("GetScriptsList")
 

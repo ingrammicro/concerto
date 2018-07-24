@@ -5,6 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands return Event subcommands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{

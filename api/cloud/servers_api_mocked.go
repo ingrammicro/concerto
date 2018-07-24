@@ -982,104 +982,104 @@ func DeleteServerFailStatusMocked(t *testing.T, serverIn *types.Server) {
 //======= DNS ==========
 
 // GetDNSListMocked test mocked function
-func GetDNSListMocked(t *testing.T, serverIn *types.Server, dnssIn *[]types.Dns) *[]types.Dns {
+func GetDNSListMocked(t *testing.T, serverIn *types.Server, DNSsIn *[]types.DNS) *[]types.DNS {
 
 	assert := assert.New(t)
 
 	// wire up
 	cs := &utils.MockConcertoService{}
 	ds, err := NewServerService(cs)
-	assert.Nil(err, "Couldn't load dns service")
-	assert.NotNil(ds, "Dns service not instanced")
+	assert.Nil(err, "Couldn't load DNS service")
+	assert.NotNil(ds, "DNS service not instanced")
 
 	// to json
-	dIn, err := json.Marshal(dnssIn)
-	assert.Nil(err, "Dns test data corrupted")
+	dIn, err := json.Marshal(DNSsIn)
+	assert.Nil(err, "DNS test data corrupted")
 
 	// call service
 	cs.On("Get", fmt.Sprintf("/v1/cloud/servers/%s/records", serverIn.ID)).Return(dIn, 200, nil)
-	dnssOut, err := ds.GetDNSList(serverIn.ID)
-	assert.Nil(err, "Error getting dns list")
-	assert.Equal(*dnssIn, dnssOut, "GetDNSList returned different dnss")
+	DNSsOut, err := ds.GetDNSList(serverIn.ID)
+	assert.Nil(err, "Error getting DNS list")
+	assert.Equal(*DNSsIn, DNSsOut, "GetDNSList returned different DNSs")
 
-	return &dnssOut
+	return &DNSsOut
 }
 
 // GetDNSListFailErrMocked test mocked function
-func GetDNSListFailErrMocked(t *testing.T, serverIn *types.Server, dnssIn *[]types.Dns) *[]types.Dns {
+func GetDNSListFailErrMocked(t *testing.T, serverIn *types.Server, DNSsIn *[]types.DNS) *[]types.DNS {
 
 	assert := assert.New(t)
 
 	// wire up
 	cs := &utils.MockConcertoService{}
 	ds, err := NewServerService(cs)
-	assert.Nil(err, "Couldn't load dns service")
-	assert.NotNil(ds, "Dns service not instanced")
+	assert.Nil(err, "Couldn't load DNS service")
+	assert.NotNil(ds, "DNS service not instanced")
 
 	// to json
-	dIn, err := json.Marshal(dnssIn)
-	assert.Nil(err, "Dns test data corrupted")
+	dIn, err := json.Marshal(DNSsIn)
+	assert.Nil(err, "DNS test data corrupted")
 
 	// call service
 	cs.On("Get", fmt.Sprintf("/v1/cloud/servers/%s/records", serverIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
-	dnssOut, err := ds.GetDNSList(serverIn.ID)
+	DNSsOut, err := ds.GetDNSList(serverIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
-	assert.Nil(dnssOut, "Expecting nil output")
+	assert.Nil(DNSsOut, "Expecting nil output")
 	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
 
-	return &dnssOut
+	return &DNSsOut
 }
 
 // GetDNSListFailStatusMocked test mocked function
-func GetDNSListFailStatusMocked(t *testing.T, serverIn *types.Server, dnssIn *[]types.Dns) *[]types.Dns {
+func GetDNSListFailStatusMocked(t *testing.T, serverIn *types.Server, DNSsIn *[]types.DNS) *[]types.DNS {
 
 	assert := assert.New(t)
 
 	// wire up
 	cs := &utils.MockConcertoService{}
 	ds, err := NewServerService(cs)
-	assert.Nil(err, "Couldn't load dns service")
-	assert.NotNil(ds, "Dns service not instanced")
+	assert.Nil(err, "Couldn't load DNS service")
+	assert.NotNil(ds, "DNS service not instanced")
 
 	// to json
-	dIn, err := json.Marshal(dnssIn)
-	assert.Nil(err, "Dns test data corrupted")
+	dIn, err := json.Marshal(DNSsIn)
+	assert.Nil(err, "DNS test data corrupted")
 
 	// call service
 	cs.On("Get", fmt.Sprintf("/v1/cloud/servers/%s/records", serverIn.ID)).Return(dIn, 499, nil)
-	dnssOut, err := ds.GetDNSList(serverIn.ID)
+	DNSsOut, err := ds.GetDNSList(serverIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
-	assert.Nil(dnssOut, "Expecting nil output")
+	assert.Nil(DNSsOut, "Expecting nil output")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 
-	return &dnssOut
+	return &DNSsOut
 }
 
 // GetDNSListFailJSONMocked test mocked function
-func GetDNSListFailJSONMocked(t *testing.T, serverIn *types.Server, dnssIn *[]types.Dns) *[]types.Dns {
+func GetDNSListFailJSONMocked(t *testing.T, serverIn *types.Server, DNSsIn *[]types.DNS) *[]types.DNS {
 
 	assert := assert.New(t)
 
 	// wire up
 	cs := &utils.MockConcertoService{}
 	ds, err := NewServerService(cs)
-	assert.Nil(err, "Couldn't load dns service")
-	assert.NotNil(ds, "Dns service not instanced")
+	assert.Nil(err, "Couldn't load DNS service")
+	assert.NotNil(ds, "DNS service not instanced")
 
 	// wrong json
 	dIn := []byte{10, 20, 30}
 
 	// call service
 	cs.On("Get", fmt.Sprintf("/v1/cloud/servers/%s/records", serverIn.ID)).Return(dIn, 200, nil)
-	dnssOut, err := ds.GetDNSList(serverIn.ID)
+	DNSsOut, err := ds.GetDNSList(serverIn.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
-	assert.Nil(dnssOut, "Expecting nil output")
+	assert.Nil(DNSsOut, "Expecting nil output")
 	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
 
-	return &dnssOut
+	return &DNSsOut
 }
 
 // GetServerEventListMocked test mocked function

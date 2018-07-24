@@ -1,3 +1,5 @@
+package saas_accounts
+
 /*
 	A SaaS account stores the credentials needed to access a SaaS provider.
   	It allows the user to access the services of a SaaS provider through the platform.
@@ -53,7 +55,6 @@
 	Options:
 		--id <saas_account_id> 		Identifier of the SaaS account
 */
-package saas_accounts
 
 // import (
 // 	"encoding/json"

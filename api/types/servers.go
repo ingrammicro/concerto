@@ -1,5 +1,6 @@
 package types
 
+// Server stores Server data
 type Server struct {
 	ID                string `json:"id" header:"ID"`
 	Name              string `json:"name" header:"NAME"`
@@ -13,7 +14,8 @@ type Server struct {
 	FirewallProfileID string `json:"firewall_profile_id" header:"FIREWALL_PROFILE_ID"`
 }
 
-type Dns struct {
+// DNS stores DNS data
+type DNS struct {
 	ID       string `json:"id" header:"ID"`
 	Name     string `json:"name" header:"NAME"`
 	Content  string `json:"content" header:"CONTENT"`
@@ -22,6 +24,7 @@ type Dns struct {
 	DomainID string `json:"domain_id" header:"DOMAIN_ID"`
 }
 
+// ScriptChar stores Script Char data
 type ScriptChar struct {
 	ID              string   `json:"id" header:"ID"`
 	Type            string   `json:"type" header:"TYPE"`

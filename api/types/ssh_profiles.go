@@ -1,5 +1,6 @@
 package types
 
+// SSHProfile stores SSH Profile data
 type SSHProfile struct {
 	ID         string `json:"id" header:"ID"`
 	Name       string `json:"name" heade:"NAME"`

@@ -6,6 +6,7 @@ import (
 	"github.com/codegangsta/cli"
 )
 
+// SubCommands return brownfield subcommands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{

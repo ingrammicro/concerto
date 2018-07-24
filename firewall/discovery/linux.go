@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// CurrentFirewallRules retrieves the firewall rules (iptables)
 func CurrentFirewallRules() ([]*FirewallChain, error) {
 	output, err := exec.Command("/sbin/iptables", "-L", "-n", "-v").Output()
 	if err != nil {

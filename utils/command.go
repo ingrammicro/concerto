@@ -2,12 +2,15 @@ package utils
 
 import (
 	"fmt"
+	"os"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	"os"
 )
 
 // TODO remove after migration
+
+//FlagsRequired checks for required flags, and show usage if requirements not met
 func FlagsRequired(c *cli.Context, flags []string) {
 	parameters := false
 	for _, flag := range flags {

@@ -5,6 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands return SaaS account subcommands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{

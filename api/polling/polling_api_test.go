@@ -1,9 +1,10 @@
 package polling
 
 import (
+	"testing"
+
 	"github.com/ingrammicro/concerto/testdata"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNewPollingServiceNil(t *testing.T) {
@@ -36,7 +37,6 @@ func TestUpdateCommand(t *testing.T) {
 	UpdateCommandFailStatusMocked(t, commandIn)
 	UpdateCommandFailJSONMocked(t, commandIn)
 }
-
 
 func TestReportBootstrapLog(t *testing.T) {
 	commandIn := testdata.GetPollingContinuousReportData()

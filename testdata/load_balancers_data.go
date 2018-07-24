@@ -39,7 +39,7 @@ func GetLoadBalancerData() *[]types.LoadBalancer {
 	return &testLoadBalancers
 }
 
-// GetLoadBalancerRecordData loads test data
+// GetLBNodeData loads test data
 func GetLBNodeData() *[]types.LBNode {
 
 	testLBNode := []types.LBNode{

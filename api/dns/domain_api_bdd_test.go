@@ -2,9 +2,12 @@ package dns
 
 import (
 	"fmt"
-	"github.com/ingrammicro/concerto/api/types"
-	"gopkg.in/cucumber/gherkin-go.v3"
 	"strings"
+
+	//"github.com/DATA-DOG/godog/gherkin"
+
+	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/ingrammicro/concerto/api/types"
 )
 
 func domainDoesNotExists(domainName string) error {
@@ -14,7 +17,7 @@ func domainDoesNotExists(domainName string) error {
 		return err
 	}
 	if domain != nil {
-		return fmt.Errorf("Domain %s exists.", domainName)
+		return fmt.Errorf("Domain %s exists", domainName)
 	}
 	return nil
 }
@@ -26,7 +29,7 @@ func domainExists(domainName string) error {
 		return err
 	}
 	if domain == nil {
-		return fmt.Errorf("Domain %s doesn't exists.", domainName)
+		return fmt.Errorf("Domain %s doesn't exists", domainName)
 	}
 	return nil
 }
@@ -186,7 +189,7 @@ func createDomainRecords(domainName string, domainRecords *gherkin.DataTable) er
 		return err
 	}
 	if domain == nil {
-		return fmt.Errorf("Domain %s doesn't exists.", domainName)
+		return fmt.Errorf("Domain %s doesn't exists", domainName)
 	}
 
 	var fields []string
@@ -228,7 +231,7 @@ func containedInDomainRecords(domainName string, domainRecords *gherkin.DataTabl
 		return err
 	}
 	if domain == nil {
-		return fmt.Errorf("Domain %s doesn't exists.", domainName)
+		return fmt.Errorf("Domain %s doesn't exists", domainName)
 	}
 
 	var fields []string

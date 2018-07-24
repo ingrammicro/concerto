@@ -16,6 +16,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
+// Time layout
 const (
 	TimeStampLayout          = "2006-01-02T15:04:05.000000-07:00"
 	TimeLayoutYYYYMMDDHHMMSS = "20060102150405"
@@ -33,6 +34,7 @@ func extractExitCode(err error) int {
 	return 0
 }
 
+// ExecCode saves command into a file and run it
 func ExecCode(code string, path string, filename string) (output string, exitCode int, startedAt time.Time, finishedAt time.Time) {
 	var err error
 	var tmp *os.File
@@ -62,6 +64,7 @@ func ExecCode(code string, path string, filename string) (output string, exitCod
 	return RunFile(tmp.Name())
 }
 
+// RunFile executes command string contained in a file
 func RunFile(command string) (output string, exitCode int, startedAt time.Time, finishedAt time.Time) {
 
 	var cmd *exec.Cmd
@@ -112,6 +115,7 @@ func RunFile(command string) (output string, exitCode int, startedAt time.Time, 
 	return
 }
 
+// RunCmd executes received command string
 func RunCmd(command string) (output string, exitCode int, startedAt time.Time, finishedAt time.Time) {
 
 	var cmd *exec.Cmd
@@ -234,6 +238,7 @@ func RunTracedCmd(command string) (exitCode int, stdOut string, stdErr string, s
 	return
 }
 
+//RunContinuousCmd executes the received command and process the retrieved response chunks asynchronously.
 func RunContinuousCmd(fn func(chunk string) error, command string, thresholdTime int) (int, error) {
 	log.Debug("RunContinuousCmd")
 

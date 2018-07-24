@@ -49,8 +49,8 @@
 [[projects]]
   name = "github.com/stretchr/objx"
   packages = ["."]
-  revision = "facf9a85c22f48d2f52f2380e4efce1768749a89"
-  version = "v0.1"
+  revision = "477a77ecc69700c7cdeb1fa9e129548e1c1c393c"
+  version = "v0.1.1"
 
 [[projects]]
   name = "github.com/stretchr/testify"
@@ -58,8 +58,8 @@
     "assert",
     "mock"
   ]
-  revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
-  version = "v1.2.1"
+  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
+  version = "v1.2.2"
 
 [[projects]]
   name = "golang.org/x/crypto"
@@ -80,17 +80,11 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "7db1c3b1a98089d0071c84f646ff5c96aad43682"
-
-[[projects]]
-  name = "gopkg.in/cucumber/gherkin-go.v3"
-  packages = ["."]
-  revision = "493a95eaa11180c87c841a303097a269fb1f670d"
-  version = "v3.2.0"
+  revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "92b7325f6a94cda806d124a617bcc6703c943d68c51e2be3182ef4ed42dc35a7"
+  inputs-digest = "e114db0b242ddaf32d563dfbb845c54dd34bf5cad6a9480906b2cfb055fc901a"
   solver-name = "gps-cdcl"
   solver-version = 1

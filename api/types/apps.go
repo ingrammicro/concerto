@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 )
 
+// WizardApp stores wizard data
 type WizardApp struct {
 	ID                  string          `json:"id" header:"ID"`
 	Name                string          `json:"name" header:"NAME"`

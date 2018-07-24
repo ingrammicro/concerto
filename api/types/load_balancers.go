@@ -1,5 +1,6 @@
 package types
 
+// LoadBalancer stores Load Balancer data
 type LoadBalancer struct {
 	ID                       string `json:"id" header:"ID"`
 	Name                     string `json:"name" header:"NAME"`
@@ -15,6 +16,7 @@ type LoadBalancer struct {
 	TrafficOut               int    `json:"traffic_out" header:"TRAFFIC_OUT"`
 }
 
+// LBNode stores Load Balancer Node data
 type LBNode struct {
 	ID       string `json:"id" header:"ID"`
 	Name     string `json:"name" header:"NAME"`

@@ -17,7 +17,7 @@ func cmdExecuteScript(c *cli.Context) error {
 	webservice, err := webservice.NewWebService()
 	utils.CheckError(err)
 
-	err, res, code := webservice.Put(fmt.Sprintf("/v1/cloud/servers/%s/operational_scripts/%s/execute", c.String("server_id"), c.String("script_id")), nil)
+	res, code, err := webservice.Put(fmt.Sprintf("/v1/cloud/servers/%s/operational_scripts/%s/execute", c.String("server_id"), c.String("script_id")), nil)
 	utils.CheckError(err)
 	utils.CheckReturnCode(code, res)
 

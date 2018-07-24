@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// Event stores an Concerto event item
+// Event stores an IMCO event item
 type Event struct {
 	ID          string    `json:"id" header:"ID"`
 	Timestamp   time.Time `json:"timestamp" header:"TIMESTAMP"`

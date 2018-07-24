@@ -169,6 +169,7 @@ func ServerDelete(c *cli.Context) error {
 }
 
 // ========= DNS ========
+
 // DNSList subcommand function
 func DNSList(c *cli.Context) error {
 	debugCmdFuncInfo(c)

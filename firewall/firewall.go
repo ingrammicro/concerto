@@ -15,16 +15,19 @@ import (
 
 const endpoint = "cloud/firewall_profile"
 
-type FirewallProfile struct {
+// Profile stores Firewall Profile data
+type Profile struct {
 	Profile Policy `json:"firewall_profile"`
 }
 
+// Policy stores Firewall Policy data
 type Policy struct {
 	Rules       []Rule `json:"rules"`
 	Md5         string `json:"md5,omitempty"`
 	ActualRules []Rule `json:"actual_rules,omitempty"`
 }
 
+// Rule stores Firewall Rule data
 type Rule struct {
 	Name     string `json:"name,omitempty"`
 	Protocol string `json:"ip_protocol"`
@@ -33,6 +36,7 @@ type Rule struct {
 	MaxPort  int    `json:"max_port"`
 }
 
+// Apply sets firewall policy
 func (policy Policy) Apply() error {
 	if len(policy.Rules) > 0 {
 		return apply(policy)
@@ -40,6 +44,7 @@ func (policy Policy) Apply() error {
 	return nil
 }
 
+// Flush purges firewall
 func Flush() error {
 	return flush()
 }
@@ -63,7 +68,7 @@ func get() Policy {
 	}
 
 	log.Debugf("Current firewall driver %s", driverName())
-	err, data, _ := webservice.Get(endpoint)
+	data, _, err := webservice.Get(endpoint)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -146,7 +151,7 @@ func cmdAdd(c *cli.Context) error {
 
 		json, err := json.Marshal(nRule)
 		utils.CheckError(err)
-		err, res, code := webservice.Post(fmt.Sprintf("%s/rules", endpoint), json)
+		res, code, err := webservice.Post(fmt.Sprintf("%s/rules", endpoint), json)
 		if res == nil {
 			log.Fatal(err)
 		}
@@ -160,7 +165,7 @@ func cmdAdd(c *cli.Context) error {
 func cmdUpdate(c *cli.Context) error {
 	utils.FlagsRequired(c, []string{"rules"})
 
-	fp := &FirewallProfile{
+	fp := &Profile{
 		Policy{},
 	}
 
@@ -174,7 +179,7 @@ func cmdUpdate(c *cli.Context) error {
 
 	json, err := json.Marshal(fp)
 	utils.CheckError(err)
-	err, res, code := webservice.Put(endpoint, json)
+	res, code, err := webservice.Put(endpoint, json)
 	if res == nil {
 		log.Fatal(err)
 	}
@@ -207,13 +212,13 @@ func cmdRemove(c *cli.Context) error {
 		webservice, err := webservice.NewWebService()
 		utils.CheckError(err)
 
-		profile := &FirewallProfile{
+		profile := &Profile{
 			policy,
 		}
 
 		json, err := json.Marshal(profile)
 		utils.CheckError(err)
-		err, res, code := webservice.Put(endpoint, json)
+		res, code, err := webservice.Put(endpoint, json)
 		if res == nil {
 			log.Fatal(err)
 		}
@@ -223,6 +228,7 @@ func cmdRemove(c *cli.Context) error {
 	return nil
 }
 
+// SubCommands return Firewall subcommands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{

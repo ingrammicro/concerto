@@ -18,6 +18,7 @@ const (
 	conclusionsEndpoint       = "blueprint/script_conclusions"
 )
 
+// ScriptCharacterization stores Script Characterization data
 type ScriptCharacterization struct {
 	Order      int               `json:"execution_order"`
 	UUID       string            `json:"uuid"`
@@ -25,12 +26,14 @@ type ScriptCharacterization struct {
 	Parameters map[string]string `json:"parameter_values"`
 }
 
+// Script stores Script data
 type Script struct {
 	Code            string   `json:"code"`
 	UUID            string   `json:"uuid"`
 	AttachmentPaths []string `json:"attachment_paths"`
 }
 
+// ScriptConclusion stores Script Conclusion data
 type ScriptConclusion struct {
 	UUID       string `json:"script_characterization_id"`
 	Output     string `json:"output"`
@@ -39,10 +42,12 @@ type ScriptConclusion struct {
 	FinishedAt string `json:"finished_at"`
 }
 
+// ScriptConclusionRoot stores Script Conclusion Root data
 type ScriptConclusionRoot struct {
 	Root ScriptConclusion `json:"script_conclusion"`
 }
 
+// SubCommands return Script subcommands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
@@ -83,7 +88,10 @@ func execute(phase string, scriptScharacterizationUUID string) {
 	}
 	if scriptScharacterizationUUID == "" {
 		log.Debugf("Current Script Characterization %s", phase)
-		err, data, _ := webservice.Get(fmt.Sprintf(characterizationsEndpoint, phase))
+		data, _, err := webservice.Get(fmt.Sprintf(characterizationsEndpoint, phase))
+		if err != nil {
+			log.Fatal(err)
+		}
 		log.Debugf(string(data))
 
 		err = json.Unmarshal(data, &scriptChars)
@@ -92,8 +100,12 @@ func execute(phase string, scriptScharacterizationUUID string) {
 		}
 	} else {
 		log.Debugf("%s Script Characterization %s", phase, scriptScharacterizationUUID)
-		err, data, _ := webservice.Get(fmt.Sprintf(characterizationEndpoint, scriptScharacterizationUUID))
+		data, _, err := webservice.Get(fmt.Sprintf(characterizationEndpoint, scriptScharacterizationUUID))
+		if err != nil {
+			log.Fatal(err)
+		}
 		log.Debugf(string(data))
+
 		scriptChars = make([]ScriptCharacterization, 1)
 		err = json.Unmarshal(data, &scriptChars[0])
 		if err != nil {
@@ -118,8 +130,8 @@ func execute(phase string, scriptScharacterizationUUID string) {
 			log.Fatal(err)
 		}
 
-		// Seting up Enviroment Variables
-		log.Infof("Enviroment Variables")
+		// Seting up Environment Variables
+		log.Infof("Environment Variables")
 		for index, value := range ex.Parameters {
 			os.Setenv(index, value)
 			log.Infof("\t - %s=%s", index, value)
@@ -146,7 +158,7 @@ func execute(phase string, scriptScharacterizationUUID string) {
 			log.Fatal(err)
 		}
 
-		err, _, _ = webservice.Post(conclusionsEndpoint, json)
+		_, _, err = webservice.Post(conclusionsEndpoint, json)
 		if err != nil {
 			log.Fatal(err)
 		}

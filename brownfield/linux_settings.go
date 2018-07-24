@@ -14,6 +14,7 @@ import (
 	"github.com/ingrammicro/concerto/utils/format"
 )
 
+// Settings stores Settings data
 type Settings struct {
 	SSHPublicKeys []string `json:"ssh_public_keys"`
 }

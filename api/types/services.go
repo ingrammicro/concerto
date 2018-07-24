@@ -1,5 +1,6 @@
 package types
 
+// Service stores Service data
 type Service struct {
 	ID          string   `json:"id" header:"ID"`
 	Name        string   `json:"name" header:"NAME"`

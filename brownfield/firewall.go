@@ -42,7 +42,7 @@ func startFirewallMapping(cs *utils.HTTPConcertoservice, rules []*discovery.Fire
 		err = fmt.Errorf("server responded with %d code: %s", status, string(body))
 		return
 	}
-	responseData := &fw.FirewallProfile{}
+	responseData := &fw.Profile{}
 	err = json.Unmarshal(body, &responseData)
 	if err != nil {
 		return

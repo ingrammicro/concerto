@@ -13,6 +13,7 @@ import (
 	"github.com/ingrammicro/concerto/utils/format"
 )
 
+// Polling Continuous Report Run, parameterized values
 const (
 	RetriesNumber        = 5
 	RetriesFactor        = 3

@@ -16,10 +16,11 @@ import (
 	"github.com/ingrammicro/concerto/utils/format"
 )
 
+// Polling, parameterized values
 const (
 	DefaultPollingPingTimingIntervalLong  = 30
 	DefaultPollingPingTimingIntervalShort = 5
-	ProcessIdFile                         = "imco-polling.pid"
+	ProcessIDFile                         = "imco-polling.pid"
 )
 
 // Handle signals
@@ -33,8 +34,8 @@ func handleSysSignals(cancelFunc context.CancelFunc) {
 }
 
 // Returns the full path to the tmp folder joined with pid management file name
-func getProcessIdFilePath() string {
-	return strings.Join([]string{os.TempDir(), string(os.PathSeparator), ProcessIdFile}, "")
+func getProcessIDFilePath() string {
+	return strings.Join([]string{os.TempDir(), string(os.PathSeparator), ProcessIDFile}, "")
 }
 
 // Start the polling process
@@ -42,7 +43,7 @@ func cmdStart(c *cli.Context) error {
 	log.Debug("cmdStart")
 
 	formatter := format.GetFormatter()
-	if err := utils.SetProcessIdToFile(getProcessIdFilePath()); err != nil {
+	if err := utils.SetProcessIDToFile(getProcessIDFilePath()); err != nil {
 		formatter.PrintFatal("cannot create the pid file", err)
 	}
 
@@ -73,7 +74,7 @@ func cmdStop(c *cli.Context) error {
 	log.Debug("cmdStop")
 
 	formatter := format.GetFormatter()
-	if err := utils.StopProcess(getProcessIdFilePath()); err != nil {
+	if err := utils.StopProcess(getProcessIDFilePath()); err != nil {
 		formatter.PrintFatal("cannot stop the polling process", err)
 	}
 

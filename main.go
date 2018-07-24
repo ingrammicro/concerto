@@ -33,6 +33,7 @@ import (
 	"github.com/ingrammicro/concerto/wizard/server_plans"
 )
 
+// ServerCommands stores Commands array for Server mode
 var ServerCommands = []cli.Command{
 	{
 		Name:  "firewall",
@@ -69,6 +70,7 @@ var ServerCommands = []cli.Command{
 	},
 }
 
+// BlueprintCommands stores Commands array for Blueprint functionalities
 var BlueprintCommands = []cli.Command{
 	{
 		Name:  "scripts",
@@ -93,6 +95,7 @@ var BlueprintCommands = []cli.Command{
 	},
 }
 
+// CloudCommands stores Commands array for Cloud functionalities
 var CloudCommands = []cli.Command{
 	{
 		Name:  "servers",
@@ -138,6 +141,7 @@ var CloudCommands = []cli.Command{
 	},
 }
 
+// NetCommands stores Commands array for Network functionalities
 var NetCommands = []cli.Command{
 	{
 		Name:  "firewall_profiles",
@@ -148,6 +152,7 @@ var NetCommands = []cli.Command{
 	},
 }
 
+// SettingsCommands stores Commands array for Settings functionalities
 var SettingsCommands = []cli.Command{
 	{
 		Name:  "cloud_accounts",
@@ -158,6 +163,7 @@ var SettingsCommands = []cli.Command{
 	},
 }
 
+// WizardCommands stores Commands array for Wizard functionalities
 var WizardCommands = []cli.Command{
 	{
 		Name:  "apps",
@@ -189,11 +195,12 @@ var WizardCommands = []cli.Command{
 	},
 }
 
+// ClientCommands stores Commands array for Client mode
 var ClientCommands = []cli.Command{
 	{
 		Name:      "setup",
 		ShortName: "se",
-		Usage:     "Configures and setups concerto cli enviroment",
+		Usage:     "Configures and setups concerto cli environment",
 		Subcommands: append(
 			setup.SubCommands(),
 		),
@@ -336,7 +343,11 @@ func cmdNotFound(c *cli.Context, command string) {
 func prepareFlags(c *cli.Context) error {
 
 	if c.Bool("debug") {
-		os.Setenv("DEBUG", "1")
+		err := os.Setenv("DEBUG", "1")
+		if err != nil {
+			log.Errorf("Error setting debug mode: %s", err)
+			return err
+		}
 		log.SetOutput(os.Stderr)
 		log.SetLevel(log.DebugLevel)
 	}

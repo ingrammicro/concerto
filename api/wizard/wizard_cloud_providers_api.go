@@ -25,9 +25,9 @@ func NewWizCloudProvidersService(concertoService utils.ConcertoService) (*WizClo
 	}, nil
 }
 
-// GetWizCloudProvidersList returns the list of wizCloudProviderss as an array of CloudProvider
+// GetWizCloudProviderList returns the list of wizCloudProviderss as an array of CloudProvider
 func (dm *WizCloudProvidersService) GetWizCloudProviderList(AppID string, LocID string) (wizCloudProviderss []types.CloudProvider, err error) {
-	log.Debug("GetWizCloudProvidersList")
+	log.Debug("GetWizCloudProviderList")
 
 	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v1/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID))
 	if err != nil {

@@ -106,7 +106,7 @@ func InitializeConcertoConfig(c *cli.Context) (*Config, error) {
 		return nil, err
 	}
 
-	// check if isHost. Needed to show appropiate options
+	// check if isHost. Needed to show appropriate options
 	err = cachedConfig.evaluateCertificate()
 	if err != nil {
 		return nil, err
@@ -211,11 +211,11 @@ func (config *Config) readConcertoConfig(c *cli.Context) error {
 		defer xmlFile.Close()
 		b, err := ioutil.ReadAll(xmlFile)
 		if err != nil {
-			return fmt.Errorf("Configuration File %s couldn't be read.", config.ConfFile)
+			return fmt.Errorf("Configuration File %s couldn't be read", config.ConfFile)
 		}
 
 		if err = xml.Unmarshal(b, &config); err != nil {
-			return fmt.Errorf("Configuration File %s does not have valid XML format.", config.ConfFile)
+			return fmt.Errorf("Configuration File %s does not have valid XML format", config.ConfFile)
 		}
 
 	} else {
@@ -363,7 +363,7 @@ func canPerformAdministratorTasks() bool {
 	return true
 }
 
-// readConcertoURL reads URL from CONCERTO_URL envrionment or calculates using API URL
+// readConcertoURL reads URL from CONCERTO_URL environment or calculates using API URL
 func (config *Config) readConcertoURL() error {
 
 	if config.ConcertoURL != "" {
@@ -392,7 +392,7 @@ func (config *Config) readConcertoURL() error {
 	return nil
 }
 
-// readConcertoURL reads URL from CONCERTO_URL envrionment or calculates using API URL
+// readConcertoURL reads URL from CONCERTO_URL environment or calculates using API URL
 func (config *Config) readBrownfieldToken(c *cli.Context) error {
 	if config.BrownfieldToken != "" {
 		return nil

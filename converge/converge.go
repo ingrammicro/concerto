@@ -14,20 +14,21 @@ import (
 	"github.com/ingrammicro/concerto/utils"
 )
 
+//CmbConverge Converges Host to original Blueprint
 func CmbConverge(c *cli.Context) error {
 
-	var firstBootJsonChef string
+	var firstBootJSONChef string
 
 	if runtime.GOOS == "windows" {
-		firstBootJsonChef = path.Join("c:\\chef", "first-boot.json")
+		firstBootJSONChef = path.Join("c:\\chef", "first-boot.json")
 	} else {
-		firstBootJsonChef = path.Join("/etc/chef", "first-boot.json")
+		firstBootJSONChef = path.Join("/etc/chef", "first-boot.json")
 	}
 
-	if utils.FileExists(firstBootJsonChef) {
+	if utils.FileExists(firstBootJSONChef) {
 		garbageOutput, _ := regexp.Compile("[\\[][^\\[|^\\]]*[\\]]\\s[A-Z]*:\\s")
 		output, _ := regexp.Compile("Chef Run")
-		cmd := exec.Command("chef-client", "-j", firstBootJsonChef)
+		cmd := exec.Command("chef-client", "-j", firstBootJSONChef)
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
 			log.Errorf("%s", err.Error())
@@ -65,7 +66,7 @@ func CmbConverge(c *cli.Context) error {
 			log.Errorf("%s", err.Error())
 		}
 	} else {
-		log.Fatalf("Make sure %s chef client configuration exists.", firstBootJsonChef)
+		log.Fatalf("Make sure %s chef client configuration exists.", firstBootJSONChef)
 	}
 	return nil
 }

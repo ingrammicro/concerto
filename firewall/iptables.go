@@ -36,7 +36,7 @@ func apply(policy Policy) error {
 
 	_, exitCode, _, _ = utils.RunCmd("/sbin/iptables -w -C INPUT -j CONCERTO")
 	if exitCode != 0 {
-		log.Debugln("Concerto Chain is not existant adding it to INPUT")
+		log.Debugln("Concerto Chain is not existent adding it to INPUT")
 		utils.RunCmd("/sbin/iptables -w -A INPUT -j CONCERTO")
 	}
 

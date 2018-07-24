@@ -1,6 +1,6 @@
 package types
 
-// Script holds script data
+// Script stores Script data
 type Script struct {
 	ID          string   `json:"id" header:"ID"`
 	Name        string   `json:"name" header:"NAME"`

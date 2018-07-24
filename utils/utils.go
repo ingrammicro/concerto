@@ -17,12 +17,15 @@ import (
 )
 
 // TODO remove after migration
+
+// CheckError checks if error is received
 func CheckError(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
+// Unzip uncompress the received file into the target path
 func Unzip(archive, target string) error {
 	reader, err := zip.OpenReader(archive)
 	if err != nil {
@@ -60,6 +63,7 @@ func Unzip(archive, target string) error {
 	return nil
 }
 
+// ScrapeErrorMessage returns scrapped response
 func ScrapeErrorMessage(message string, regExpression string) string {
 
 	re, err := regexp.Compile(regExpression)
@@ -76,6 +80,7 @@ func ScrapeErrorMessage(message string, regExpression string) string {
 	return message
 }
 
+// CheckReturnCode validates error code and message if needed
 func CheckReturnCode(res int, mesg []byte) {
 	if res >= 300 {
 
@@ -167,6 +172,7 @@ func CheckRequiredFlags(c *cli.Context, flags []string) {
 	}
 }
 
+// RandomString generates a random string from lowercase letters and numbers
 func RandomString(strlen int) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"

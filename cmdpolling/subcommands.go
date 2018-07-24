@@ -4,6 +4,7 @@ import (
 	"github.com/codegangsta/cli"
 )
 
+// SubCommands return Polling subcommands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
