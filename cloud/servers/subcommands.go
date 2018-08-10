@@ -174,7 +174,7 @@ func SubCommands() []cli.Command {
 		},
 		{
 			Name:   "add-label",
-			Usage:  "This action assign a single label from a single labelable resource",
+			Usage:  "This action assigns a single label from a single labelable resource",
 			Action: cmd.LabelAdd,
 			Flags: []cli.Flag{
 				cli.StringFlag{
@@ -195,7 +195,7 @@ func SubCommands() []cli.Command {
 		},
 		{
 			Name:   "remove-label",
-			Usage:  "This action de-assign a single label from a single labelable resource",
+			Usage:  "This action unassigns a single label from a single labelable resource",
 			Action: cmd.LabelRemove,
 			Flags: []cli.Flag{
 				cli.StringFlag{
