@@ -47,9 +47,9 @@ func GetLabelWithNamespaceData() *[]types.Label {
 }
 
 // GetLabeledResourcesData loads test data
-func GetLabeledResourcesData() *[]types.LabeledResources {
+func GetLabeledResourcesData() *[]types.LabeledResource {
 
-	testLabeledResources := []types.LabeledResources{
+	testLabeledResources := []types.LabeledResource{
 		{
 			ID:           "fakeID0",
 			ResourceType: "server",

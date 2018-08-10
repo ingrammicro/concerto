@@ -253,7 +253,7 @@ func CreateLabelFailJSONMocked(t *testing.T, labelIn *types.Label) *types.Label 
 }
 
 // AddLabelMocked test mocked function
-func AddLabelMocked(t *testing.T, labelIn *types.Label, labeledResourcesOut []types.LabeledResources) []types.LabeledResources {
+func AddLabelMocked(t *testing.T, labelIn *types.Label, labeledResourcesOut []types.LabeledResource) []types.LabeledResource {
 
 	assert := assert.New(t)
 
@@ -281,7 +281,7 @@ func AddLabelMocked(t *testing.T, labelIn *types.Label, labeledResourcesOut []ty
 }
 
 // AddLabelFailErrMocked test mocked function
-func AddLabelFailErrMocked(t *testing.T, labelIn *types.Label, labeledResourcesOut []types.LabeledResources) []types.LabeledResources {
+func AddLabelFailErrMocked(t *testing.T, labelIn *types.Label, labeledResourcesOut []types.LabeledResource) []types.LabeledResource {
 
 	assert := assert.New(t)
 
@@ -310,7 +310,7 @@ func AddLabelFailErrMocked(t *testing.T, labelIn *types.Label, labeledResourcesO
 }
 
 // AddLabelFailStatusMocked test mocked function
-func AddLabelFailStatusMocked(t *testing.T, labelIn *types.Label, labeledResourcesOut []types.LabeledResources) []types.LabeledResources {
+func AddLabelFailStatusMocked(t *testing.T, labelIn *types.Label, labeledResourcesOut []types.LabeledResource) []types.LabeledResource {
 
 	assert := assert.New(t)
 
@@ -339,7 +339,7 @@ func AddLabelFailStatusMocked(t *testing.T, labelIn *types.Label, labeledResourc
 }
 
 // AddLabelFailJSONMocked test mocked function
-func AddLabelFailJSONMocked(t *testing.T, labelIn *types.Label, labeledResourcesOut []types.LabeledResources) []types.LabeledResources {
+func AddLabelFailJSONMocked(t *testing.T, labelIn *types.Label, labeledResourcesOut []types.LabeledResource) []types.LabeledResource {
 
 	assert := assert.New(t)
 

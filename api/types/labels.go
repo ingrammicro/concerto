@@ -8,7 +8,7 @@ type Label struct {
 	Value        string `json:"value" header:"VALUE" show:"nolist"`
 }
 
-type LabeledResources struct {
+type LabeledResource struct {
 	ID           string `json:"id" header:"ID"`
 	ResourceType string `json:"resource_type" header:"RESOURCE_TYPE"`
 }

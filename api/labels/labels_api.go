@@ -74,7 +74,7 @@ func (lbl *LabelService) CreateLabel(labelVector *map[string]interface{}) (label
 }
 
 // AddLabel assigns a single label from a single labelable resource
-func (lbl *LabelService) AddLabel(labelVector *map[string]interface{}, labelID string) (labeledResources []types.LabeledResources, err error) {
+func (lbl *LabelService) AddLabel(labelVector *map[string]interface{}, labelID string) (labeledResources []types.LabeledResource, err error) {
 	log.Debug("AddLabel")
 
 	data, status, err := lbl.concertoService.Post(fmt.Sprintf("/v1/labels/%s/resources", labelID), labelVector)
