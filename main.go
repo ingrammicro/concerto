@@ -1,6 +1,7 @@
 package main
 
 import (
+	//"context"
 	"fmt"
 	"os"
 	"sort"
@@ -11,6 +12,7 @@ import (
 	"github.com/ingrammicro/concerto/blueprint/scripts"
 	"github.com/ingrammicro/concerto/blueprint/services"
 	"github.com/ingrammicro/concerto/blueprint/templates"
+	"github.com/ingrammicro/concerto/bootstrapping"
 	"github.com/ingrammicro/concerto/brownfield"
 	cl_prov "github.com/ingrammicro/concerto/cloud/cloud_providers"
 	"github.com/ingrammicro/concerto/cloud/generic_images"
@@ -66,6 +68,13 @@ var ServerCommands = []cli.Command{
 		Usage: "Manages polling commands",
 		Subcommands: append(
 			cmdpolling.SubCommands(),
+		),
+	},
+	{
+		Name:  "bootstrap",
+		Usage: "Manages bootstrapping commands",
+		Subcommands: append(
+			bootstrapping.SubCommands(),
 		),
 	},
 }

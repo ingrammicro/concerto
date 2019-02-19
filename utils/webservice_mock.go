@@ -34,7 +34,7 @@ func (m *MockConcertoService) Get(path string) ([]byte, int, error) {
 }
 
 // GetFile sends GET request to Concerto API and receives a file
-func (m *MockConcertoService) GetFile(path string, directoryPath string) (string, int, error) {
+func (m *MockConcertoService) GetFile(path string, directoryPath string, fileName string) (string, int, error) {
 	args := m.Called(path, directoryPath)
 	return args.String(0), args.Int(1), args.Error(2)
 }
