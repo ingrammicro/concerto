@@ -39,18 +39,25 @@ func SSHProfileList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive sshProfile data", err)
 	}
 
-	filteredResources, err := LabelFiltering(c, sshProfiles)
-	if err != nil {
-		formatter.PrintFatal("Couldn't list SSH profiles filtered by labels", err)
+	labelables := make([]*types.LabelableFields, 0, len(sshProfiles))
+	for i := range sshProfiles {
+		labelables = append(labelables, &sshProfiles[i].LabelableFields)
 	}
-	if filteredResources != nil {
-		sshProfiles = nil
-		for _, v := range *filteredResources {
-			sshProfiles = append(sshProfiles, v.(types.SSHProfile))
+
+	filteredLabelables := LabelFiltering(c, labelables)
+
+	tmp := sshProfiles
+	sshProfiles = nil
+	if len(filteredLabelables) > 0 {
+		for _, labelable := range filteredLabelables {
+			for i := range tmp {
+				if &tmp[i].LabelableFields == labelable {
+					sshProfiles = append(sshProfiles, tmp[i])
+				}
+			}
 		}
 	}
 
-	LabelAssignNamesForIDs(c, sshProfiles)
 	if err = formatter.PrintList(sshProfiles); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -68,7 +75,7 @@ func SSHProfileShow(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive sshProfile data", err)
 	}
 
-	LabelAssignNamesForIDs(c, sshProfile)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&sshProfile.LabelableFields})
 	if err = formatter.PrintItem(*sshProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -98,7 +105,7 @@ func SSHProfileCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create sshProfile", err)
 	}
 
-	LabelAssignNamesForIDs(c, sshProfile)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&sshProfile.LabelableFields})
 	if err = formatter.PrintItem(*sshProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -116,7 +123,7 @@ func SSHProfileUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update sshProfile", err)
 	}
 
-	LabelAssignNamesForIDs(c, sshProfile)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&sshProfile.LabelableFields})
 	if err = formatter.PrintItem(*sshProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

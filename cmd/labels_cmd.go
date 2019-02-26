@@ -2,12 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"reflect"
 	"regexp"
 	"strings"
-
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/labels"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
@@ -65,76 +64,51 @@ func LabelCreate(c *cli.Context) error {
 	return nil
 }
 
-// LabelFiltering subcommand function receives an interface representing a collection of labelable resources (Server, Template, ...)
+// LabelFiltering subcommand function receives a collection of references to labelable objects
 // Evaluates the matching of assigned labels with the labels requested for filtering.
-func LabelFiltering(c *cli.Context, items interface{}) (*[]interface{}, error) {
+func LabelFiltering(c *cli.Context, inItems []*types.LabelableFields) []*types.LabelableFields {
 	debugCmdFuncInfo(c)
 
-	if c.String("labels") != "" {
-		its := reflect.ValueOf(items)
-		if its.Type().Kind() != reflect.Slice {
-			return nil, fmt.Errorf("Cannot process label filtering. Slice expected")
-		}
+	labelsMapNameToID, labelsMapIDToName := LabelLoadsMapping(c)
 
-		// evaluates labels
+	var outItems []*types.LabelableFields
+	if c.String("labels") != "" {
 		_, formatter := WireUpLabel(c)
 		labelNamesIn := LabelsUnifyInputNames(c.String("labels"), formatter)
 
-		// Load Labels mapping ID <-> NAME
-		_, labelsMapIDToName := LabelLoadsMapping(c)
+		var labelIDsIn []string
+		for _, name := range labelNamesIn {
+			labelIDsIn = append(labelIDsIn, labelsMapNameToID[name])
+		}
 
-		var filteredResources []interface{}
-		var tmpLabelNames []string
-		// per resource (Server, Template, ...)
-		for i := 0; i < its.Len(); i++ {
-			tmpLabelNames = nil
-			labelIDs := reflect.ValueOf(its.Index(i).FieldByName("LabelIDs").Interface())
-			if len := labelIDs.Len(); len > 0 {
-				for j := 0; j < len; j++ {
-					tmpLabelNames = append(tmpLabelNames, labelsMapIDToName[labelIDs.Index(j).String()])
-				}
-			}
-			// checks whether received labels match for resources labels
-			if utils.Subset(labelNamesIn, tmpLabelNames) {
-				filteredResources = append(filteredResources, its.Index(i).Interface())
+		for i := 0; i < len(inItems); i++ {
+			if inItems[i].FilterByLabelIDs(labelIDsIn) {
+				// added filtered
+				outItems = append(outItems, inItems[i])
 			}
 		}
-		return &filteredResources, nil
+	} else {
+		// all included
+		outItems = inItems
 	}
-	return nil, nil
+
+	// Assigns the Labels names
+	for i := 0; i < len(outItems); i++ {
+		outItems[i].FillInLabelNames(labelsMapIDToName)
+	}
+
+	return outItems
 }
 
-// LabelAssignNamesForIDs subcommand function receives an interface representing labelable resources (Server, Template, ...)
+// LabelAssignNamesForIDs subcommand function receives a collection of references to labelables objects
 // Resolves the Labels names associated to a each resource from given Labels ids, loading object with respective labels names
-func LabelAssignNamesForIDs(c *cli.Context, items interface{}) {
+func LabelAssignNamesForIDs(c *cli.Context, items []*types.LabelableFields) {
 	debugCmdFuncInfo(c)
-
-	var tmpLabelNames []string
 
 	// Load Labels mapping ID <-> NAME
 	_, labelsMapIDToName := LabelLoadsMapping(c)
-
-	its := reflect.ValueOf(items)
-	if its.Type().Kind() == reflect.Slice { // resources collection
-		// per resource (Server, Template, ...)
-		for i := 0; i < its.Len(); i++ {
-			tmpLabelNames = nil
-			labelIDs := reflect.ValueOf(its.Index(i).FieldByName("LabelIDs").Interface())
-			if len := labelIDs.Len(); len > 0 {
-				for j := 0; j < len; j++ {
-					tmpLabelNames = append(tmpLabelNames, labelsMapIDToName[labelIDs.Index(j).String()])
-				}
-			}
-			its.Index(i).FieldByName("Labels").Set(reflect.ValueOf(tmpLabelNames))
-		}
-	} else if its.Type().Kind() == reflect.Ptr { // resource
-		labelIDs := reflect.Indirect(its).FieldByName("LabelIDs")
-		if len := labelIDs.Len(); len > 0 {
-			for j := 0; j < len; j++ {
-				tmpLabelNames = append(tmpLabelNames, labelsMapIDToName[labelIDs.Index(j).String()])
-			}
-		}
-		reflect.Indirect(its).FieldByName("Labels").Set(reflect.ValueOf(tmpLabelNames))
+	for i := 0; i < len(items); i++ {
+		items[i].FillInLabelNames(labelsMapIDToName)
 	}
 }
 
@@ -171,9 +145,9 @@ func LabelsUnifyInputNames(labelsNames string, formatter format.Formatter) []str
 	return labelNamesIn
 }
 
-// LabelResolution subcommand function retrieves a labels map(Name<->ID) based on label names received to be procesed.
+// LabelResolution subcommand function retrieves a labels map(Name<->ID) based on label names received to be processed.
 // The function evaluates the received labels names (comma separated string); with them, solves the assigned IDs for the given labels names.
-// If the label name is not avaiable in IMCO yet, it is created.
+// If the label name is not available in IMCO yet, it is created.
 func LabelResolution(c *cli.Context, labelsNames string) []string {
 	debugCmdFuncInfo(c)
 
@@ -181,7 +155,7 @@ func LabelResolution(c *cli.Context, labelsNames string) []string {
 	labelNamesIn := LabelsUnifyInputNames(labelsNames, formatter)
 	labelsMapNameToID, _ := LabelLoadsMapping(c)
 
-	// Obtain output mapped labels Name<->ID; currenlty in IMCO platform as well as if creation is required
+	// Obtain output mapped labels Name<->ID; currently in IMCO platform as well as if creation is required
 	labelsOutMap := make(map[string]string)
 	for _, name := range labelNamesIn {
 		// check if the label already exists in IMCO, creates it if it does not exist

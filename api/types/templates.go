@@ -12,8 +12,7 @@ type Template struct {
 	ServiceList             []string         `json:"service_list,omitempty" header:"SERVICE LIST" show:"nolist"`
 	ConfigurationAttributes *json.RawMessage `json:"configuration_attributes,omitempty" header:"CONFIGURATION ATTRIBUTES" show:"nolist"`
 	ResourceType            string           `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
-	LabelIDs                []string         `json:"label_ids" header:"LABEL_IDS" show:"nolist,noshow"`
-	Labels                  []string         `json:"labels" header:"LABELS"`
+	LabelableFields
 }
 
 // TemplateScript stores a templates' script info

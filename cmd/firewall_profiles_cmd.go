@@ -39,18 +39,25 @@ func FirewallProfileList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive firewallProfile data", err)
 	}
 
-	filteredResources, err := LabelFiltering(c, firewallProfiles)
-	if err != nil {
-		formatter.PrintFatal("Couldn't list firewall profiles filtered by labels", err)
+	labelables := make([]*types.LabelableFields, 0, len(firewallProfiles))
+	for i := range firewallProfiles {
+		labelables = append(labelables, &firewallProfiles[i].LabelableFields)
 	}
-	if filteredResources != nil {
-		firewallProfiles = nil
-		for _, v := range *filteredResources {
-			firewallProfiles = append(firewallProfiles, v.(types.FirewallProfile))
+
+	filteredLabelables := LabelFiltering(c, labelables)
+
+	tmp := firewallProfiles
+	firewallProfiles = nil
+	if len(filteredLabelables) > 0 {
+		for _, labelable := range filteredLabelables {
+			for i := range tmp {
+				if &tmp[i].LabelableFields == labelable {
+					firewallProfiles = append(firewallProfiles, tmp[i])
+				}
+			}
 		}
 	}
 
-	LabelAssignNamesForIDs(c, firewallProfiles)
 	if err = formatter.PrintList(firewallProfiles); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -68,7 +75,7 @@ func FirewallProfileShow(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive firewallProfile data", err)
 	}
 
-	LabelAssignNamesForIDs(c, firewallProfile)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&firewallProfile.LabelableFields})
 	if err = formatter.PrintItem(*firewallProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -103,7 +110,7 @@ func FirewallProfileCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create firewallProfile", err)
 	}
 
-	LabelAssignNamesForIDs(c, firewallProfile)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&firewallProfile.LabelableFields})
 	if err = formatter.PrintItem(*firewallProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -125,7 +132,7 @@ func FirewallProfileUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update firewallProfile", err)
 	}
 
-	LabelAssignNamesForIDs(c, firewallProfile)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&firewallProfile.LabelableFields})
 	if err = formatter.PrintItem(*firewallProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

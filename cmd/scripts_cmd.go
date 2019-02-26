@@ -41,18 +41,25 @@ func ScriptsList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive script data", err)
 	}
 
-	filteredResources, err := LabelFiltering(c, scripts)
-	if err != nil {
-		formatter.PrintFatal("Couldn't list scripts filtered by labels", err)
+	labelables := make([]*types.LabelableFields, 0, len(scripts))
+	for i := range scripts {
+		labelables = append(labelables, &scripts[i].LabelableFields)
 	}
-	if filteredResources != nil {
-		scripts = nil
-		for _, v := range *filteredResources {
-			scripts = append(scripts, v.(types.Script))
+
+	filteredLabelables := LabelFiltering(c, labelables)
+
+	tmp := scripts
+	scripts = nil
+	if len(filteredLabelables) > 0 {
+		for _, labelable := range filteredLabelables {
+			for i := range tmp {
+				if &tmp[i].LabelableFields == labelable {
+					scripts = append(scripts, tmp[i])
+				}
+			}
 		}
 	}
 
-	LabelAssignNamesForIDs(c, scripts)
 	if err = formatter.PrintList(scripts); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -70,7 +77,7 @@ func ScriptShow(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive script data", err)
 	}
 
-	LabelAssignNamesForIDs(c, script)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&script.LabelableFields})
 	if err = formatter.PrintItem(*script); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -101,7 +108,7 @@ func ScriptCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create script", err)
 	}
 
-	LabelAssignNamesForIDs(c, script)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&script.LabelableFields})
 	if err = formatter.PrintItem(*script); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -119,7 +126,7 @@ func ScriptUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update script", err)
 	}
 
-	LabelAssignNamesForIDs(c, script)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&script.LabelableFields})
 	if err = formatter.PrintItem(*script); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

@@ -39,18 +39,25 @@ func TemplateList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive template data", err)
 	}
 
-	filteredResources, err := LabelFiltering(c, templates)
-	if err != nil {
-		formatter.PrintFatal("Couldn't list templates filtered by labels", err)
+	labelables := make([]*types.LabelableFields, 0, len(templates))
+	for i := range templates {
+		labelables = append(labelables, &templates[i].LabelableFields)
 	}
-	if filteredResources != nil {
-		templates = nil
-		for _, v := range *filteredResources {
-			templates = append(templates, v.(types.Template))
+
+	filteredLabelables := LabelFiltering(c, labelables)
+
+	tmp := templates
+	templates = nil
+	if len(filteredLabelables) > 0 {
+		for _, labelable := range filteredLabelables {
+			for i := range tmp {
+				if &tmp[i].LabelableFields == labelable {
+					templates = append(templates, tmp[i])
+				}
+			}
 		}
 	}
 
-	LabelAssignNamesForIDs(c, templates)
 	if err = formatter.PrintList(templates); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -68,7 +75,7 @@ func TemplateShow(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive template data", err)
 	}
 
-	LabelAssignNamesForIDs(c, template)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&template.LabelableFields})
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -104,7 +111,7 @@ func TemplateCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create template", err)
 	}
 
-	LabelAssignNamesForIDs(c, template)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&template.LabelableFields})
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -129,7 +136,7 @@ func TemplateUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update template", err)
 	}
 
-	LabelAssignNamesForIDs(c, template)
+	LabelAssignNamesForIDs(c, []*types.LabelableFields{&template.LabelableFields})
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

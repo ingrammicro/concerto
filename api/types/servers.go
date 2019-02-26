@@ -1,19 +1,18 @@
 package types
 
 type Server struct {
-	ID                string   `json:"id" header:"ID"`
-	Name              string   `json:"name" header:"NAME"`
-	Fqdn              string   `json:"fqdn" header:"FQDN"`
-	State             string   `json:"state" header:"STATE"`
-	PublicIP          string   `json:"public_ip" header:"PUBLIC_IP"`
-	TemplateID        string   `json:"template_id" header:"TEMPLATE_ID"`
-	ServerPlanID      string   `json:"server_plan_id" header:"SERVER_PLAN_ID"`
-	CloudAccountID    string   `json:"cloud_account_id" header:"CLOUD_ACCOUNT_ID"`
-	SSHProfileID      string   `json:"ssh_profile_id" header:"SSH_PROFILE_ID"`
-	FirewallProfileID string   `json:"firewall_profile_id" header:"FIREWALL_PROFILE_ID"`
-	ResourceType      string   `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
-	LabelIDs          []string `json:"label_ids" header:"LABEL_IDS" show:"nolist,noshow"`
-	Labels            []string `json:"labels" header:"LABELS"`
+	ID                string `json:"id" header:"ID"`
+	Name              string `json:"name" header:"NAME"`
+	Fqdn              string `json:"fqdn" header:"FQDN"`
+	State             string `json:"state" header:"STATE"`
+	PublicIP          string `json:"public_ip" header:"PUBLIC_IP"`
+	TemplateID        string `json:"template_id" header:"TEMPLATE_ID"`
+	ServerPlanID      string `json:"server_plan_id" header:"SERVER_PLAN_ID"`
+	CloudAccountID    string `json:"cloud_account_id" header:"CLOUD_ACCOUNT_ID"`
+	SSHProfileID      string `json:"ssh_profile_id" header:"SSH_PROFILE_ID"`
+	FirewallProfileID string `json:"firewall_profile_id" header:"FIREWALL_PROFILE_ID"`
+	ResourceType      string `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
+	LabelableFields
 }
 
 type Dns struct {
