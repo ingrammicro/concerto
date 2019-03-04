@@ -265,6 +265,13 @@ func downloadPolicyFiles(bootstrappingSvc *blueprint.BootstrappingService, bsPro
 func cleanObsoletePolicyFiles(directoryPath string, bsProcess *bootstrappingProcess) error {
 	log.Debug("cleanObsoletePolicyFiles")
 
+	// evaluates working folder
+	deletableFiles, err := ioutil.ReadDir(directoryPath)
+	if err != nil {
+		// TODO should it be an error?
+		log.Warn("Cannot read directory: ", directoryPath, err)
+	}
+
 	// builds an array of currently processable files at this looping time
 	currentlyProcessableFiles := []string{bsProcess.attributes.fileName} // saved attributes file name
 	for _, bsPolicyFile := range bsProcess.policyFiles {
@@ -272,15 +279,7 @@ func cleanObsoletePolicyFiles(directoryPath string, bsProcess *bootstrappingProc
 		currentlyProcessableFiles = append(currentlyProcessableFiles, bsPolicyFile.name)     // Uncompressed folder names
 	}
 
-	// evaluates working folder
-	files, err := ioutil.ReadDir(directoryPath)
-	if err != nil {
-		// TODO should it be an error?
-		log.Warn("Cannot read directory: ", directoryPath, err)
-	}
-
-	// removes files not regarding to any of current policy files
-	for _, f := range files {
+	for _, f := range deletableFiles {
 		if !utils.Contains(currentlyProcessableFiles, f.Name()) {
 			log.Debug("Removing: ", f.Name())
 			if err := os.RemoveAll(strings.Join([]string{directoryPath, string(os.PathSeparator), f.Name()}, "")); err != nil {
@@ -289,6 +288,7 @@ func cleanObsoletePolicyFiles(directoryPath string, bsProcess *bootstrappingProc
 			}
 		}
 	}
+
 	return nil // TODO should it be managed as error?
 }
 
