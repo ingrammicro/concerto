@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"regexp"
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
@@ -20,7 +19,7 @@ type ConcertoService interface {
 	Put(path string, payload *map[string]interface{}) ([]byte, int, error)
 	Delete(path string) ([]byte, int, error)
 	Get(path string) ([]byte, int, error)
-	GetFile(path string, directoryPath string, fileName string) (string, int, error)
+	GetFile(path string, filePath string) (string, int, error)
 }
 
 // HTTPConcertoservice web service manager.
@@ -198,7 +197,7 @@ func (hcs *HTTPConcertoservice) Get(path string) ([]byte, int, error) {
 }
 
 // GetFile sends GET request to Concerto API and receives a file
-func (hcs *HTTPConcertoservice) GetFile(path string, directoryPath string, fileName string) (string, int, error) {
+func (hcs *HTTPConcertoservice) GetFile(path string, filePath string) (string, int, error) {
 
 	url, _, err := hcs.prepareCall(path, nil)
 	if err != nil {
@@ -214,19 +213,7 @@ func (hcs *HTTPConcertoservice) GetFile(path string, directoryPath string, fileN
 	defer response.Body.Close()
 	log.Debugf("Status code:%d message:%s", response.StatusCode, response.Status)
 
-	realFileName := ""
-	if directoryPath != "" && fileName == "" {
-		r, err := regexp.Compile("filename=\\\"([^\\\"]*){1}\\\"")
-		if err != nil {
-			return "", response.StatusCode, err
-		}
-
-		// TODO check errors
-		fileName = r.FindStringSubmatch(response.Header.Get("Content-Disposition"))[1]
-		realFileName = fmt.Sprintf("%s/%s", directoryPath, fileName)
-	} else {
-		realFileName = fileName
-	}
+	realFileName := filePath
 
 	output, err := os.Create(realFileName)
 	if err != nil {
