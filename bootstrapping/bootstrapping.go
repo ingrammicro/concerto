@@ -25,17 +25,17 @@ import (
 
 const (
 	//DefaultTimingInterval Default period for looping
-	DefaultTimingInterval     = 600 // 600 seconds = 10 minutes
-	DefaultRandomMaxThreshold = 6   // minutes
-	DefaultThresholdLines     = 10
-	ProcessIDFile             = "imco-bootstrapping.pid"
-	RetriesNumber             = 5
+	DefaultTimingInterval = 600 // 600 seconds = 10 minutes
+	DefaultTimingSplay    = 360 // seconds
+	DefaultThresholdLines = 10
+	ProcessIDFile         = "imco-bootstrapping.pid"
+	RetriesNumber         = 5
 )
 
 type bootstrappingProcess struct {
 	startedAt      string
 	finishedAt     string
-	policyFiles    []policyFile
+	policyFiles    []*policyFile
 	attributes     attributes
 	thresholdLines int
 	directoryPath  string
@@ -60,8 +60,9 @@ type policyFile struct {
 	downloaded   bool
 	uncompressed bool
 	executed     bool
-	logged       bool
 }
+
+var allPolicyFilesSuccessfullyApplied bool
 
 // Handle signals
 func handleSysSignals(cancelFunc context.CancelFunc) {
@@ -94,27 +95,12 @@ func start(c *cli.Context) error {
 		formatter.PrintFatal("cannot create the pid file", err)
 	}
 
-	timingInterval := c.Int64("time")
-	if !(timingInterval > 0) {
-		timingInterval = DefaultTimingInterval
-	}
-	// Adds a random value to the given timing interval!
-	// Sleep for a configured amount of time plus a random amount of time (10 minutes plus 0 to 5 minutes, for instance)
-	timingInterval = timingInterval + int64(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(DefaultRandomMaxThreshold)*60)
-	log.Debug("time interval: ", timingInterval)
-
-	thresholdLines := c.Int("lines")
-	if !(thresholdLines > 0) {
-		thresholdLines = DefaultThresholdLines
-	}
-	log.Debug("routine lines threshold: ", thresholdLines)
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	go handleSysSignals(cancel)
 
-	bootstrappingRoutine(ctx, c, timingInterval, thresholdLines)
+	bootstrappingRoutine(ctx, c)
 
 	return nil
 }
@@ -133,40 +119,49 @@ func stop(c *cli.Context) error {
 }
 
 // Main bootstrapping background routine
-func bootstrappingRoutine(ctx context.Context, c *cli.Context, timingInterval int64, thresholdLines int) {
+func bootstrappingRoutine(ctx context.Context, c *cli.Context) {
 	log.Debug("bootstrappingRoutine")
 
-	bootstrappingSvc, formatter := cmd.WireUpBootstrapping(c)
-	commandProcessed := make(chan bool, 1)
-	isRunningCommandRoutine := false
-	currentTicker := time.NewTicker(time.Duration(timingInterval) * time.Second)
-	for {
-		if !isRunningCommandRoutine {
-			isRunningCommandRoutine = true
-			go processingCommandRoutine(bootstrappingSvc, formatter, thresholdLines, commandProcessed)
-		}
+	timingInterval := c.Int64("interval")
+	if !(timingInterval > 0) {
+		timingInterval = DefaultTimingInterval
+	}
 
-		log.Debug("waiting...", currentTicker)
+	timingSplay := c.Int64("splay")
+	if !(timingSplay > 0) {
+		timingSplay = DefaultTimingSplay
+	}
+
+	thresholdLines := c.Int("lines")
+	if !(thresholdLines > 0) {
+		thresholdLines = DefaultThresholdLines
+	}
+	log.Debug("routine lines threshold: ", thresholdLines)
+
+	bootstrappingSvc, formatter := cmd.WireUpBootstrapping(c)
+	for {
+		applyPolicyfiles(bootstrappingSvc, formatter, thresholdLines)
+
+		// Sleep for a configured amount of time plus a random amount of time (10 minutes plus 0 to 5 minutes, for instance)
+		ticker := time.NewTicker(time.Duration(timingInterval + int64(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(int(timingSplay)))) * time.Second)
 
 		select {
-		case <-commandProcessed:
-			isRunningCommandRoutine = false
-			currentTicker.Stop()
-			currentTicker = time.NewTicker(time.Duration(timingInterval) * time.Second)
-			log.Debug("command processed")
-		case <-currentTicker.C:
+		case <- ticker.C:
 			log.Debug("ticker")
-		case <-ctx.Done():
+		case <- ctx.Done():
 			log.Debug(ctx.Err())
 			log.Debug("closing bootstrapping")
-			return
+		}
+		ticker.Stop()
+		if ctx.Err() != nil {
+			break
 		}
 	}
 }
 
 // Subsidiary routine for commands processing
-func processingCommandRoutine(bootstrappingSvc *blueprint.BootstrappingService, formatter format.Formatter, thresholdLines int, commandProcessed chan bool) {
-	log.Debug("processingCommandRoutine")
+func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatter format.Formatter, thresholdLines int) {
+	log.Debug("applyPolicyfiles")
 
 	// Inquire about desired configuration changes to be applied by querying the `GET /blueprint/configuration` endpoint. This will provide a JSON response with the desired configuration changes
 	bsConfiguration, status, err := bootstrappingSvc.GetBootstrappingConfiguration()
@@ -201,9 +196,10 @@ func processingCommandRoutine(bootstrappingSvc *blueprint.BootstrappingService, 
 			// Inform the platform of applied changes via a `PUT /blueprint/applied_configuration` request with a JSON payload similar to
 			log.Debug("reporting applied policy files")
 			reportAppliedConfiguration(bootstrappingSvc, bsProcess)
+
+			completeBootstrappingSequence(bsProcess)
 		}
 	}
-	commandProcessed <- true
 }
 
 func initializePrototype(bsConfiguration *types.BootstrappingConfiguration, bsProcess *bootstrappingProcess) {
@@ -237,7 +233,7 @@ func initializePrototype(bsConfiguration *types.BootstrappingConfiguration, bsPr
 		policyFile.tarballPath = strings.Join([]string{bsProcess.directoryPath, policyFile.fileName}, "")
 		policyFile.folderPath = strings.Join([]string{bsProcess.directoryPath, policyFile.name}, "")
 
-		bsProcess.policyFiles = append(bsProcess.policyFiles, *policyFile)
+		bsProcess.policyFiles = append(bsProcess.policyFiles, policyFile)
 	}
 	log.Debug(bsProcess)
 }
@@ -306,20 +302,10 @@ func saveAttributes(bsProcess *bootstrappingProcess) {
 	}
 }
 
-//For every policy file, apply them doing the following:
-//	* Extract the tarball to a temporal work directory DIR
-//	* Run  `cd DIR; chef-client -z -j path/to/attrs-<attribute_revision_id>.json` while sending the stderr and stdout in bunches of 10 lines to the
-// platform via `POST /blueprint/bootstrap_logs` (this resource is a copy of POST /command_polling/bootstrap_logs used in the command_polling command).
-// If the command returns with a non-zero value, stop applying policy files and continue with the next step.
-
-// TODO On the first iteration that applies successfully all policy files (runs all `chef-client -z` commands obtaining 0 return codes) only, run the boot scripts for the server by executing the `scripts boot` sub-command (as an external process).
-// TODO Just a POC, an starging point. To be completed...
+// processPolicyFiles applies for each policy the required chef commands, reporting in bunches of N lines
 func processPolicyFiles(bootstrappingSvc *blueprint.BootstrappingService, bsProcess *bootstrappingProcess) {
 	log.Debug("processPolicyFiles")
 
-	// Run  `cd DIR; chef-client -z -j path/to/attrs-<attribute_revision_id>.json` while sending the stderr and stdout in bunches of
-	// 10 lines to the platform via `POST /blueprint/bootstrap_logs` (this resource is a copy of POST /command_polling/bootstrap_logs used in
-	// the command_polling command). If the command returns with a non-zero value, stop applying policyfiles and continue with the next step.
 	for _, bsPolicyFile := range bsProcess.policyFiles {
 		command := strings.Join([]string{"cd", bsPolicyFile.folderPath}, " ")
 		if runtime.GOOS == "windows" {
@@ -327,11 +313,6 @@ func processPolicyFiles(bootstrappingSvc *blueprint.BootstrappingService, bsProc
 		}
 		command = strings.Join([]string{command, strings.Join([]string{"chef-client -z -j", bsProcess.attributes.filePath}, " ")}, ";")
 		log.Debug(command)
-
-		// ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
-		// TODO ** TO BE REMOVED** !!! for debugging purposes, overriding real command
-		command = "ping -c 100 8.8.8.8"
-		// ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
 
 		// Custom method for chunks processing
 		fn := func(chunk string) error {
@@ -369,12 +350,16 @@ func processPolicyFiles(bootstrappingSvc *blueprint.BootstrappingService, bsProc
 		}
 
 		log.Info("completed: ", exitCode)
+
+		bsPolicyFile.executed = exitCode == 0 // policy successfully applied
+		//If the command returns with a non-zero value, stop applying policyfiles and continue with the next step.
+		if !bsPolicyFile.executed {
+			break
+		}
 	}
 }
 
-// reportAppliedConfiguration Inform the platform of applied changes via a `PUT /blueprint/applied_configuration` request
-//The `policy file_revision_ids` field should have revision ids set only for those policy files successfully applied on the iteration, that is,
-// it should not have any values set for those failing and those skipped because of a previous one failing.
+// reportAppliedConfiguration Inform the platform of applied changes
 func reportAppliedConfiguration(bootstrappingSvc *blueprint.BootstrappingService, bsProcess *bootstrappingProcess) {
 	log.Debug("reportAppliedConfiguration")
 
@@ -399,5 +384,29 @@ func reportAppliedConfiguration(bootstrappingSvc *blueprint.BootstrappingService
 	err := bootstrappingSvc.ReportBootstrappingAppliedConfiguration(&payload)
 	if err != nil {
 		log.Errorf("cannot report applied configuration [%s]", err)
+	}
+}
+
+// completeBootstrappingSequence evaluates if the first iteration of policies was completed; If case, execute the "scripts boot" command.
+func completeBootstrappingSequence(bsProcess *bootstrappingProcess) {
+	log.Debug("completeBootstrappingSequence")
+
+	if !allPolicyFilesSuccessfullyApplied {
+		checked := true
+		for _, bsPolicyFile := range bsProcess.policyFiles {
+			if !bsPolicyFile.executed {
+				checked = false
+				break
+			}
+		}
+		allPolicyFilesSuccessfullyApplied = checked
+
+		if allPolicyFilesSuccessfullyApplied {
+			log.Debug("run the boot scripts")
+			//run the boot scripts for the server by executing the scripts boot sub-command (as an external process).
+			if output, exit, _, _ := utils.RunCmd( strings.Join([]string{os.Args[0], "scripts", "boot"}, " ")); exit != 0 {
+				log.Errorf("Error executing scripts boot: (%d) %s", exit, output)
+			}
+		}
 	}
 }

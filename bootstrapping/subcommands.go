@@ -12,9 +12,14 @@ func SubCommands() []cli.Command {
 			Action: start,
 			Flags: []cli.Flag{
 				cli.Int64Flag{
-					Name:  "time, t",
-					Usage: "Bootstrapping time interval (seconds)",
+					Name:  "interval, i",
+					Usage: "The frequency (in seconds) at which the bootstrapping runs",
 					Value: DefaultTimingInterval,
+				},
+				cli.Int64Flag{
+					Name:  "splay, s",
+					Usage: "A random number between zero and splay that is added to interval (seconds)",
+					Value: DefaultTimingSplay,
 				},
 				cli.IntFlag{
 					Name:  "lines, l",
