@@ -80,7 +80,7 @@ func (bs *BootstrappingService) ReportBootstrappingLog(BootstrappingContinuousRe
 }
 
 
-//
+// DownloadPolicyFile gets a file from given url saving file into given file path
 func (bs *BootstrappingService) DownloadPolicyFile(url string, filePath string) (realFileName string, status int, err error) {
 	log.Debug("DownloadPolicyFile")
 

@@ -13,8 +13,13 @@ func SubCommands() []cli.Command {
 			Flags: []cli.Flag{
 				cli.Int64Flag{
 					Name:  "time, t",
-					Usage: "bootstrapping time interval (seconds)",
+					Usage: "Bootstrapping time interval (seconds)",
 					Value: DefaultTimingInterval,
+				},
+				cli.IntFlag{
+					Name:  "lines, l",
+					Usage: "Maximum lines threshold per response chunk",
+					Value: DefaultThresholdLines,
 				},
 			},
 		},
