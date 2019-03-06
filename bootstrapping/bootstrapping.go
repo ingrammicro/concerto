@@ -30,7 +30,7 @@ const (
 	DefaultTimingInterval = 600 // 600 seconds = 10 minutes
 	DefaultTimingSplay    = 360 // seconds
 	DefaultThresholdLines = 10
-	ProcessIDFile         = "imco-bootstrapping.pid"
+	ProcessLockFile       = "imco-bootstrapping.lock"
 	RetriesNumber         = 5
 )
 
@@ -48,9 +48,44 @@ type attributes struct {
 	rawData    *json.RawMessage
 }
 
+var allPolicyfilesSuccessfullyApplied bool
+
 type policyfile types.BootstrappingPolicyfile
 
-var allPolicyfilesSuccessfullyApplied bool
+func (pf policyfile) Name() string {
+	return strings.Join([]string{pf.ID, "-", pf.RevisionID}, "")
+}
+
+func (pf *policyfile) FileName() string {
+	return strings.Join([]string{pf.Name(), "tgz"}, ".")
+}
+
+func (pf *policyfile) QueryURL() (string, error) {
+	if pf.DownloadURL == "" {
+		return "", fmt.Errorf("obtaining URL query: empty download URL")
+	}
+	url, err := url.Parse(pf.DownloadURL)
+	if err != nil {
+		return "", fmt.Errorf("parsing URL to extract query: %v", err)
+	}
+	return fmt.Sprintf("%s?%s", url.Path, url.RawQuery), nil
+}
+
+func (pf *policyfile) TarballPath(dir string) string {
+	return filepath.Join(dir, pf.FileName())
+}
+
+func (pf *policyfile) Path(dir string) string {
+	return filepath.Join(dir, pf.Name())
+}
+
+func (a *attributes) FileName() string {
+	return fmt.Sprintf("attrs-%s.json", a.revisionID)
+}
+
+func (a *attributes) FilePath(dir string) string {
+	return filepath.Join(dir, a.FileName())
+}
 
 // Handle signals
 func handleSysSignals(cancelFunc context.CancelFunc) {
@@ -62,9 +97,9 @@ func handleSysSignals(cancelFunc context.CancelFunc) {
 	cancelFunc()
 }
 
-// Returns the full path to the tmp directory joined with pid management file name
-func getProcessIDFilePath() string {
-	return strings.Join([]string{os.TempDir(), string(os.PathSeparator), ProcessIDFile}, "")
+// Returns the full path to the tmp directory joined with lock management file name
+func getProcessLockFilePath() string {
+	return filepath.Join(os.TempDir(), string(os.PathSeparator), ProcessLockFile)
 }
 
 // Returns the full path to the tmp directory
@@ -88,17 +123,13 @@ func generateWorkspaceDir() (string, error) {
 func start(c *cli.Context) error {
 	log.Debug("start")
 
-	// TODO: replace /etc/imco with a directory taken from configuration/that depends on OS
-	lockFile, err := singleinstance.CreateLockFile(filepath.Join("/etc/imco", "imco-bootstrapping.lock"))
+	lockFile, err := singleinstance.CreateLockFile(getProcessLockFilePath())
 	if err != nil {
 		return err
 	}
 	defer lockFile.Close()
 
 	formatter := format.GetFormatter()
-	if err := utils.SetProcessIdToFile(getProcessIDFilePath()); err != nil {
-		formatter.PrintFatal("cannot create the pid file", err)
-	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -150,7 +181,7 @@ func stop(c *cli.Context) error {
 	log.Debug("cmdStop")
 
 	formatter := format.GetFormatter()
-	if err := utils.StopProcess(getProcessIDFilePath()); err != nil {
+	if err := utils.StopProcess(getProcessLockFilePath()); err != nil {
 		formatter.PrintFatal("cannot stop the bootstrapping process", err)
 	}
 
@@ -266,7 +297,7 @@ func downloadPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsPro
 
 // cleanObsoletePolicyfiles cleans off any tarball that is no longer needed.
 func cleanObsoletePolicyfiles(bsProcess *bootstrappingProcess) error {
-	log.Debug("cleanObsoletePolicyFiles")
+	log.Debug("cleanObsoletePolicyfiles")
 
 	// evaluates working folder
 	deletableFiles, err := ioutil.ReadDir(bsProcess.directoryPath)
@@ -389,39 +420,4 @@ func completeBootstrappingSequence(bsProcess *bootstrappingProcess) error {
 		allPolicyfilesSuccessfullyApplied = true
 	}
 	return nil
-}
-
-func (pf policyfile) Name() string {
-	return strings.Join([]string{pf.ID, "-", pf.RevisionID}, "")
-}
-
-func (pf *policyfile) FileName() string {
-	return strings.Join([]string{pf.Name(), "tgz"}, ".")
-}
-
-func (pf *policyfile) QueryURL() (string, error) {
-	if pf.DownloadURL == "" {
-		return "", fmt.Errorf("obtaining URL query: empty download URL")
-	}
-	url, err := url.Parse(pf.DownloadURL)
-	if err != nil {
-		return "", fmt.Errorf("parsing URL to extract query: %v", err)
-	}
-	return fmt.Sprintf("%s?%s", url.Path, url.RawQuery), nil
-}
-
-func (pf *policyfile) TarballPath(dir string) string {
-	return filepath.Join(dir, pf.FileName())
-}
-
-func (pf *policyfile) Path(dir string) string {
-	return filepath.Join(dir, pf.Name())
-}
-
-func (a *attributes) FileName() string {
-	return fmt.Sprintf("attrs-%s.json", a.revisionID)
-}
-
-func (a *attributes) FilePath(dir string) string {
-	return filepath.Join(dir, a.FileName())
 }
