@@ -204,6 +204,7 @@ func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatte
 	}
 	dir, err := generateWorkspaceDir()
 	if err != nil {
+		formatter.PrintError("couldn't generated workspace directory", err)
 		return err
 	}
 	bsProcess := &bootstrappingProcess{
@@ -216,25 +217,25 @@ func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatte
 	// proto structures
 	err = initializePrototype(bsConfiguration, bsProcess)
 	if err != nil {
-		log.Debug(err)
+		formatter.PrintError("couldn't initialize prototype", err)
 		return err
 	}
 	// For every policyfile, ensure its tarball (downloadable through their download_url) has been downloaded to the server ...
 	err = downloadPolicyfiles(bootstrappingSvc, bsProcess)
 	if err != nil {
-		log.Debug(err)
+		formatter.PrintError("couldn't download policy files", err)
 		return err
 	}
 	//... and clean off any tarball that is no longer needed.
 	err = cleanObsoletePolicyfiles(bsProcess)
 	if err != nil {
-		log.Debug(err)
+		formatter.PrintError("couldn't clean obsolete policy files", err)
 		return err
 	}
 	// Store the attributes as JSON in a file with name `attrs-<attribute_revision_id>.json`
 	err = saveAttributes(bsProcess)
 	if err != nil {
-		log.Debug(err)
+		formatter.PrintError("couldn't save attributes for policy files", err)
 		return err
 	}
 	// Process tarballs policies
@@ -246,10 +247,11 @@ func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatte
 	log.Debug("reporting applied policy files")
 	reportErr := reportAppliedConfiguration(bootstrappingSvc, bsProcess)
 	if reportErr != nil {
-		log.Debug(err)
+		formatter.PrintError("couldn't report applied status for policy files", err)
 		return err
 	}
 	if err != nil {
+		formatter.PrintError("couldn't process policy files", err)
 		return err
 	}
 	return completeBootstrappingSequence(bsProcess)
