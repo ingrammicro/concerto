@@ -16,6 +16,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	singleinstance "github.com/allan-simon/go-singleinstance"
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/blueprint"
 	"github.com/ingrammicro/concerto/api/types"
@@ -67,15 +68,32 @@ func getProcessIDFilePath() string {
 }
 
 // Returns the full path to the tmp directory
-func getProcessingFolderFilePath() string {
-	dir := strings.Join([]string{os.TempDir(), string(os.PathSeparator), "imco", string(os.PathSeparator)}, "")
-	os.Mkdir(dir, 0777)
-	return dir
+func generateWorkspaceDir() (string, error) {
+	dir := filepath.Join(os.TempDir(), "imco")
+	dirInfo, err := os.Stat(dir)
+	if err != nil {
+		err := os.Mkdir(dir, 0777)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		if !dirInfo.Mode().IsDir() {
+			return "", fmt.Errorf("%s exists but is not a directory", dir)
+		}
+	}
+	return dir, nil
 }
 
 // Start the bootstrapping process
 func start(c *cli.Context) error {
 	log.Debug("start")
+
+	// TODO: replace /etc/imco with a directory taken from configuration/that depends on OS
+	lockFile, err := singleinstance.CreateLockFile(filepath.Join("/etc/imco", "imco-bootstrapping.lock"))
+	if err != nil {
+		return err
+	}
+	defer lockFile.Close()
 
 	formatter := format.GetFormatter()
 	if err := utils.SetProcessIdToFile(getProcessIDFilePath()); err != nil {
@@ -147,16 +165,20 @@ func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatte
 	// Inquire about desired configuration changes to be applied by querying the `GET /blueprint/configuration` endpoint. This will provide a JSON response with the desired configuration changes
 	bsConfiguration, status, err := bootstrappingSvc.GetBootstrappingConfiguration()
 	if err == nil && status != 200 {
-		err = fmt.Errorf("received non-ok %d response")
+		err = fmt.Errorf("received non-ok %d response", status)
 	}
 	if err != nil {
 		formatter.PrintError("couldn't receive bootstrapping data", err)
 		return err
 	}
+	dir, err := generateWorkspaceDir()
+	if err != nil {
+		return err
+	}
 	bsProcess := &bootstrappingProcess{
 		startedAt:                    time.Now().UTC(),
 		thresholdLines:               thresholdLines,
-		directoryPath:                getProcessingFolderFilePath(),
+		directoryPath:                dir,
 		appliedPolicyfileRevisionIDs: make(map[string]string),
 	}
 
