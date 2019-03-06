@@ -185,26 +185,31 @@ func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatte
 	// proto structures
 	err = initializePrototype(bsConfiguration, bsProcess)
 	if err != nil {
+		log.Debug(err)
 		return err
 	}
 	// For every policyfile, ensure its tarball (downloadable through their download_url) has been downloaded to the server ...
 	err = downloadPolicyfiles(bootstrappingSvc, bsProcess)
 	if err != nil {
+		log.Debug(err)
 		return err
 	}
 	//... and clean off any tarball that is no longer needed.
 	err = cleanObsoletePolicyfiles(bsProcess)
 	if err != nil {
+		log.Debug(err)
 		return err
 	}
 	// Store the attributes as JSON in a file with name `attrs-<attribute_revision_id>.json`
 	err = saveAttributes(bsProcess)
 	if err != nil {
+		log.Debug(err)
 		return err
 	}
 	// Process tarballs policies
 	err = processPolicyfiles(bootstrappingSvc, bsProcess)
 	if err != nil {
+		log.Debug(err)
 		return err
 	}
 	// Finishing time
@@ -214,6 +219,7 @@ func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatte
 	log.Debug("reporting applied policy files")
 	err = reportAppliedConfiguration(bootstrappingSvc, bsProcess)
 	if err != nil {
+		log.Debug(err)
 		return err
 	}
 	return completeBootstrappingSequence(bsProcess)
@@ -261,35 +267,28 @@ func downloadPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsPro
 
 // cleanObsoletePolicyfiles cleans off any tarball that is no longer needed.
 func cleanObsoletePolicyfiles(bsProcess *bootstrappingProcess) error {
-	log.Debug("cleanObsoletePolicyfiles")
+	log.Debug("cleanObsoletePolicyFiles")
 
-	// evaluates working directory
+	// evaluates working folder
 	deletableFiles, err := ioutil.ReadDir(bsProcess.directoryPath)
 	if err != nil {
 		return err
 	}
 
-	// removes from deletableFiles those files we are going to use
-	for _, bsPolicyfile := range bsProcess.policyfiles {
-		for i, file := range deletableFiles {
-			if file.Name() == bsPolicyfile.FileName() {
-				deletableFiles[i] = deletableFiles[len(deletableFiles)-1]
-				deletableFiles = deletableFiles[:len(deletableFiles)-1]
-				break
-			}
-			if file.Name() == bsPolicyfile.Name() {
-				deletableFiles[i] = deletableFiles[len(deletableFiles)-1]
-				deletableFiles = deletableFiles[:len(deletableFiles)-1]
-				break
-			}
-		}
+	// builds an array of currently processable files at this looping time
+	currentlyProcessableFiles := []string{bsProcess.attributes.FileName()} // saved attributes file name
+	for _, bsPolicyFile := range bsProcess.policyfiles {
+		currentlyProcessableFiles = append(currentlyProcessableFiles, bsPolicyFile.FileName()) // Downloaded tgz file names
+		currentlyProcessableFiles = append(currentlyProcessableFiles, bsPolicyFile.Name())     // Uncompressed folder names
 	}
 
 	// removes from deletableFiles array the policy files currently applied
 	for _, f := range deletableFiles {
-		log.Debug("removing: ", f.Name())
-		if err := os.RemoveAll(strings.Join([]string{bsProcess.directoryPath, string(os.PathSeparator), f.Name()}, "")); err != nil {
-			return err
+		if !utils.Contains(currentlyProcessableFiles, f.Name()) {
+			log.Debug("removing: ", f.Name())
+			if err := os.RemoveAll(strings.Join([]string{bsProcess.directoryPath, string(os.PathSeparator), f.Name()}, "")); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -314,11 +313,11 @@ func processPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsProc
 	log.Debug("processPolicyfiles")
 
 	for _, bsPolicyfile := range bsProcess.policyfiles {
-		command := strings.Join([]string{"cd", bsPolicyfile.Path(bsProcess.directoryPath)}, " ")
+		command := fmt.Sprintf("cd %s", bsPolicyfile.Path(bsProcess.directoryPath))
 		if runtime.GOOS == "windows" {
-			command = strings.Join([]string{command, "SET \"PATH=%PATH%;C:\\ruby\\bin;C:\\opscode\\chef\\bin;C:\\opscode\\chef\\embedded\\bin\""}, ";")
+			command = fmt.Sprintf("%s\nSET \"PATH=%PATH%;C:\\ruby\\bin;C:\\opscode\\chef\\bin;C:\\opscode\\chef\\embedded\\bin\"", command)
 		}
-		command = strings.Join([]string{command, strings.Join([]string{"chef-client -z -j", bsProcess.attributes.FilePath(bsProcess.directoryPath)}, " ")}, ";")
+		command = fmt.Sprintf("%s\nchef-client -z -j %s", command, bsProcess.attributes.FilePath(bsProcess.directoryPath))
 		log.Debug(command)
 
 		// Custom method for chunks processing
@@ -409,7 +408,7 @@ func (pf *policyfile) QueryURL() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("parsing URL to extract query: %v", err)
 	}
-	return strings.Join([]string{url.Path[1:], url.RawQuery}, "?"), nil
+	return fmt.Sprintf("%s?%s", url.Path, url.RawQuery), nil
 }
 
 func (pf *policyfile) TarballPath(dir string) string {
