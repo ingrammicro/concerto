@@ -3,16 +3,17 @@ package bootstrapping
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/url"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"syscall"
 	"time"
-	"math/rand"
-	"fmt"
-	"runtime"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
@@ -33,36 +34,22 @@ const (
 )
 
 type bootstrappingProcess struct {
-	startedAt      string
-	finishedAt     string
-	policyFiles    []*policyFile
-	attributes     attributes
-	thresholdLines int
-	directoryPath  string
+	startedAt                    time.Time
+	finishedAt                   time.Time
+	policyfiles                  []policyfile
+	attributes                   attributes
+	thresholdLines               int
+	directoryPath                string
+	appliedPolicyfileRevisionIDs map[string]string
 }
 type attributes struct {
 	revisionID string
-	fileName   string
-	filePath   string
 	rawData    *json.RawMessage
 }
 
-type policyFile struct {
-	id          string
-	revisionID  string
-	name        string
-	fileName    string
-	tarballURL  string
-	queryURL    string
-	tarballPath string
-	folderPath  string
+type policyfile types.BootstrappingPolicyfile
 
-	downloaded   bool
-	uncompressed bool
-	executed     bool
-}
-
-var allPolicyFilesSuccessfullyApplied bool
+var allPolicyfilesSuccessfullyApplied bool
 
 // Handle signals
 func handleSysSignals(cancelFunc context.CancelFunc) {
@@ -74,12 +61,12 @@ func handleSysSignals(cancelFunc context.CancelFunc) {
 	cancelFunc()
 }
 
-// Returns the full path to the tmp folder joined with pid management file name
+// Returns the full path to the tmp directory joined with pid management file name
 func getProcessIDFilePath() string {
 	return strings.Join([]string{os.TempDir(), string(os.PathSeparator), ProcessIDFile}, "")
 }
 
-// Returns the full path to the tmp folder
+// Returns the full path to the tmp directory
 func getProcessingFolderFilePath() string {
 	dir := strings.Join([]string{os.TempDir(), string(os.PathSeparator), "imco", string(os.PathSeparator)}, "")
 	os.Mkdir(dir, 0777)
@@ -100,7 +87,42 @@ func start(c *cli.Context) error {
 
 	go handleSysSignals(cancel)
 
-	bootstrappingRoutine(ctx, c)
+	timingInterval := c.Int64("interval")
+	if !(timingInterval > 0) {
+		timingInterval = DefaultTimingInterval
+	}
+
+	timingSplay := c.Int64("splay")
+	if !(timingSplay > 0) {
+		timingSplay = DefaultTimingSplay
+	}
+
+	thresholdLines := c.Int("lines")
+	if !(thresholdLines > 0) {
+		thresholdLines = DefaultThresholdLines
+	}
+	log.Debug("routine lines threshold: ", thresholdLines)
+
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	bootstrappingSvc, formatter := cmd.WireUpBootstrapping(c)
+	for {
+		applyPolicyfiles(bootstrappingSvc, formatter, thresholdLines)
+
+		// Sleep for a configured amount of time plus a random amount of time (10 minutes plus 0 to 5 minutes, for instance)
+		ticker := time.NewTicker(time.Duration(timingInterval+int64(r.Intn(int(timingSplay)))) * time.Second)
+
+		select {
+		case <-ticker.C:
+			log.Debug("ticker")
+		case <-ctx.Done():
+			log.Debug(ctx.Err())
+			log.Debug("closing bootstrapping")
+		}
+		ticker.Stop()
+		if ctx.Err() != nil {
+			break
+		}
+	}
 
 	return nil
 }
@@ -118,200 +140,163 @@ func stop(c *cli.Context) error {
 	return nil
 }
 
-// Main bootstrapping background routine
-func bootstrappingRoutine(ctx context.Context, c *cli.Context) {
-	log.Debug("bootstrappingRoutine")
-
-	timingInterval := c.Int64("interval")
-	if !(timingInterval > 0) {
-		timingInterval = DefaultTimingInterval
-	}
-
-	timingSplay := c.Int64("splay")
-	if !(timingSplay > 0) {
-		timingSplay = DefaultTimingSplay
-	}
-
-	thresholdLines := c.Int("lines")
-	if !(thresholdLines > 0) {
-		thresholdLines = DefaultThresholdLines
-	}
-	log.Debug("routine lines threshold: ", thresholdLines)
-
-	bootstrappingSvc, formatter := cmd.WireUpBootstrapping(c)
-	for {
-		applyPolicyfiles(bootstrappingSvc, formatter, thresholdLines)
-
-		// Sleep for a configured amount of time plus a random amount of time (10 minutes plus 0 to 5 minutes, for instance)
-		ticker := time.NewTicker(time.Duration(timingInterval + int64(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(int(timingSplay)))) * time.Second)
-
-		select {
-		case <- ticker.C:
-			log.Debug("ticker")
-		case <- ctx.Done():
-			log.Debug(ctx.Err())
-			log.Debug("closing bootstrapping")
-		}
-		ticker.Stop()
-		if ctx.Err() != nil {
-			break
-		}
-	}
-}
-
 // Subsidiary routine for commands processing
-func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatter format.Formatter, thresholdLines int) {
+func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatter format.Formatter, thresholdLines int) error {
 	log.Debug("applyPolicyfiles")
 
 	// Inquire about desired configuration changes to be applied by querying the `GET /blueprint/configuration` endpoint. This will provide a JSON response with the desired configuration changes
 	bsConfiguration, status, err := bootstrappingSvc.GetBootstrappingConfiguration()
+	if err == nil && status != 200 {
+		err = fmt.Errorf("received non-ok %d response")
+	}
 	if err != nil {
 		formatter.PrintError("couldn't receive bootstrapping data", err)
-	} else {
-		if status == 200 {
-			bsProcess := new(bootstrappingProcess)
-			// Starting time
-			bsProcess.startedAt = time.Now().UTC().String()
-			bsProcess.thresholdLines = thresholdLines
-			bsProcess.directoryPath = getProcessingFolderFilePath()
-
-			// proto structures
-			initializePrototype(bsConfiguration, bsProcess)
-
-			// For every policyFile, ensure its tarball (downloadable through their download_url) has been downloaded to the server ...
-			downloadPolicyFiles(bootstrappingSvc, bsProcess)
-
-			//... and clean off any tarball that is no longer needed.
-			cleanObsoletePolicyFiles(bsProcess)
-
-			// Store the attributes as JSON in a file with name `attrs-<attribute_revision_id>.json`
-			saveAttributes(bsProcess)
-
-			// Process tarballs policies
-			processPolicyFiles(bootstrappingSvc, bsProcess)
-
-			// Finishing time
-			bsProcess.finishedAt = time.Now().UTC().String()
-
-			// Inform the platform of applied changes via a `PUT /blueprint/applied_configuration` request with a JSON payload similar to
-			log.Debug("reporting applied policy files")
-			reportAppliedConfiguration(bootstrappingSvc, bsProcess)
-
-			completeBootstrappingSequence(bsProcess)
-		}
+		return err
 	}
+	bsProcess := &bootstrappingProcess{
+		startedAt:                    time.Now().UTC(),
+		thresholdLines:               thresholdLines,
+		directoryPath:                getProcessingFolderFilePath(),
+		appliedPolicyfileRevisionIDs: make(map[string]string),
+	}
+
+	// proto structures
+	err = initializePrototype(bsConfiguration, bsProcess)
+	if err != nil {
+		return err
+	}
+	// For every policyfile, ensure its tarball (downloadable through their download_url) has been downloaded to the server ...
+	err = downloadPolicyfiles(bootstrappingSvc, bsProcess)
+	if err != nil {
+		return err
+	}
+	//... and clean off any tarball that is no longer needed.
+	err = cleanObsoletePolicyfiles(bsProcess)
+	if err != nil {
+		return err
+	}
+	// Store the attributes as JSON in a file with name `attrs-<attribute_revision_id>.json`
+	err = saveAttributes(bsProcess)
+	if err != nil {
+		return err
+	}
+	// Process tarballs policies
+	err = processPolicyfiles(bootstrappingSvc, bsProcess)
+	if err != nil {
+		return err
+	}
+	// Finishing time
+	bsProcess.finishedAt = time.Now().UTC()
+
+	// Inform the platform of applied changes via a `PUT /blueprint/applied_configuration` request with a JSON payload similar to
+	log.Debug("reporting applied policy files")
+	err = reportAppliedConfiguration(bootstrappingSvc, bsProcess)
+	if err != nil {
+		return err
+	}
+	return completeBootstrappingSequence(bsProcess)
 }
 
-func initializePrototype(bsConfiguration *types.BootstrappingConfiguration, bsProcess *bootstrappingProcess) {
+func initializePrototype(bsConfiguration *types.BootstrappingConfiguration, bsProcess *bootstrappingProcess) error {
 	log.Debug("initializePrototype")
 
 	// Attributes
 	bsProcess.attributes.revisionID = bsConfiguration.AttributeRevisionID
-	bsProcess.attributes.fileName = strings.Join([]string{"attrs-", bsProcess.attributes.revisionID, ".json"}, "")
-	bsProcess.attributes.filePath = strings.Join([]string{bsProcess.directoryPath, bsProcess.attributes.fileName}, "")
 	bsProcess.attributes.rawData = bsConfiguration.Attributes
 
 	// Policies
-	for _, bsConfPolicyFile := range bsConfiguration.PolicyFiles {
-		policyFile := new(policyFile)
-		policyFile.id = bsConfPolicyFile.ID
-		policyFile.revisionID = bsConfPolicyFile.RevisionID
-
-		policyFile.name = strings.Join([]string{policyFile.id, "-", policyFile.revisionID}, "")
-		policyFile.fileName = strings.Join([]string{policyFile.name, ".tgz"}, "")
-		policyFile.tarballURL = bsConfPolicyFile.DownloadURL
-
-		if policyFile.tarballURL != "" {
-			url, err := url.Parse(policyFile.tarballURL)
-			if err != nil {
-				log.Errorf("cannot parse the tarball policy file url: %s [%s]", policyFile.tarballURL, err)
-			} else {
-				policyFile.queryURL = strings.Join([]string{url.Path[1:], url.RawQuery}, "?")
-			}
-		}
-
-		policyFile.tarballPath = strings.Join([]string{bsProcess.directoryPath, policyFile.fileName}, "")
-		policyFile.folderPath = strings.Join([]string{bsProcess.directoryPath, policyFile.name}, "")
-
-		bsProcess.policyFiles = append(bsProcess.policyFiles, policyFile)
+	for _, bsConfPolicyfile := range bsConfiguration.Policyfiles {
+		bsProcess.policyfiles = append(bsProcess.policyfiles, policyfile(bsConfPolicyfile))
 	}
 	log.Debug(bsProcess)
+	return nil
 }
 
-// downloadPolicyFiles For every policy file, ensure its tarball (downloadable through their download_url) has been downloaded to the server ...
-func downloadPolicyFiles(bootstrappingSvc *blueprint.BootstrappingService, bsProcess *bootstrappingProcess) {
-	log.Debug("downloadPolicyFiles")
+// downloadPolicyfiles For every policy file, ensure its tarball (downloadable through their download_url) has been downloaded to the server ...
+func downloadPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsProcess *bootstrappingProcess) error {
+	log.Debug("downloadPolicyfiles")
 
-	for _, bsPolicyFile := range bsProcess.policyFiles {
-		log.Debug("downloading: ", bsPolicyFile.tarballURL)
-		_, status, err := bootstrappingSvc.DownloadPolicyFile(bsPolicyFile.queryURL, bsPolicyFile.tarballPath)
+	for _, bsPolicyfile := range bsProcess.policyfiles {
+		tarballPath := bsPolicyfile.TarballPath(bsProcess.directoryPath)
+		log.Debug("downloading: ", tarballPath)
+		queryURL, err := bsPolicyfile.QueryURL()
 		if err != nil {
-			log.Errorf("cannot download the tarball policy file: %s [%s]", bsPolicyFile.tarballURL, err)
+			return err
 		}
-		if status == 200 {
-			bsPolicyFile.downloaded = true
-			log.Debug("decompressing: ", bsPolicyFile.tarballPath)
-			if err = utils.Untar(bsPolicyFile.tarballPath, bsPolicyFile.folderPath); err != nil {
-				log.Errorf("cannot decompress the tarball policy file: %s [%s]", bsPolicyFile.tarballPath, err)
-			}
-			bsPolicyFile.uncompressed = true
-		} else {
-			log.Errorf("cannot download the policy file: %v", bsPolicyFile.fileName)
+		_, status, err := bootstrappingSvc.DownloadPolicyfile(queryURL, tarballPath)
+		if err == nil && status != 200 {
+			err = fmt.Errorf("obtained non-ok response when downloading policyfile %s", queryURL)
+		}
+		if err != nil {
+			return err
+		}
+		if err = utils.Untar(tarballPath, bsPolicyfile.Path(bsProcess.directoryPath)); err != nil {
+			return err
 		}
 	}
+	return nil
 }
 
-// cleanObsoletePolicyFiles cleans off any tarball that is no longer needed.
-func cleanObsoletePolicyFiles(bsProcess *bootstrappingProcess) {
-	log.Debug("cleanObsoletePolicyFiles")
+// cleanObsoletePolicyfiles cleans off any tarball that is no longer needed.
+func cleanObsoletePolicyfiles(bsProcess *bootstrappingProcess) error {
+	log.Debug("cleanObsoletePolicyfiles")
 
-	// evaluates working folder
+	// evaluates working directory
 	deletableFiles, err := ioutil.ReadDir(bsProcess.directoryPath)
 	if err != nil {
-		log.Errorf("cannot read directory: %s [%s]", bsProcess.directoryPath, err)
+		return err
 	}
 
-	// builds an array of currently processable files at this looping time
-	currentlyProcessableFiles := []string{bsProcess.attributes.fileName} // saved attributes file name
-	for _, bsPolicyFile := range bsProcess.policyFiles {
-		currentlyProcessableFiles = append(currentlyProcessableFiles, bsPolicyFile.fileName) // Downloaded tgz file names
-		currentlyProcessableFiles = append(currentlyProcessableFiles, bsPolicyFile.name)     // Uncompressed folder names
+	// removes from deletableFiles those files we are going to use
+	for _, bsPolicyfile := range bsProcess.policyfiles {
+		for i, file := range deletableFiles {
+			if file.Name() == bsPolicyfile.FileName() {
+				deletableFiles[i] = deletableFiles[len(deletableFiles)-1]
+				deletableFiles = deletableFiles[:len(deletableFiles)-1]
+				break
+			}
+			if file.Name() == bsPolicyfile.Name() {
+				deletableFiles[i] = deletableFiles[len(deletableFiles)-1]
+				deletableFiles = deletableFiles[:len(deletableFiles)-1]
+				break
+			}
+		}
 	}
 
 	// removes from deletableFiles array the policy files currently applied
 	for _, f := range deletableFiles {
-		if !utils.Contains(currentlyProcessableFiles, f.Name()) {
-			log.Debug("removing: ", f.Name())
-			if err := os.RemoveAll(strings.Join([]string{bsProcess.directoryPath, string(os.PathSeparator), f.Name()}, "")); err != nil {
-				log.Errorf("cannot remove: %s [%s]", f.Name(), err)
-			}
+		log.Debug("removing: ", f.Name())
+		if err := os.RemoveAll(strings.Join([]string{bsProcess.directoryPath, string(os.PathSeparator), f.Name()}, "")); err != nil {
+			return err
 		}
 	}
+	return nil
 }
 
 // saveAttributes stores the attributes as JSON in a file with name `attrs-<attribute_revision_id>.json`
-func saveAttributes(bsProcess *bootstrappingProcess) {
+func saveAttributes(bsProcess *bootstrappingProcess) error {
 	log.Debug("saveAttributes")
 
 	attrs, err := json.Marshal(bsProcess.attributes.rawData)
 	if err != nil {
-		log.Errorf("cannot process policies attributes: %s [%s]", bsProcess.attributes.revisionID, err)
+		return err
 	}
-	if err := ioutil.WriteFile(bsProcess.attributes.filePath, attrs, 0600); err != nil {
-		log.Errorf("cannot save policies attributes: %s [%s]", bsProcess.attributes.revisionID, err)
+	if err := ioutil.WriteFile(bsProcess.attributes.FilePath(bsProcess.directoryPath), attrs, 0600); err != nil {
+		return err
 	}
+	return nil
 }
 
-// processPolicyFiles applies for each policy the required chef commands, reporting in bunches of N lines
-func processPolicyFiles(bootstrappingSvc *blueprint.BootstrappingService, bsProcess *bootstrappingProcess) {
-	log.Debug("processPolicyFiles")
+// processPolicyfiles applies for each policy the required chef commands, reporting in bunches of N lines
+func processPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsProcess *bootstrappingProcess) error {
+	log.Debug("processPolicyfiles")
 
-	for _, bsPolicyFile := range bsProcess.policyFiles {
-		command := strings.Join([]string{"cd", bsPolicyFile.folderPath}, " ")
+	for _, bsPolicyfile := range bsProcess.policyfiles {
+		command := strings.Join([]string{"cd", bsPolicyfile.Path(bsProcess.directoryPath)}, " ")
 		if runtime.GOOS == "windows" {
 			command = strings.Join([]string{command, "SET \"PATH=%PATH%;C:\\ruby\\bin;C:\\opscode\\chef\\bin;C:\\opscode\\chef\\embedded\\bin\""}, ";")
 		}
-		command = strings.Join([]string{command, strings.Join([]string{"chef-client -z -j", bsProcess.attributes.filePath}, " ")}, ";")
+		command = strings.Join([]string{command, strings.Join([]string{"chef-client -z -j", bsProcess.attributes.FilePath(bsProcess.directoryPath)}, " ")}, ";")
 		log.Debug(command)
 
 		// Custom method for chunks processing
@@ -345,68 +330,78 @@ func processPolicyFiles(bootstrappingSvc *blueprint.BootstrappingService, bsProc
 		}
 
 		exitCode, err := utils.RunContinuousCmd(fn, command, -1, bsProcess.thresholdLines)
+		if err == nil && exitCode != 0 {
+			err = fmt.Errorf("policyfile application exited with %d code", exitCode)
+		}
 		if err != nil {
-			log.Errorf("cannot process continuous report command [%s]", err)
+			return err
 		}
 
 		log.Info("completed: ", exitCode)
-
-		bsPolicyFile.executed = exitCode == 0 // policy successfully applied
-		//If the command returns with a non-zero value, stop applying policyfiles and continue with the next step.
-		if !bsPolicyFile.executed {
-			break
-		}
+		bsProcess.appliedPolicyfileRevisionIDs[bsPolicyfile.ID] = bsPolicyfile.RevisionID
 	}
+	return nil
 }
 
 // reportAppliedConfiguration Inform the platform of applied changes
-func reportAppliedConfiguration(bootstrappingSvc *blueprint.BootstrappingService, bsProcess *bootstrappingProcess) {
+func reportAppliedConfiguration(bootstrappingSvc *blueprint.BootstrappingService, bsProcess *bootstrappingProcess) error {
 	log.Debug("reportAppliedConfiguration")
-
-	var policyFileRevisionIDs string
-	for _, bsPolicyFile := range bsProcess.policyFiles {
-		if bsPolicyFile.executed { // only for policies successfully applied
-			appliedPolicyMap := map[string]string{bsPolicyFile.id: bsPolicyFile.revisionID}
-			appliedPolicyBytes, err := json.Marshal(appliedPolicyMap)
-			if err != nil {
-				log.Errorf("corrupted candidates policies map [%s]", err)
-			}
-			policyFileRevisionIDs = strings.Join([]string{policyFileRevisionIDs, string(appliedPolicyBytes)}, "")
-		}
-	}
 
 	payload := map[string]interface{}{
 		"started_at":              bsProcess.startedAt,
 		"finished_at":             bsProcess.finishedAt,
-		"policyfile_revision_ids": policyFileRevisionIDs,
+		"policyfile_revision_ids": bsProcess.appliedPolicyfileRevisionIDs,
 		"attribute_revision_id":   bsProcess.attributes.revisionID,
 	}
-	err := bootstrappingSvc.ReportBootstrappingAppliedConfiguration(&payload)
-	if err != nil {
-		log.Errorf("cannot report applied configuration [%s]", err)
-	}
+	return bootstrappingSvc.ReportBootstrappingAppliedConfiguration(&payload)
 }
 
 // completeBootstrappingSequence evaluates if the first iteration of policies was completed; If case, execute the "scripts boot" command.
-func completeBootstrappingSequence(bsProcess *bootstrappingProcess) {
+func completeBootstrappingSequence(bsProcess *bootstrappingProcess) error {
 	log.Debug("completeBootstrappingSequence")
 
-	if !allPolicyFilesSuccessfullyApplied {
-		checked := true
-		for _, bsPolicyFile := range bsProcess.policyFiles {
-			if !bsPolicyFile.executed {
-				checked = false
-				break
-			}
+	if !allPolicyfilesSuccessfullyApplied {
+		log.Debug("run the boot scripts")
+		//run the boot scripts for the server by executing the scripts boot sub-command (as an external process).
+		if output, exit, _, _ := utils.RunCmd(strings.Join([]string{os.Args[0], "scripts", "boot"}, " ")); exit != 0 {
+			return fmt.Errorf("boot scripts run failed with exit code %d and following output: %s", exit, output)
 		}
-		allPolicyFilesSuccessfullyApplied = checked
-
-		if allPolicyFilesSuccessfullyApplied {
-			log.Debug("run the boot scripts")
-			//run the boot scripts for the server by executing the scripts boot sub-command (as an external process).
-			if output, exit, _, _ := utils.RunCmd( strings.Join([]string{os.Args[0], "scripts", "boot"}, " ")); exit != 0 {
-				log.Errorf("Error executing scripts boot: (%d) %s", exit, output)
-			}
-		}
+		allPolicyfilesSuccessfullyApplied = true
 	}
+	return nil
+}
+
+func (pf policyfile) Name() string {
+	return strings.Join([]string{pf.ID, "-", pf.RevisionID}, "")
+}
+
+func (pf *policyfile) FileName() string {
+	return strings.Join([]string{pf.Name(), "tgz"}, ".")
+}
+
+func (pf *policyfile) QueryURL() (string, error) {
+	if pf.DownloadURL == "" {
+		return "", fmt.Errorf("obtaining URL query: empty download URL")
+	}
+	url, err := url.Parse(pf.DownloadURL)
+	if err != nil {
+		return "", fmt.Errorf("parsing URL to extract query: %v", err)
+	}
+	return strings.Join([]string{url.Path[1:], url.RawQuery}, "?"), nil
+}
+
+func (pf *policyfile) TarballPath(dir string) string {
+	return filepath.Join(dir, pf.FileName())
+}
+
+func (pf *policyfile) Path(dir string) string {
+	return filepath.Join(dir, pf.Name())
+}
+
+func (a *attributes) FileName() string {
+	return fmt.Sprintf("attrs-%s.json", a.revisionID)
+}
+
+func (a *attributes) FilePath(dir string) string {
+	return filepath.Join(dir, a.FileName())
 }
