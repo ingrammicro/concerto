@@ -208,18 +208,17 @@ func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatte
 	}
 	// Process tarballs policies
 	err = processPolicyfiles(bootstrappingSvc, bsProcess)
-	if err != nil {
-		log.Debug(err)
-		return err
-	}
 	// Finishing time
 	bsProcess.finishedAt = time.Now().UTC()
 
 	// Inform the platform of applied changes via a `PUT /blueprint/applied_configuration` request with a JSON payload similar to
 	log.Debug("reporting applied policy files")
-	err = reportAppliedConfiguration(bootstrappingSvc, bsProcess)
-	if err != nil {
+	reportErr := reportAppliedConfiguration(bootstrappingSvc, bsProcess)
+	if reportErr != nil {
 		log.Debug(err)
+		return err
+	}
+	if err != nil {
 		return err
 	}
 	return completeBootstrappingSequence(bsProcess)
@@ -286,7 +285,7 @@ func cleanObsoletePolicyfiles(bsProcess *bootstrappingProcess) error {
 	for _, f := range deletableFiles {
 		if !utils.Contains(currentlyProcessableFiles, f.Name()) {
 			log.Debug("removing: ", f.Name())
-			if err := os.RemoveAll(strings.Join([]string{bsProcess.directoryPath, string(os.PathSeparator), f.Name()}, "")); err != nil {
+			if err := os.RemoveAll(filepath.Join(bsProcess.directoryPath, f.Name())); err != nil {
 				return err
 			}
 		}
