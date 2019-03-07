@@ -97,33 +97,41 @@ func handleSysSignals(cancelFunc context.CancelFunc) {
 	cancelFunc()
 }
 
-// Returns the full path to the tmp directory joined with lock management file name
-func getProcessLockFilePath() string {
-	return filepath.Join(os.TempDir(), string(os.PathSeparator), ProcessLockFile)
+// Returns the full path to the tmp directory joined with pid management file name
+func lockFilePath() string {
+	return filepath.Join(workspaceDir(), ProcessLockFile)
+}
+
+func workspaceDir() string {
+	return filepath.Join(os.TempDir(), "imco")
 }
 
 // Returns the full path to the tmp directory
-func generateWorkspaceDir() (string, error) {
-	dir := filepath.Join(os.TempDir(), "imco")
+func generateWorkspaceDir() error {
+	dir := workspaceDir()
 	dirInfo, err := os.Stat(dir)
 	if err != nil {
 		err := os.Mkdir(dir, 0777)
 		if err != nil {
-			return "", err
+			return err
 		}
 	} else {
 		if !dirInfo.Mode().IsDir() {
-			return "", fmt.Errorf("%s exists but is not a directory", dir)
+			return fmt.Errorf("%s exists but is not a directory", dir)
 		}
 	}
-	return dir, nil
+	return nil
 }
 
 // Start the bootstrapping process
 func start(c *cli.Context) error {
 	log.Debug("start")
 
-	lockFile, err := singleinstance.CreateLockFile(getProcessLockFilePath())
+	err := generateWorkspaceDir()
+	if err != nil {
+		return err
+	}
+	lockFile, err := singleinstance.CreateLockFile(lockFilePath())
 	if err != nil {
 		return err
 	}
@@ -181,7 +189,7 @@ func stop(c *cli.Context) error {
 	log.Debug("cmdStop")
 
 	formatter := format.GetFormatter()
-	if err := utils.StopProcess(getProcessLockFilePath()); err != nil {
+	if err := utils.StopProcess(lockFilePath()); err != nil {
 		formatter.PrintFatal("cannot stop the bootstrapping process", err)
 	}
 
@@ -202,7 +210,7 @@ func applyPolicyfiles(ctx context.Context, bootstrappingSvc *blueprint.Bootstrap
 		formatter.PrintError("couldn't receive bootstrapping data", err)
 		return err
 	}
-	dir, err := generateWorkspaceDir()
+	err = generateWorkspaceDir()
 	if err != nil {
 		formatter.PrintError("couldn't generated workspace directory", err)
 		return err
@@ -210,7 +218,7 @@ func applyPolicyfiles(ctx context.Context, bootstrappingSvc *blueprint.Bootstrap
 	bsProcess := &bootstrappingProcess{
 		startedAt:                    time.Now().UTC(),
 		thresholdLines:               thresholdLines,
-		directoryPath:                dir,
+		directoryPath:                workspaceDir(),
 		appliedPolicyfileRevisionIDs: make(map[string]string),
 	}
 
