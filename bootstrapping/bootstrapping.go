@@ -155,7 +155,7 @@ func start(c *cli.Context) error {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	bootstrappingSvc, formatter := cmd.WireUpBootstrapping(c)
 	for {
-		applyPolicyfiles(bootstrappingSvc, formatter, thresholdLines)
+		applyPolicyfiles(ctx, bootstrappingSvc, formatter, thresholdLines)
 
 		// Sleep for a configured amount of time plus a random amount of time (10 minutes plus 0 to 5 minutes, for instance)
 		ticker := time.NewTicker(time.Duration(timingInterval+int64(r.Intn(int(timingSplay)))) * time.Second)
@@ -190,7 +190,7 @@ func stop(c *cli.Context) error {
 }
 
 // Subsidiary routine for commands processing
-func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatter format.Formatter, thresholdLines int) error {
+func applyPolicyfiles(ctx context.Context, bootstrappingSvc *blueprint.BootstrappingService, formatter format.Formatter, thresholdLines int) error {
 	log.Debug("applyPolicyfiles")
 
 	// Inquire about desired configuration changes to be applied by querying the `GET /blueprint/configuration` endpoint. This will provide a JSON response with the desired configuration changes
@@ -221,7 +221,7 @@ func applyPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, formatte
 		return err
 	}
 	// For every policyfile, ensure its tarball (downloadable through their download_url) has been downloaded to the server ...
-	err = downloadPolicyfiles(bootstrappingSvc, bsProcess)
+	err = downloadPolicyfiles(ctx, bootstrappingSvc, bsProcess)
 	if err != nil {
 		formatter.PrintError("couldn't download policy files", err)
 		return err
@@ -273,7 +273,7 @@ func initializePrototype(bsConfiguration *types.BootstrappingConfiguration, bsPr
 }
 
 // downloadPolicyfiles For every policy file, ensure its tarball (downloadable through their download_url) has been downloaded to the server ...
-func downloadPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsProcess *bootstrappingProcess) error {
+func downloadPolicyfiles(ctx context.Context, bootstrappingSvc *blueprint.BootstrappingService, bsProcess *bootstrappingProcess) error {
 	log.Debug("downloadPolicyfiles")
 
 	for _, bsPolicyfile := range bsProcess.policyfiles {
@@ -290,7 +290,7 @@ func downloadPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsPro
 		if err != nil {
 			return err
 		}
-		if err = utils.Untar(tarballPath, bsPolicyfile.Path(bsProcess.directoryPath)); err != nil {
+		if err = utils.Untar(ctx, tarballPath, bsPolicyfile.Path(bsProcess.directoryPath)); err != nil {
 			return err
 		}
 	}

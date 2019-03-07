@@ -2,18 +2,18 @@ package utils
 
 import (
 	"archive/zip"
+	"context"
 	"fmt"
 	"io"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
 
 	"github.com/codegangsta/cli"
-
-	"os/exec"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -62,14 +62,13 @@ func Unzip(archive, target string) error {
 	return nil
 }
 
-// TODO using cmd := exec.CommandContext(ctx,...
-func Untar(source, target string) error {
+func Untar(ctx context.Context, source, target string) error {
 
 	if err := os.MkdirAll(target, 0600); err != nil {
 		return err
 	}
 
-	cmd := exec.Command("tar", "-xzf", source, "-C", target)
+	cmd := exec.CommandContext(ctx, "tar", "-xzf", source, "-C", target)
 	if err := cmd.Run(); err != nil {
 		return err
 	}
