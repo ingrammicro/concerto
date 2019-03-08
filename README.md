@@ -61,7 +61,7 @@ Extract the contents with your zip compressor of choice and continue using the s
 
 ### Configuration
 
-IMCO CLI configuration will usually be located in your personal folder under `.concerto`. If you are using root, CLI will look for contiguration files under `/etc/imco`.
+IMCO CLI configuration will usually be located in your personal folder under `.concerto`. If you are using root, CLI will look for contiguration files under `/etc/cio`.
 We will assume that you are not root, so create the folder and drop the certificates to this location:
 
 ```bash
@@ -184,7 +184,7 @@ If you got an error executing IMCO CLI:
 - check that your internet connection can reach `clients.{IMCO_DOMAIN}`
 - make sure that your firewall lets you access to <https://clients.{IMCO_DOMAIN}:886>
 - check that `client.xml` is pointing to the correct certificates location
-- if `concerto` executes but only shows server commands, you are probably trying to use `concerto` from a commissioned server, and the configuration is being read from `/etc/imco`. If that's the case, you should leave `concerto` configuration untouched so that server commands are available for our remote management.
+- if `concerto` executes but only shows server commands, you are probably trying to use `concerto` from a commissioned server, and the configuration is being read from `/etc/cio`. If that's the case, you should leave `concerto` configuration untouched so that server commands are available for our remote management.
 
 ## Usage
 

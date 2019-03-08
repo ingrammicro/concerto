@@ -20,18 +20,18 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
-const windowsServerConfigFile = "c:\\imco\\client.xml"
-const nixServerConfigFile = "/etc/imco/client.xml"
+const windowsServerConfigFile = "c:\\cio\\client.xml"
+const nixServerConfigFile = "/etc/cio/client.xml"
 const defaultConcertoEndpoint = "https://clients.concerto.io:886/"
 
-const windowsServerLogFilePath = "c:\\imco\\log\\concerto-client.log"
-const windowsServerCaCertPath = "c:\\imco\\client_ssl\\ca_cert.pem"
-const windowsServerCertPath = "c:\\imco\\client_ssl\\cert.pem"
-const windowsServerKeyPath = "c:\\imco\\client_ssl\\private\\key.pem"
+const windowsServerLogFilePath = "c:\\cio\\log\\concerto-client.log"
+const windowsServerCaCertPath = "c:\\cio\\client_ssl\\ca_cert.pem"
+const windowsServerCertPath = "c:\\cio\\client_ssl\\cert.pem"
+const windowsServerKeyPath = "c:\\cio\\client_ssl\\private\\key.pem"
 const nixServerLogFilePath = "/var/log/concerto-client.log"
-const nixServerCaCertPath = "/etc/imco/client_ssl/ca_cert.pem"
-const nixServerCertPath = "/etc/imco/client_ssl/cert.pem"
-const nixServerKeyPath = "/etc/imco/client_ssl/private/key.pem"
+const nixServerCaCertPath = "/etc/cio/client_ssl/ca_cert.pem"
+const nixServerCertPath = "/etc/cio/client_ssl/cert.pem"
+const nixServerKeyPath = "/etc/cio/client_ssl/private/key.pem"
 
 // Config stores configuration file contents
 type Config struct {

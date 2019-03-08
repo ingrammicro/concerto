@@ -19,7 +19,7 @@ import (
 const (
 	DefaultPollingPingTimingIntervalLong  = 30
 	DefaultPollingPingTimingIntervalShort = 5
-	ProcessIdFile                         = "imco-polling.pid"
+	ProcessIdFile                         = "cio-polling.pid"
 )
 
 // Handle signals

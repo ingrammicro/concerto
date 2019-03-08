@@ -30,7 +30,7 @@ const (
 	DefaultTimingInterval = 600 // 600 seconds = 10 minutes
 	DefaultTimingSplay    = 360 // seconds
 	DefaultThresholdLines = 10
-	ProcessLockFile       = "imco-bootstrapping.lock"
+	ProcessLockFile       = "cio-bootstrapping.lock"
 	RetriesNumber         = 5
 )
 
@@ -103,7 +103,7 @@ func lockFilePath() string {
 }
 
 func workspaceDir() string {
-	return filepath.Join(os.TempDir(), "imco")
+	return filepath.Join(os.TempDir(), "cio")
 }
 
 // Returns the full path to the tmp directory
@@ -258,11 +258,7 @@ func applyPolicyfiles(ctx context.Context, bootstrappingSvc *blueprint.Bootstrap
 		formatter.PrintError("couldn't report applied status for policy files", err)
 		return err
 	}
-	if err != nil {
-		formatter.PrintError("couldn't process policy files", err)
-		return err
-	}
-	return completeBootstrappingSequence(bsProcess)
+	return err
 }
 
 func initializePrototype(bsConfiguration *types.BootstrappingConfiguration, bsProcess *bootstrappingProcess) error {
@@ -355,7 +351,7 @@ func processPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsProc
 	for _, bsPolicyfile := range bsProcess.policyfiles {
 		command := fmt.Sprintf("cd %s", bsPolicyfile.Path(bsProcess.directoryPath))
 		if runtime.GOOS == "windows" {
-			command = fmt.Sprintf("%s\nSET \"PATH=%PATH%;C:\\ruby\\bin;C:\\opscode\\chef\\bin;C:\\opscode\\chef\\embedded\\bin\"", command)
+			command = fmt.Sprintf("%s\nSET \"PATH=%%PATH%%;C:\\ruby\\bin;C:\\opscode\\chef\\bin;C:\\opscode\\chef\\embedded\\bin\"", command)
 		}
 		command = fmt.Sprintf("%s\nchef-client -z -j %s", command, bsProcess.attributes.FilePath(bsProcess.directoryPath))
 		log.Debug(command)
@@ -415,19 +411,4 @@ func reportAppliedConfiguration(bootstrappingSvc *blueprint.BootstrappingService
 		"attribute_revision_id":   bsProcess.attributes.revisionID,
 	}
 	return bootstrappingSvc.ReportBootstrappingAppliedConfiguration(&payload)
-}
-
-// completeBootstrappingSequence evaluates if the first iteration of policies was completed; If case, execute the "scripts boot" command.
-func completeBootstrappingSequence(bsProcess *bootstrappingProcess) error {
-	log.Debug("completeBootstrappingSequence")
-
-	if !allPolicyfilesSuccessfullyApplied {
-		log.Debug("run the boot scripts")
-		//run the boot scripts for the server by executing the scripts boot sub-command (as an external process).
-		if output, exit, _, _ := utils.RunCmd(strings.Join([]string{os.Args[0], "scripts", "boot"}, " ")); exit != 0 {
-			return fmt.Errorf("boot scripts run failed with exit code %d and following output: %s", exit, output)
-		}
-		allPolicyfilesSuccessfullyApplied = true
-	}
-	return nil
 }
