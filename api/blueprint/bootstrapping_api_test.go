@@ -36,3 +36,9 @@ func TestReportBootstrappingLog(t *testing.T) {
 	ReportBootstrappingLogFailStatusMocked(t, commandIn)
 	ReportBootstrappingLogFailJSONMocked(t, commandIn)
 }
+
+func TestDownloadPolicyfile(t *testing.T) {
+	dataIn := testdata.GetBootstrappingDownloadFileData()
+	DownloadPolicyfileMocked(t, dataIn)
+	DownloadPolicyfileFailErrMocked(t, dataIn)
+}

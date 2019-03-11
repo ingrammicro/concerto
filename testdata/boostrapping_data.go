@@ -1,8 +1,8 @@
 package testdata
 
 import (
-	"github.com/ingrammicro/concerto/api/types"
 	"encoding/json"
+	"github.com/ingrammicro/concerto/api/types"
 )
 
 // GetBootstrappingConfigurationData loads test data
@@ -10,7 +10,7 @@ func GetBootstrappingConfigurationData() *types.BootstrappingConfiguration {
 
 	attrs := json.RawMessage(`{"fakeAttribute0":"val0","fakeAttribute1":"val1"}`)
 	test := types.BootstrappingConfiguration{
-		Policyfiles:         []types.BootstrappingPolicyfile{
+		Policyfiles: []types.BootstrappingPolicyfile{
 			{
 				ID:          "fakeProfileID0",
 				RevisionID:  "fakeProfileRevisionID0",
@@ -30,11 +30,19 @@ func GetBootstrappingConfigurationData() *types.BootstrappingConfiguration {
 }
 
 // GetBootstrappingContinuousReportData loads test data
-func GetBootstrappingContinuousReportData() *types.BootstrappingContinuousReport{
+func GetBootstrappingContinuousReportData() *types.BootstrappingContinuousReport {
 
 	testBootstrappingContinuousReport := types.BootstrappingContinuousReport{
 		Stdout: "Bootstrap log created",
 	}
 
 	return &testBootstrappingContinuousReport
+}
+
+//GetBootstrappingDownloadFileData
+func GetBootstrappingDownloadFileData() map[string]string {
+	return map[string]string{
+		"fakeURLToFile":        "http://fakeURLToFile.xxx/filename.tgz",
+		"fakeFileDownloadFile": "filename.tgz",
+	}
 }

@@ -2,11 +2,11 @@ package blueprint
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/stretchr/testify/assert"
 	"testing"
-	"fmt"
 )
 
 // GetBootstrappingConfigurationMocked test mocked function
@@ -151,7 +151,7 @@ func ReportBootstrappingAppliedConfigurationFailErrMocked(t *testing.T, commandI
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Put", fmt.Sprintf("/blueprint/applied_configuration"), &payload).Return(dIn, 400, fmt.Errorf("Mocked error"))
+	cs.On("Put", fmt.Sprintf("/blueprint/applied_configuration"), &payload).Return(dIn, 499, fmt.Errorf("Mocked error"))
 	err = ds.ReportBootstrappingAppliedConfiguration(&payload)
 	assert.NotNil(err, "We are expecting an error")
 	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
@@ -249,7 +249,7 @@ func ReportBootstrappingLogFailErrMocked(t *testing.T, commandIn *types.Bootstra
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Post", fmt.Sprintf("/blueprint/bootstrap_logs"), &payload).Return(dIn, 400, fmt.Errorf("Mocked error"))
+	cs.On("Post", fmt.Sprintf("/blueprint/bootstrap_logs"), &payload).Return(dIn, 499, fmt.Errorf("Mocked error"))
 	commandOut, _, err := ds.ReportBootstrappingLog(&payload)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -313,4 +313,46 @@ func ReportBootstrappingLogFailJSONMocked(t *testing.T, commandIn *types.Bootstr
 	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
 
 	return commandOut
+}
+
+// DownloadPolicyfileMocked
+func DownloadPolicyfileMocked(t *testing.T, dataIn map[string]string) {
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewBootstrappingService(cs)
+	assert.Nil(err, "Couldn't load bootstrapping service")
+	assert.NotNil(ds, "Bootstrapping service not instanced")
+
+	urlSource := dataIn["fakeURLToFile"]
+	pathFile := dataIn["fakeFileDownloadFile"]
+
+	// call service
+	cs.On("GetFile", urlSource, pathFile).Return(pathFile, 200, nil)
+	realFileName, status, err := ds.DownloadPolicyfile(urlSource, pathFile)
+	assert.Nil(err, "Error downloading bootstrapping policy file")
+	assert.Equal(status, 200, "DownloadPolicyfile returned invalid response")
+	assert.Equal(realFileName, pathFile, "Invalid downloaded file path")
+}
+
+// DownloadPolicyfileFailErrMocked
+func DownloadPolicyfileFailErrMocked(t *testing.T, dataIn map[string]string) {
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewBootstrappingService(cs)
+	assert.Nil(err, "Couldn't load bootstrapping service")
+	assert.NotNil(ds, "Bootstrapping service not instanced")
+
+	urlSource := dataIn["fakeURLToFile"]
+	pathFile := dataIn["fakeFileDownloadFile"]
+
+	// call service
+	cs.On("GetFile", urlSource, pathFile).Return("", 499, fmt.Errorf("Mocked error"))
+	_, status, err := ds.DownloadPolicyfile(urlSource, pathFile)
+	assert.NotNil(err, "We are expecting an error")
+	assert.Equal(status, 499, "DownloadPolicyfile returned an unexpected status code")
+	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
 }
