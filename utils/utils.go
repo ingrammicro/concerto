@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -68,11 +69,15 @@ func Untar(ctx context.Context, source, target string) error {
 		return err
 	}
 
-	cmd := exec.CommandContext(ctx, "tar", "-xzf", source, "-C", target)
+	tarExecutable := "tar"
+	if runtime.GOOS == "windows" {
+		tarExecutable = "C:\\opscode\\chef\\bin\\tar.exe"
+	}
+	cmd := exec.CommandContext(ctx, tarExecutable, "-xzf", source, "-C", target)
 	if err := cmd.Run(); err != nil {
 		return err
 	}
-
+	
 	return nil
 }
 

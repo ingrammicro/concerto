@@ -99,7 +99,7 @@ func handleSysSignals(cancelFunc context.CancelFunc) {
 
 // Returns the full path to the tmp directory joined with pid management file name
 func lockFilePath() string {
-	return filepath.Join(workspaceDir(), ProcessLockFile)
+	return filepath.Join(os.TempDir(), ProcessLockFile)
 }
 
 func workspaceDir() string {
