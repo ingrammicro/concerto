@@ -48,8 +48,6 @@ type attributes struct {
 	rawData    *json.RawMessage
 }
 
-var allPolicyfilesSuccessfullyApplied bool
-
 type policyfile types.BootstrappingPolicyfile
 
 func (pf policyfile) Name() string {
