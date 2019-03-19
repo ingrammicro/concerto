@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/codegangsta/cli"
@@ -41,23 +42,23 @@ func ScriptsList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive script data", err)
 	}
 
-	labelables := make([]*types.LabelableFields, 0, len(scripts))
-	for i := range scripts {
-		labelables = append(labelables, &scripts[i].LabelableFields)
+	labelables := make([]types.Labelable, len(scripts))
+	for i, sc := range scripts {
+		labelables[i] = types.Labelable(&sc)
 	}
 
-	filteredLabelables := LabelFiltering(c, labelables)
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
+	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 
-	tmp := scripts
-	scripts = nil
-	if len(filteredLabelables) > 0 {
-		for _, labelable := range filteredLabelables {
-			for i := range tmp {
-				if &tmp[i].LabelableFields == labelable {
-					scripts = append(scripts, tmp[i])
-				}
-			}
+	scripts = make([]types.Script, len(filteredLabelables))
+	for i, labelable := range labelables {
+		fw, ok := labelable.(*types.Script)
+		if !ok {
+			formatter.PrintFatal("Label filtering returned unexpected result",
+				fmt.Errorf("expected labelable to be a *types.Script, got a %T", labelable))
 		}
+		scripts[i] = *fw
 	}
 
 	if err = formatter.PrintList(scripts); err != nil {
@@ -77,7 +78,8 @@ func ScriptShow(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive script data", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&script.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	script.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*script); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -108,7 +110,8 @@ func ScriptCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create script", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&script.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	script.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*script); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -126,7 +129,8 @@ func ScriptUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update script", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&script.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	script.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*script); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

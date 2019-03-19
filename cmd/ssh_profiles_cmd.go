@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/cloud"
 	"github.com/ingrammicro/concerto/api/types"
@@ -39,23 +41,21 @@ func SSHProfileList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive sshProfile data", err)
 	}
 
-	labelables := make([]*types.LabelableFields, 0, len(sshProfiles))
-	for i := range sshProfiles {
-		labelables = append(labelables, &sshProfiles[i].LabelableFields)
+	labelables := make([]types.Labelable, len(sshProfiles))
+	for i, sshP := range sshProfiles {
+		labelables[i] = types.Labelable(&sshP)
 	}
-
-	filteredLabelables := LabelFiltering(c, labelables)
-
-	tmp := sshProfiles
-	sshProfiles = nil
-	if len(filteredLabelables) > 0 {
-		for _, labelable := range filteredLabelables {
-			for i := range tmp {
-				if &tmp[i].LabelableFields == labelable {
-					sshProfiles = append(sshProfiles, tmp[i])
-				}
-			}
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
+	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
+	sshProfiles = make([]types.SSHProfile, len(filteredLabelables))
+	for i, labelable := range labelables {
+		fw, ok := labelable.(*types.SSHProfile)
+		if !ok {
+			formatter.PrintFatal("Label filtering returned unexpected result",
+				fmt.Errorf("expected labelable to be a *types.SSHProfile, got a %T", labelable))
 		}
+		sshProfiles[i] = *fw
 	}
 
 	if err = formatter.PrintList(sshProfiles); err != nil {
@@ -74,8 +74,8 @@ func SSHProfileShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive sshProfile data", err)
 	}
-
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&sshProfile.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	sshProfile.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*sshProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -105,7 +105,8 @@ func SSHProfileCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create sshProfile", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&sshProfile.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	sshProfile.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*sshProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -123,7 +124,8 @@ func SSHProfileUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update sshProfile", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&sshProfile.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	sshProfile.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*sshProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/network"
 	"github.com/ingrammicro/concerto/api/types"
@@ -39,25 +41,22 @@ func FirewallProfileList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive firewallProfile data", err)
 	}
 
-	labelables := make([]*types.LabelableFields, 0, len(firewallProfiles))
-	for i := range firewallProfiles {
-		labelables = append(labelables, &firewallProfiles[i].LabelableFields)
+	labelables := make([]types.Labelable, len(firewallProfiles))
+	for i, fwp := range firewallProfiles {
+		labelables[i] = types.Labelable(&fwp)
 	}
-
-	filteredLabelables := LabelFiltering(c, labelables)
-
-	tmp := firewallProfiles
-	firewallProfiles = nil
-	if len(filteredLabelables) > 0 {
-		for _, labelable := range filteredLabelables {
-			for i := range tmp {
-				if &tmp[i].LabelableFields == labelable {
-					firewallProfiles = append(firewallProfiles, tmp[i])
-				}
-			}
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
+	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
+	firewallProfiles = make([]types.FirewallProfile, len(filteredLabelables))
+	for i, labelable := range labelables {
+		fw, ok := labelable.(*types.FirewallProfile)
+		if !ok {
+			formatter.PrintFatal("Label filtering returned unexpected result",
+				fmt.Errorf("expected labelable to be a *types.FirewallProfile, got a %T", labelable))
 		}
+		firewallProfiles[i] = *fw
 	}
-
 	if err = formatter.PrintList(firewallProfiles); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -74,8 +73,8 @@ func FirewallProfileShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive firewallProfile data", err)
 	}
-
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&firewallProfile.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	firewallProfile.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*firewallProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -109,8 +108,8 @@ func FirewallProfileCreate(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't create firewallProfile", err)
 	}
-
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&firewallProfile.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	firewallProfile.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*firewallProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -132,7 +131,8 @@ func FirewallProfileUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update firewallProfile", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&firewallProfile.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	firewallProfile.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*firewallProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

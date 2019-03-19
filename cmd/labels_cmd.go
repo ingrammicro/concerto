@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/labels"
 	"github.com/ingrammicro/concerto/api/types"
@@ -66,49 +67,37 @@ func LabelCreate(c *cli.Context) error {
 
 // LabelFiltering subcommand function receives a collection of references to labelable objects
 // Evaluates the matching of assigned labels with the labels requested for filtering.
-func LabelFiltering(c *cli.Context, inItems []*types.LabelableFields) []*types.LabelableFields {
+func LabelFiltering(c *cli.Context, items []types.Labelable, labelIDsByName map[string]string) []types.Labelable {
 	debugCmdFuncInfo(c)
 
-	labelsMapNameToID, labelsMapIDToName := LabelLoadsMapping(c)
-
-	var outItems []*types.LabelableFields
 	if c.String("labels") != "" {
 		_, formatter := WireUpLabel(c)
 		labelNamesIn := LabelsUnifyInputNames(c.String("labels"), formatter)
-
-		var labelIDsIn []string
+		var filteringLabelIDs []string
 		for _, name := range labelNamesIn {
-			labelIDsIn = append(labelIDsIn, labelsMapNameToID[name])
-		}
-
-		for i := 0; i < len(inItems); i++ {
-			if inItems[i].FilterByLabelIDs(labelIDsIn) {
-				// added filtered
-				outItems = append(outItems, inItems[i])
+			id := labelIDsByName[name]
+			if id != "" {
+				filteringLabelIDs = append(filteringLabelIDs, id)
 			}
 		}
-	} else {
-		// all included
-		outItems = inItems
+		var result []types.Labelable
+		for _, item := range items {
+			if item.FilterByLabelIDs(filteringLabelIDs) {
+				result = append(result, item)
+			}
+		}
+		return result
 	}
 
-	// Assigns the Labels names
-	for i := 0; i < len(outItems); i++ {
-		outItems[i].FillInLabelNames(labelsMapIDToName)
-	}
-
-	return outItems
+	return items
 }
 
 // LabelAssignNamesForIDs subcommand function receives a collection of references to labelables objects
 // Resolves the Labels names associated to a each resource from given Labels ids, loading object with respective labels names
-func LabelAssignNamesForIDs(c *cli.Context, items []*types.LabelableFields) {
+func LabelAssignNamesForIDs(c *cli.Context, items []types.Labelable, labelNamesByID map[string]string) {
 	debugCmdFuncInfo(c)
-
-	// Load Labels mapping ID <-> NAME
-	_, labelsMapIDToName := LabelLoadsMapping(c)
-	for i := 0; i < len(items); i++ {
-		items[i].FillInLabelNames(labelsMapIDToName)
+	for _, labelable := range items {
+		labelable.FillInLabelNames(labelNamesByID)
 	}
 }
 
@@ -122,14 +111,14 @@ func LabelLoadsMapping(c *cli.Context) (map[string]string, map[string]string) {
 		formatter.PrintFatal("Couldn't receive labels data", err)
 	}
 
-	labelsMapNameToID := make(map[string]string)
-	labelsMapIDToName := make(map[string]string)
+	labelIDsByName := make(map[string]string)
+	labelNamesByID := make(map[string]string)
 
 	for _, label := range labels {
-		labelsMapNameToID[label.Name] = label.ID
-		labelsMapIDToName[label.ID] = label.Name
+		labelIDsByName[label.Name] = label.ID
+		labelNamesByID[label.ID] = label.Name
 	}
-	return labelsMapNameToID, labelsMapIDToName
+	return labelIDsByName, labelNamesByID
 }
 
 // LabelsUnifyInputNames subcommand function evaluates the received labels names (comma separated string).

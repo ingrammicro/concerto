@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/blueprint"
 	"github.com/ingrammicro/concerto/api/types"
@@ -39,23 +41,22 @@ func TemplateList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive template data", err)
 	}
 
-	labelables := make([]*types.LabelableFields, 0, len(templates))
-	for i := range templates {
-		labelables = append(labelables, &templates[i].LabelableFields)
+	labelables := make([]types.Labelable, len(templates))
+	for i, t := range templates {
+		labelables[i] = types.Labelable(&t)
 	}
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
+	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 
-	filteredLabelables := LabelFiltering(c, labelables)
-
-	tmp := templates
-	templates = nil
-	if len(filteredLabelables) > 0 {
-		for _, labelable := range filteredLabelables {
-			for i := range tmp {
-				if &tmp[i].LabelableFields == labelable {
-					templates = append(templates, tmp[i])
-				}
-			}
+	templates = make([]types.Template, len(filteredLabelables))
+	for i, labelable := range labelables {
+		fw, ok := labelable.(*types.Template)
+		if !ok {
+			formatter.PrintFatal("Label filtering returned unexpected result",
+				fmt.Errorf("expected labelable to be a *types.Template, got a %T", labelable))
 		}
+		templates[i] = *fw
 	}
 
 	if err = formatter.PrintList(templates); err != nil {
@@ -75,7 +76,8 @@ func TemplateShow(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive template data", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&template.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	template.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -111,7 +113,8 @@ func TemplateCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create template", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&template.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	template.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -136,7 +139,8 @@ func TemplateUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update template", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&template.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	template.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

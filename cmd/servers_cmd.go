@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/cloud"
 	"github.com/ingrammicro/concerto/api/types"
@@ -39,25 +41,24 @@ func ServerList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive server data", err)
 	}
 
-	labelables := make([]*types.LabelableFields, 0, len(servers))
-	for i := range servers {
-		labelables = append(labelables, &servers[i].LabelableFields)
+	labelables := make([]types.Labelable, len(servers))
+	for i, server := range servers {
+		labelables[i] = types.Labelable(&server)
 	}
 
-	filteredLabelables := LabelFiltering(c, labelables)
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
+	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 
-	tmp := servers
-	servers = nil
-	if len(filteredLabelables) > 0 {
-		for _, labelable := range filteredLabelables {
-			for i := range tmp {
-				if &tmp[i].LabelableFields == labelable {
-					servers = append(servers, tmp[i])
-				}
-			}
+	servers = make([]types.Server, len(filteredLabelables))
+	for i, labelable := range labelables {
+		s, ok := labelable.(*types.Server)
+		if !ok {
+			formatter.PrintFatal("Label filtering returned unexpected result",
+				fmt.Errorf("expected labelable to be a *types.Server, got a %T", labelable))
 		}
+		servers[i] = *s
 	}
-
 	if err = formatter.PrintList(servers); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -75,7 +76,8 @@ func ServerShow(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive server data", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&server.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -107,7 +109,8 @@ func ServerCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create server", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&server.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -125,7 +128,8 @@ func ServerUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update server", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&server.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -143,7 +147,8 @@ func ServerBoot(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't boot server", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&server.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -161,7 +166,8 @@ func ServerReboot(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't reboot server", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&server.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -179,7 +185,8 @@ func ServerShutdown(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't shutdown server", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&server.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -197,7 +204,8 @@ func ServerOverride(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't override server", err)
 	}
 
-	LabelAssignNamesForIDs(c, []*types.LabelableFields{&server.LabelableFields})
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
