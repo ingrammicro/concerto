@@ -76,9 +76,7 @@ func LabelFiltering(c *cli.Context, items []types.Labelable, labelIDsByName map[
 		var filteringLabelIDs []string
 		for _, name := range labelNamesIn {
 			id := labelIDsByName[name]
-			if id != "" {
-				filteringLabelIDs = append(filteringLabelIDs, id)
-			}
+			filteringLabelIDs = append(filteringLabelIDs, id)
 		}
 		var result []types.Labelable
 		for _, item := range items {
@@ -137,18 +135,17 @@ func LabelsUnifyInputNames(labelsNames string, formatter format.Formatter) []str
 // LabelResolution subcommand function retrieves a labels map(Name<->ID) based on label names received to be processed.
 // The function evaluates the received labels names (comma separated string); with them, solves the assigned IDs for the given labels names.
 // If the label name is not available in IMCO yet, it is created.
-func LabelResolution(c *cli.Context, labelsNames string) []string {
+func LabelResolution(c *cli.Context, labelsNames string, labelIDsByName map[string]string) []string {
 	debugCmdFuncInfo(c)
 
 	labelsSvc, formatter := WireUpLabel(c)
 	labelNamesIn := LabelsUnifyInputNames(labelsNames, formatter)
-	labelsMapNameToID, _ := LabelLoadsMapping(c)
 
 	// Obtain output mapped labels Name<->ID; currently in IMCO platform as well as if creation is required
 	labelsOutMap := make(map[string]string)
 	for _, name := range labelNamesIn {
 		// check if the label already exists in IMCO, creates it if it does not exist
-		if labelsMapNameToID[name] == "" {
+		if labelIDsByName[name] == "" {
 			labelPayload := make(map[string]interface{})
 			labelPayload["name"] = name
 			newLabel, err := labelsSvc.CreateLabel(&labelPayload)
@@ -157,7 +154,7 @@ func LabelResolution(c *cli.Context, labelsNames string) []string {
 			}
 			labelsOutMap[name] = newLabel.ID
 		} else {
-			labelsOutMap[name] = labelsMapNameToID[name]
+			labelsOutMap[name] = labelIDsByName[name]
 		}
 	}
 	labelsIdsArr := make([]string, 0)
@@ -174,7 +171,8 @@ func LabelAdd(c *cli.Context) error {
 	labelsSvc, formatter := WireUpLabel(c)
 	checkRequiredFlags(c, []string{"id", "label"}, formatter)
 
-	labelsIdsArr := LabelResolution(c, c.String("label"))
+	labelIDsByName, _ := LabelLoadsMapping(c)
+	labelsIdsArr := LabelResolution(c, c.String("label"), labelIDsByName)
 	if len(labelsIdsArr) > 1 {
 		formatter.PrintFatal("Too many label names. Please, Use only one label name", fmt.Errorf("Invalid parameter: %v - %v", c.String("label"), labelsIdsArr))
 	}

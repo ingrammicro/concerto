@@ -42,14 +42,14 @@ func FirewallProfileList(c *cli.Context) error {
 	}
 
 	labelables := make([]types.Labelable, len(firewallProfiles))
-	for i, fwp := range firewallProfiles {
-		labelables[i] = types.Labelable(&fwp)
+	for i:=0; i< len(firewallProfiles); i++ {
+		labelables[i] = types.Labelable(&firewallProfiles[i])
 	}
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 	firewallProfiles = make([]types.FirewallProfile, len(filteredLabelables))
-	for i, labelable := range labelables {
+	for i, labelable := range filteredLabelables {
 		fw, ok := labelable.(*types.FirewallProfile)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
@@ -99,8 +99,11 @@ func FirewallProfileCreate(c *cli.Context) error {
 	if c.String("rules") != "" {
 		firewallProfileIn["rules"] = (*params)["rules"]
 	}
+
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"))
+		labelsIdsArr := LabelResolution(c, c.String("labels"), labelIDsByName)
 		firewallProfileIn["label_ids"] = labelsIdsArr
 	}
 
@@ -108,7 +111,7 @@ func FirewallProfileCreate(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't create firewallProfile", err)
 	}
-	_, labelNamesByID := LabelLoadsMapping(c)
+
 	firewallProfile.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*firewallProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)

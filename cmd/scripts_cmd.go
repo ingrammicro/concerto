@@ -43,8 +43,8 @@ func ScriptsList(c *cli.Context) error {
 	}
 
 	labelables := make([]types.Labelable, len(scripts))
-	for i, sc := range scripts {
-		labelables[i] = types.Labelable(&sc)
+	for i:=0; i< len(scripts); i++ {
+		labelables[i] = types.Labelable(&scripts[i])
 	}
 
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
@@ -52,13 +52,13 @@ func ScriptsList(c *cli.Context) error {
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 
 	scripts = make([]types.Script, len(filteredLabelables))
-	for i, labelable := range labelables {
-		fw, ok := labelable.(*types.Script)
+	for i, labelable := range filteredLabelables {
+		s, ok := labelable.(*types.Script)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.Script, got a %T", labelable))
 		}
-		scripts[i] = *fw
+		scripts[i] = *s
 	}
 
 	if err = formatter.PrintList(scripts); err != nil {
@@ -100,8 +100,11 @@ func ScriptCreate(c *cli.Context) error {
 	if c.String("parameters") != "" {
 		scriptIn["parameters"] = strings.Split(c.String("parameters"), ",")
 	}
+
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"))
+		labelsIdsArr := LabelResolution(c, c.String("labels"), labelIDsByName)
 		scriptIn["label_ids"] = labelsIdsArr
 	}
 
@@ -110,7 +113,6 @@ func ScriptCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create script", err)
 	}
 
-	_, labelNamesByID := LabelLoadsMapping(c)
 	script.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*script); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)

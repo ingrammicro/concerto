@@ -42,20 +42,20 @@ func SSHProfileList(c *cli.Context) error {
 	}
 
 	labelables := make([]types.Labelable, len(sshProfiles))
-	for i, sshP := range sshProfiles {
-		labelables[i] = types.Labelable(&sshP)
+	for i:=0; i< len(sshProfiles); i++ {
+		labelables[i] = types.Labelable(&sshProfiles[i])
 	}
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 	sshProfiles = make([]types.SSHProfile, len(filteredLabelables))
-	for i, labelable := range labelables {
-		fw, ok := labelable.(*types.SSHProfile)
+	for i, labelable := range filteredLabelables {
+		sshP, ok := labelable.(*types.SSHProfile)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.SSHProfile, got a %T", labelable))
 		}
-		sshProfiles[i] = *fw
+		sshProfiles[i] = *sshP
 	}
 
 	if err = formatter.PrintList(sshProfiles); err != nil {
@@ -95,8 +95,11 @@ func SSHProfileCreate(c *cli.Context) error {
 	if c.String("private_key") != "" {
 		sshProfileIn["private_key"] = c.String("private_key")
 	}
+
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"))
+		labelsIdsArr := LabelResolution(c, c.String("labels"), labelIDsByName)
 		sshProfileIn["label_ids"] = labelsIdsArr
 	}
 
@@ -105,7 +108,6 @@ func SSHProfileCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create sshProfile", err)
 	}
 
-	_, labelNamesByID := LabelLoadsMapping(c)
 	sshProfile.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*sshProfile); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)

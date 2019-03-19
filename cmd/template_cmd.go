@@ -42,21 +42,21 @@ func TemplateList(c *cli.Context) error {
 	}
 
 	labelables := make([]types.Labelable, len(templates))
-	for i, t := range templates {
-		labelables[i] = types.Labelable(&t)
+	for i:=0; i< len(templates); i++ {
+		labelables[i] = types.Labelable(&templates[i])
 	}
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 
 	templates = make([]types.Template, len(filteredLabelables))
-	for i, labelable := range labelables {
-		fw, ok := labelable.(*types.Template)
+	for i, labelable := range filteredLabelables {
+		tpl, ok := labelable.(*types.Template)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.Template, got a %T", labelable))
 		}
-		templates[i] = *fw
+		templates[i] = *tpl
 	}
 
 	if err = formatter.PrintList(templates); err != nil {
@@ -103,8 +103,10 @@ func TemplateCreate(c *cli.Context) error {
 		"configuration_attributes": (*params)["configuration_attributes"],
 	}
 
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"))
+		labelsIdsArr := LabelResolution(c, c.String("labels"), labelIDsByName)
 		templateIn["label_ids"] = labelsIdsArr
 	}
 
@@ -113,7 +115,6 @@ func TemplateCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create template", err)
 	}
 
-	_, labelNamesByID := LabelLoadsMapping(c)
 	template.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)

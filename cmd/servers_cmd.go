@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/cloud"
 	"github.com/ingrammicro/concerto/api/types"
@@ -42,16 +41,14 @@ func ServerList(c *cli.Context) error {
 	}
 
 	labelables := make([]types.Labelable, len(servers))
-	for i, server := range servers {
-		labelables[i] = types.Labelable(&server)
+	for i:=0; i< len(servers); i++ {
+		labelables[i] = types.Labelable(&servers[i])
 	}
-
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
-
 	servers = make([]types.Server, len(filteredLabelables))
-	for i, labelable := range labelables {
+	for i, labelable := range filteredLabelables {
 		s, ok := labelable.(*types.Server)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
@@ -99,8 +96,10 @@ func ServerCreate(c *cli.Context) error {
 		"cloud_account_id":    c.String("cloud_account_id"),
 	}
 
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"))
+		labelsIdsArr := LabelResolution(c, c.String("labels"), labelIDsByName)
 		serverIn["label_ids"] = labelsIdsArr
 	}
 
@@ -109,7 +108,6 @@ func ServerCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create server", err)
 	}
 
-	_, labelNamesByID := LabelLoadsMapping(c)
 	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
