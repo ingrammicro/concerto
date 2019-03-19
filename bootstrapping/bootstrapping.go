@@ -347,11 +347,20 @@ func processPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsProc
 	log.Debug("processPolicyfiles")
 
 	for _, bsPolicyfile := range bsProcess.policyfiles {
-		command := fmt.Sprintf("cd %s", bsPolicyfile.Path(bsProcess.directoryPath))
+		command := fmt.Sprintf("chef-client -z -j %s", bsProcess.attributes.FilePath(bsProcess.directoryPath))
+		policyfileDir := bsPolicyfile.Path(bsProcess.directoryPath)
+		var renamedPolicyfileDir string
 		if runtime.GOOS == "windows" {
-			command = fmt.Sprintf("%s\nSET \"PATH=%%PATH%%;C:\\ruby\\bin;C:\\opscode\\chef\\bin;C:\\opscode\\chef\\embedded\\bin\"", command)
+			renamedPolicyfileDir = policyfileDir
+			policyfileDir = filepath.Join(bsProcess.directoryPath, "active")
+			err := os.Rename(renamedPolicyfileDir, policyfileDir)
+			if err != nil {
+				return fmt.Errorf("could not rename %s as %s: %v", renamedPolicyfileDir, policyfileDir, err)
+			}
+			command = fmt.Sprintf("SET \"PATH=%%PATH%%;C:\\ruby\\bin;C:\\opscode\\chef\\bin;C:\\opscode\\chef\\embedded\\bin\"\n%s", command)
 		}
-		command = fmt.Sprintf("%s\nchef-client -z -j %s", command, bsProcess.attributes.FilePath(bsProcess.directoryPath))
+		command = fmt.Sprintf("cd %s\n%s", policyfileDir, command)
+
 		log.Debug(command)
 
 		// Custom method for chunks processing
@@ -394,6 +403,12 @@ func processPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsProc
 
 		log.Info("completed: ", exitCode)
 		bsProcess.appliedPolicyfileRevisionIDs[bsPolicyfile.ID] = bsPolicyfile.RevisionID
+		if renamedPolicyfileDir != "" {
+			err = os.Rename(policyfileDir, renamedPolicyfileDir)
+			if err != nil {
+				return fmt.Errorf("could not rename %s as %s back: %v", policyfileDir, renamedPolicyfileDir, err)
+			}
+		}
 	}
 	return nil
 }
