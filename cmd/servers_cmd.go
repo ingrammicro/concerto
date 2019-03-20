@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/cloud"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
@@ -37,6 +39,23 @@ func ServerList(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive server data", err)
 	}
+
+	labelables := make([]types.Labelable, len(servers))
+	for i:=0; i< len(servers); i++ {
+		labelables[i] = types.Labelable(&servers[i])
+	}
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
+	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
+	servers = make([]types.Server, len(filteredLabelables))
+	for i, labelable := range filteredLabelables {
+		s, ok := labelable.(*types.Server)
+		if !ok {
+			formatter.PrintFatal("Label filtering returned unexpected result",
+				fmt.Errorf("expected labelable to be a *types.Server, got a %T", labelable))
+		}
+		servers[i] = *s
+	}
 	if err = formatter.PrintList(servers); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -53,6 +72,9 @@ func ServerShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive server data", err)
 	}
+
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -65,10 +87,28 @@ func ServerCreate(c *cli.Context) error {
 	serverSvc, formatter := WireUpServer(c)
 
 	checkRequiredFlags(c, []string{"name", "ssh_profile_id", "firewall_profile_id", "template_id", "server_plan_id", "cloud_account_id"}, formatter)
-	server, err := serverSvc.CreateServer(utils.FlagConvertParams(c))
+	serverIn := map[string]interface{}{
+		"name":                c.String("name"),
+		"ssh_profile_id":      c.String("ssh_profile_id"),
+		"firewall_profile_id": c.String("firewall_profile_id"),
+		"template_id":         c.String("template_id"),
+		"server_plan_id":      c.String("server_plan_id"),
+		"cloud_account_id":    c.String("cloud_account_id"),
+	}
+
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+
+	if c.IsSet("labels") {
+		labelsIdsArr := LabelResolution(c, c.String("labels"), labelIDsByName)
+		serverIn["label_ids"] = labelsIdsArr
+	}
+
+	server, err := serverSvc.CreateServer(&serverIn)
 	if err != nil {
 		formatter.PrintFatal("Couldn't create server", err)
 	}
+
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -85,6 +125,9 @@ func ServerUpdate(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't update server", err)
 	}
+
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -101,6 +144,9 @@ func ServerBoot(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't boot server", err)
 	}
+
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -117,6 +163,9 @@ func ServerReboot(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't reboot server", err)
 	}
+
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -133,6 +182,9 @@ func ServerShutdown(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't shutdown server", err)
 	}
+
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -149,6 +201,9 @@ func ServerOverride(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't override server", err)
 	}
+
+	_, labelNamesByID := LabelLoadsMapping(c)
+	server.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*server); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

@@ -2,6 +2,7 @@ package format
 
 import (
 	"fmt"
+	"github.com/ingrammicro/concerto/utils"
 	"io"
 	"reflect"
 	"strings"
@@ -9,8 +10,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 )
-
-const minifySeconds string = "minifySeconds"
 
 // TextFormatter prints items and lists
 type TextFormatter struct {
@@ -26,29 +25,83 @@ func NewTextFormatter(out io.Writer) *TextFormatter {
 	}
 }
 
-// PrintItem prints an item
+func (f *TextFormatter) printItemAux(w *tabwriter.Writer, item interface{}) error {
+	log.Debug("printItemAux")
+
+	it := reflect.ValueOf(item)
+	for i := 0; i < it.NumField(); i++ {
+		showTags := strings.Split(it.Type().Field(i).Tag.Get("show"), ",")
+		if !utils.Contains(showTags, "noshow") {
+			switch it.Field(i).Type().String() {
+			case "json.RawMessage":
+				fmt.Fprintln(w, fmt.Sprintf("%s:\t%s", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
+			case "*json.RawMessage":
+				fmt.Fprintln(w, fmt.Sprintf("%s:\t%s", it.Type().Field(i).Tag.Get("header"), it.Field(i).Elem()))
+			default:
+				if it.Field(i).Kind() == reflect.Struct {
+					f.printItemAux(w, it.Field(i).Interface())
+				} else {
+					fmt.Fprintln(w, fmt.Sprintf("%s:\t%+v", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// PrintItem prints item
 func (f *TextFormatter) PrintItem(item interface{}) error {
 	log.Debug("PrintItem")
 
-	it := reflect.ValueOf(item)
-	nf := it.NumField()
-
 	w := tabwriter.NewWriter(f.output, 15, 1, 3, ' ', 0)
-	for i := 0; i < nf; i++ {
-		// TODO not the best way to use reflection. Check this later
-		switch it.Field(i).Type().String() {
-		case "json.RawMessage":
-			fmt.Fprintf(w, "%s:\t%s\n", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface())
-		case "*json.RawMessage":
-			fmt.Fprintf(w, "%s:\t%s\n", it.Type().Field(i).Tag.Get("header"), it.Field(i).Elem())
-		default:
-			fmt.Fprintf(w, "%s:\t%+v\n", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface())
-		}
-	}
-	fmt.Fprintln(w)
+	f.printItemAux(w, item)
 	w.Flush()
 
 	return nil
+}
+
+func (f *TextFormatter) printListHeadersAux(w *tabwriter.Writer, t reflect.Type) {
+	log.Debug("printListHeadersAux")
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+
+		if field.Type.Kind() == reflect.Struct {
+			f.printListHeadersAux(w, field.Type)
+		}
+
+		showTags := strings.Split(field.Tag.Get("show"), ",")
+		if !utils.Contains(showTags, "nolist") {
+			fmt.Fprint(w, fmt.Sprintf("%+v\t", field.Tag.Get("header")))
+		}
+	}
+}
+
+func (f *TextFormatter) printListBodyAux(w *tabwriter.Writer, t reflect.Value) {
+	log.Debug("printListBodyAux")
+
+	for i := 0; i < t.NumField(); i++ {
+		showTags := strings.Split(t.Type().Field(i).Tag.Get("show"), ",")
+		if !utils.Contains(showTags, "nolist") {
+			field := t.Field(i)
+			switch field.Type().String() {
+			case "json.RawMessage":
+				fmt.Fprint(w, fmt.Sprintf("%s\t", field.Interface()))
+			case "*json.RawMessage":
+				if field.IsNil() {
+					fmt.Fprint(w, fmt.Sprintf(" \t"))
+				} else {
+					fmt.Fprint(w, fmt.Sprintf("%s\t", field.Elem()))
+				}
+			default:
+				if field.Kind() == reflect.Struct {
+					f.printListBodyAux(w, field)
+				} else {
+					fmt.Fprint(w, fmt.Sprintf("%+v\t", field.Interface()))
+				}
+			}
+		}
+	}
 }
 
 // PrintList prints item list
@@ -59,82 +112,21 @@ func (f *TextFormatter) PrintList(items interface{}) error {
 	its := reflect.ValueOf(items)
 	t := its.Type().Kind()
 	if t != reflect.Slice {
-		return fmt.Errorf("Couldn't print list. Expected slice, but received %s", t.String())
+		return fmt.Errorf("couldn't print list. Expected slice, but received %s", t.String())
 	}
 
 	w := tabwriter.NewWriter(f.output, 15, 1, 3, ' ', 0)
 
-	header := reflect.TypeOf(items).Elem()
-	nf := header.NumField()
-
-	// avoid printing elements with 'show:nolist'  attribute
-	// special format tags
-	avoid := make([]bool, nf)
-	format := make([]string, nf)
-	for i := 0; i < nf; i++ {
-		avoid[i] = false
-		showTags := strings.Split(header.Field(i).Tag.Get("show"), ",")
-		for _, showTag := range showTags {
-			if showTag == "nolist" {
-				avoid[i] = true
-			}
-			if showTag == minifySeconds {
-				format[i] = minifySeconds
-			}
-		}
-	}
-
-	// print header
-	for i := 0; i < nf; i++ {
-		if !avoid[i] {
-			fmt.Fprintf(w, "%+v\t", header.Field(i).Tag.Get("header"))
-		}
-	}
+	// Headers
+	f.printListHeadersAux(w, reflect.TypeOf(items).Elem())
 	fmt.Fprintln(w)
 
-	// print contents
-	for i := 0; i < its.Len(); i++ {
-		it := its.Index(i)
-		nf := it.NumField()
-		for i := 0; i < nf; i++ {
-			if !avoid[i] {
-
-				if format[i] == minifySeconds {
-
-					remainingSeconds := int(it.Field(i).Float())
-					s := remainingSeconds % 60
-					remainingSeconds = (remainingSeconds - s)
-					m := int(remainingSeconds/60) % 60
-					remainingSeconds = (remainingSeconds - m*60)
-					h := (remainingSeconds / 3600) % 24
-					remainingSeconds = (remainingSeconds - h*3600)
-					d := int(remainingSeconds / 86400)
-
-					if d > 0 {
-						fmt.Fprintf(w, "%dd%dh%dm\t", d, h, m)
-					} else {
-						fmt.Fprintf(w, "%dh%dm%ds\t", h, m, s)
-					}
-
-				} else {
-
-					switch it.Field(i).Type().String() {
-					case "json.RawMessage":
-						fmt.Fprintf(w, "%s\t", it.Field(i).Interface())
-					case "*json.RawMessage":
-						if it.Field(i).IsNil() {
-							fmt.Fprintf(w, " \t")
-						} else {
-							fmt.Fprintf(w, "%s\t", it.Field(i).Elem())
-						}
-					default:
-						fmt.Fprintf(w, "%+v\t", it.Field(i).Interface())
-					}
-				}
-			}
-		}
+	// Body
+	for pos := 0; pos < its.Len(); pos++ {
+		f.printListBodyAux(w, its.Index(pos))
 		fmt.Fprintln(w)
 	}
+
 	w.Flush()
 
 	return nil
