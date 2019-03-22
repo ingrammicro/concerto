@@ -2,12 +2,15 @@ package utils
 
 import (
 	"archive/zip"
+	"context"
 	"fmt"
 	"io"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -57,6 +60,24 @@ func Unzip(archive, target string) error {
 		}
 	}
 
+	return nil
+}
+
+func Untar(ctx context.Context, source, target string) error {
+
+	if err := os.MkdirAll(target, 0600); err != nil {
+		return err
+	}
+
+	tarExecutable := "tar"
+	if runtime.GOOS == "windows" {
+		tarExecutable = "C:\\opscode\\chef\\bin\\tar.exe"
+	}
+	cmd := exec.CommandContext(ctx, tarExecutable, "-xzf", source, "-C", target)
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+	
 	return nil
 }
 
@@ -217,4 +238,29 @@ func Subset(s1, s2 []string) bool {
 		}
 	}
 	return true
+}
+
+func RemoveFileInfo(fileInfo os.FileInfo, fileInfoName string) error {
+	if fileInfo.IsDir() {
+		d, err := os.Open(fileInfoName)
+		if err != nil {
+			return err
+		}
+		defer d.Close()
+		names, err := d.Readdirnames(-1)
+		if err != nil {
+			return err
+		}
+		for _, name := range names {
+			err = os.RemoveAll(filepath.Join(fileInfoName, name))
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	if err := os.Remove(fileInfoName); err != nil {
+		return err
+	}
+	return nil
 }
