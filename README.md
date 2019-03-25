@@ -49,11 +49,11 @@ Once your account has been provisioned, we recommend you to follow the configura
 
 ## Manual Setup
 
-Use IMCO's Web UI to navigate the menus to `Settings` > `User Details` and scroll down until you find the `New API Key` button.
+Use IMCO's Web UI to navigate the menus to `Settings` > `User Details` and scroll down until you find the `API Key` button.
 
 <img src="./docs/images/newAPIkey.png" alt="API Key" width="500px" >
 
-Pressing `New API Key` will download a compressed file that contains the necessary files to authenticate with IMCO API and manage your infrastructure. `Keep it safe`.
+Pressing `Create and download a new API key` will download a compressed file that contains the necessary files to authenticate with IMCO API and manage your infrastructure. `Keep it safe`.
 
 Extract the contents with your zip compressor of choice and continue using the setup guide for your O.S.
 
@@ -61,7 +61,7 @@ Extract the contents with your zip compressor of choice and continue using the s
 
 ### Configuration
 
-IMCO CLI configuration will usually be located in your personal folder under `.concerto`. If you are using root, CLI will look for contiguration files under `/etc/imco`.
+IMCO CLI configuration will usually be located in your personal folder under `.concerto`. If you are using root, CLI will look for contiguration files under `/etc/cio`.
 We will assume that you are not root, so create the folder and drop the certificates to this location:
 
 ```bash
@@ -131,15 +131,16 @@ USAGE:
    concerto [global options] command [command options] [arguments...]
 
 VERSION:
-   0.6.1
+   0.7.0
 
 AUTHOR:
    Concerto Contributors <https://github.com/ingrammicro/concerto>
 
 COMMANDS:
      blueprint, bl  Manages blueprint commands for scripts, services and templates
-     cloud, clo     Manages cloud related commands for workspaces, servers, generic images, ssh profiles, cloud providers, server plans and Saas providers
+     cloud, clo     Manages cloud related commands for servers, generic images, ssh profiles, cloud providers, server plans and Saas providers
      events, ev     Events allow the user to track their actions and the state of their servers
+     labels, lbl    Provides information about labels
      network, net   Manages network related commands for firewall profiles
      settings, set  Provides settings for cloud accounts
      setup, se      Configures and setups concerto cli enviroment
@@ -147,12 +148,17 @@ COMMANDS:
 ...
 ```
 
-To test that certificates are valid, and that we can communicate with IMCO server, obtain the list of workspaces at your IMCO account using this command
+To test that certificates are valid, and that we can communicate with IMCO server, obtain the list of cloud providers at your IMCO account using this command
 
 ```bash
-$ concerto cloud workspaces list
-ID                         NAME               DEFAULT        SSH_PROFILE_ID             FIREWALL_PROFILE_ID
-5aabb7521de0240abb00000e   default            true           5aabb7521de0240abb00000d   5aabb7521de0240abb00000c
+$ concerto cloud cloud_providers list
+ID                         NAME
+5aabb7511de0240abb000001   AWS
+5aabb7511de0240abb000002   Mock
+5aabb7511de0240abb000003   DigitalOcean
+5aabb7511de0240abb000004   Microsoft Azure ARM
+5aabb7511de0240abb000005   Microsoft Azure
+5aba04be425b5d0c16000000   VCloud
 ```
 
 ## Environment variables
@@ -178,11 +184,13 @@ If you got an error executing IMCO CLI:
 - check that your internet connection can reach `clients.{IMCO_DOMAIN}`
 - make sure that your firewall lets you access to <https://clients.{IMCO_DOMAIN}:886>
 - check that `client.xml` is pointing to the correct certificates location
-- if `concerto` executes but only shows server commands, you are probably trying to use `concerto` from a commissioned server, and the configuration is being read from `/etc/imco`. If that's the case, you should leave `concerto` configuration untouched so that server commands are available for our remote management.
+- if `concerto` executes but only shows server commands, you are probably trying to use `concerto` from a commissioned server, and the configuration is being read from `/etc/cio`. If that's the case, you should leave `concerto` configuration untouched so that server commands are available for our remote management.
 
 ## Usage
 
 We include the most common use cases here. If you feel there is a missing a use case here, open an github issue <https://github.com/ingrammicro/concerto/issues/new>.
+
+From release 0.7.0 the resources can be organized using labels, a many-to-many relationship between labels and resources, based on User criteria and needs ('workspaces' are not available anymore)
 
 ## Wizard
 
@@ -281,45 +289,31 @@ FLAVOUR_REQUIREMENTS:
 GENERIC_IMAGE_ID:
 ```
 
-We have a new server template and a workspace with a commissioned server in IMCO.
+We have a new server template with a commissioned server in IMCO.
 
 <img src="./docs/images/commissioned-server.png" alt="Server Commissioned" width="500px" >
-
-From the command line, get the new workspace, and then our commissioned server ID.
-
-```bash
-$ concerto cloud workspaces list
-ID                         NAME                  DEFAULT        SSH_PROFILE_ID             FIREWALL_PROFILE_ID
-5aabb7521de0240abb00000e   default               true           5aabb7521de0240abb00000d   5aabb7521de0240abb00000c
-5b0ea6377906e900fab96797   Wordpress_workspace   false          5aabb7521de0240abb00000d   5b0ea6377906e900fab96795
-```
-
-```bash
-$ concerto cloud workspaces list_workspace_servers --workspace_id 5b0ea6377906e900fab96797
-ID                         NAME           FQDN                                            STATE          PUBLIC_IP        WORKSPACE_ID               TEMPLATE_ID                SERVER_PLAN_ID             SSH_PROFILE_ID
-5b0ea6377906e900fab96798   wpnode1        sf98aa2c61069a1b.centralus.cloudapp.azure.com   inactive       104.43.245.138   5b0ea6377906e900fab96797   5b0ea6377906e900fab96792   5aac0c05348f190b3e0011c2   5aabb7521de0240abb00000d
-```
 
 Our server's ID is `5b0ea6377906e900fab96798`. We can now use `concerto cloud servers` subcommands to manage the server. Lets bring wordpress up:
 
 ```bash
 $ concerto cloud servers boot --id 5b0ea6377906e900fab96798
-ID:                 5b0ea6377906e900fab96798
-NAME:               wpnode1
-FQDN:               sf98aa2c61069a1b.centralus.cloudapp.azure.com
-STATE:              booting
-PUBLIC_IP:          104.43.245.138
-WORKSPACE_ID:       5b0ea6377906e900fab96797
-TEMPLATE_ID:        5b0ea6377906e900fab96792
-SERVER_PLAN_ID:     5aac0c05348f190b3e0011c2
-CLOUD_ACCOUNT_ID:   5aabb7531de0240abb000024
-SSH_PROFILE_ID:     5aabb7521de0240abb00000d
+ID:                    5b0ea6377906e900fab96798
+NAME:                  wpnode1
+FQDN:                  sf98aa2c61069a1b.centralus.cloudapp.azure.com
+STATE:                 booting
+PUBLIC_IP:             104.43.245.138
+TEMPLATE_ID:           5b0ea6377906e900fab96792
+SERVER_PLAN_ID:        5aac0c05348f190b3e0011c2
+CLOUD_ACCOUNT_ID:      5aabb7531de0240abb000024
+SSH_PROFILE_ID:        5aabb7521de0240abb00000e
+FIREWALL_PROFILE_ID:   5b50a4c75f7c880ad9c6bbfb
+RESOURCE_TYPE:         server
+LABELS:                [Wordpress]
 ```
 
 Server status: `Bootstraping`
 
 <img src="./docs/images/server-bootstraping.png" alt="Server Bootstraping" width="500px" >
-
 
 Server status: `Operational`
 
@@ -359,6 +353,7 @@ ID                         NAME
 5aabb7551de0240abb000068   Red Hat Enterprise Linux 7.3 x86_64
 5aabb7551de0240abb000069   CentOS 7.4 x86_64
 5aabb7551de0240abb00006a   Debian 9 x86_64
+5b2a331ee09b740b5ee72f24   Ubuntu 18.04 Bionic Beaver x86_64
 ```
 
 Take note of Ubuntu 16.04 ID, `5aabb7551de0240abb000065`.
@@ -376,28 +371,21 @@ ID                         NAME                  DESCRIPTION                    
 Joomla curated cookbooks creates a local mysql database. We only have to tell our cookbook that we should override the `joomla.db.hostname` to `127.0.0.1`. Execute the following command to create the Joomla template.
 
 ```bash
-$ concerto blueprint templates create --name joomla-tmplt --generic_image_id 5aabb7551de0240abb000065 --service_list '["joomla"]' --configuration_attributes '{"joomla":{"db":{"hostname":"127.0.0.1"}}}'
-ID:                         5b0ebc6e7906e900fab967a3
+$ concerto blueprint templates create --name joomla-tmplt --generic_image_id 5aabb7551de0240abb000065 --service_list '["joomla"]' --configuration_attributes '{"joomla":{"db":{"hostname":"127.0.0.1"}}}' --labels Joomla,mysite.com
+ID:                         5b5192b15f7c880ad9c6bc12
 NAME:                       joomla-tmplt
 GENERIC IMAGE ID:           5aabb7551de0240abb000065
 SERVICE LIST:               [joomla]
 CONFIGURATION ATTRIBUTES:   {"joomla":{"db":{"hostname":"127.0.0.1"}}}
+RESOURCE_TYPE:              template
+LABELS:                     [mysite.com Joomla]
 ```
 
 #### Instantiate a server
 
-Now that we have our server blueprint defined, let's start one. Servers in IMCO need to know the workspace that define their runtime infrastructure environment, the server plan for the cloud provider, and the template used to build the instance.
+Now that we have our server blueprint defined, let's start one. Servers in IMCO need to know the server plan for the cloud provider, and the template used to build the instance.
 
 As we did in the Wizard use case, we can find the missing data using these commands:
-
-##### Find the workspace
-
-```bash
-$ concerto cloud workspaces list
-ID                         NAME                  DEFAULT        SSH_PROFILE_ID             FIREWALL_PROFILE_ID
-5aabb7521de0240abb00000e   default               true           5aabb7521de0240abb00000d   5aabb7521de0240abb00000c
-5b0ea6377906e900fab96797   Wordpress_workspace   false          5aabb7521de0240abb00000d   5b0ea6377906e900fab96795
-```
 
 ##### Find cloud provider server plan
 
@@ -451,11 +439,11 @@ We already know our template ID, but in case you want to make sure
 
 ```bash
 $ concerto blueprint templates list
-ID                         NAME                 GENERIC IMAGE ID
-5afd5b4c42d90d09f00000aa   windows 2016         5aabb7551de0240abb000067
-5b067fe8f585000b80809a8e   ubuntu 16.04         5aabb7551de0240abb000065
-5b0ea6377906e900fab96792   Wordpress_template   5aabb7551de0240abb000064
-5b0ebc6e7906e900fab967a3   joomla-tmplt         5aabb7551de0240abb000065
+ID                         NAME                 GENERIC IMAGE ID              LABELS
+5afd5b4c42d90d09f00000aa   windows 2016         5aabb7551de0240abb000067      []
+5b067fe8f585000b80809a8e   ubuntu 16.04         5aabb7551de0240abb000065      []
+5b0ea6377906e900fab96792   Wordpress_template   5aabb7551de0240abb000064      [Wordpress]
+5b5192b15f7c880ad9c6bc12   joomla-tmplt         5aabb7551de0240abb000065      [mysite.com Joomla]
 ```
 
 ##### Find Location ID
@@ -473,7 +461,7 @@ ID                         NAME
 
 ##### Find Cloud Account ID
 
-It's necessary to retrive the adequeate Cloud Account ID for `Microsoft Azure` Cloud Provider, in our case `5aabb7511de0240abb000005`:
+It's necessary to retrieve the adequate Cloud Account ID for `Microsoft Azure` Cloud Provider, in our case `5aabb7511de0240abb000005`:
 
 ```bash
 $ concerto settings cloud_accounts list
@@ -489,57 +477,87 @@ ID                         NAME                                     CLOUD_PROVID
 5aba066c425b5d0c64000002   VMWare-Routed-cloud_account-name         5aba04be425b5d0c16000000   VCloud
 ```
 
+##### Find SSH Profile ID
+
+It's necessary to retrieve the adequate SSH Profile ID. It can be created using CLI commands or IMCO UI.
+
+```bash
+$ concerto cloud ssh_profiles list
+ID                         NAME                 PUBLIC_KEY                   LABELS
+5aabb7521de0240abb00000d   default              ssh-rsa AAAAB3NzaC1yc[...]   []
+5aabb7521de0240abb00000e   Joomla SSH           ssh-rsa AAAABBfD4Klmn[...]   [mysite.com Joomla]
+[...]
+```
+
+##### Find Firewall Profile ID
+
+It's necessary to retrieve the adequate Firewall Profile ID. It can be created using CLI commands or IMCO UI.
+
+```bash
+$ concerto network firewall_profiles list
+ID                         NAME                                     DESCRIPTION                                            DEFAULT        LABELS
+5aabb7521de0240abb00000c   Default firewall                         Firewall profile created by the platfom for your use   true           []
+5b519da77fb2480b0831d9d2   Joomla Firewall                          Firewall profile created for joomla management         false          [mysite.com Joomla]
+[...]
+```
+
 ##### Create our Joomla Server
 
 ```bash
-$ concerto cloud servers create --name joomla-node1 --workspace_id 5aabb7521de0240abb00000e --template_id 5b0ebc6e7906e900fab967a3 --server_plan_id 5aac0c04348f190b3e001186 --cloud_account_id 5aabb7531de0240abb000024
-ID:                 5b0ebe297906e900fab967a7
-NAME:               joomla-node1
+$ concerto cloud servers create --name joomla-node1 --template_id 5b5192b15f7c880ad9c6bc12 --server_plan_id 5aac0c04348f190b3e001186 --cloud_account_id 5aabb7531de0240abb000024 --ssh_profile_id 5aabb7521de0240abb00000e --firewall_profile_id 5b519da77fb2480b0831d9d2 --labels Joomla,mysite.com
+ID:                    5b5193675f7c880ad9c6bc16
+NAME:                  joomla-node1
 FQDN:
-STATE:              commissioning
+STATE:                 commissioning
 PUBLIC_IP:
-WORKSPACE_ID:       5aabb7521de0240abb00000e
-TEMPLATE_ID:        5b0ebc6e7906e900fab967a3
-SERVER_PLAN_ID:     5aac0c04348f190b3e001186
-CLOUD_ACCOUNT_ID:   5aabb7531de0240abb000024
-SSH_PROFILE_ID:     5aabb7521de0240abb00000d
+TEMPLATE_ID:           5b5192b15f7c880ad9c6bc12
+SERVER_PLAN_ID:        5aac0c04348f190b3e001186
+CLOUD_ACCOUNT_ID:      5aabb7531de0240abb000024
+SSH_PROFILE_ID:        5aabb7521de0240abb00000e
+FIREWALL_PROFILE_ID:   5b519da77fb2480b0831d9d2
+RESOURCE_TYPE:         server
+LABELS:                [mysite.com Joomla]
 ```
 
 And finally boot it
 
 ```bash
-$ concerto cloud servers boot --id 5b0ebe297906e900fab967a7
-ID:                 5b0ebe297906e900fab967a7
-NAME:               joomla-node1
+$ concerto cloud servers boot --id 5b5193675f7c880ad9c6bc16
+ID:                    5b5193675f7c880ad9c6bc16
+NAME:                  joomla-node1
 FQDN:
-STATE:              booting
+STATE:                 booting
 PUBLIC_IP:
-WORKSPACE_ID:       5aabb7521de0240abb00000e
-TEMPLATE_ID:        5b0ebc6e7906e900fab967a3
-SERVER_PLAN_ID:     5aac0c04348f190b3e001186
-CLOUD_ACCOUNT_ID:   5aabb7531de0240abb000024
-SSH_PROFILE_ID:     5aabb7521de0240abb00000d
+TEMPLATE_ID:           5b5192b15f7c880ad9c6bc12
+SERVER_PLAN_ID:        5aac0c04348f190b3e001186
+CLOUD_ACCOUNT_ID:      5aabb7531de0240abb000024
+SSH_PROFILE_ID:        5aabb7521de0240abb00000e
+FIREWALL_PROFILE_ID:   5b519da77fb2480b0831d9d2
+RESOURCE_TYPE:         server
+LABELS:                [mysite.com Joomla]
 ```
 
 You can retrieve the current status of the server and see how it transitions along different statuses (booting, bootstrapping, operational). Then, after a brief amount of time the final status is reached:
 
 ```bash
-$ concerto cloud servers show --id 5b0ebe297906e900fab967a7
-ID:                 5b0ebe297906e900fab967a7
-NAME:               joomla-node1
-FQDN:               s22e6c216adaec08.centralus.cloudapp.azure.com
-STATE:              operational
-PUBLIC_IP:          104.43.242.14
-WORKSPACE_ID:       5aabb7521de0240abb00000e
-TEMPLATE_ID:        5b0ebc6e7906e900fab967a3
-SERVER_PLAN_ID:     5aac0c04348f190b3e001186
-CLOUD_ACCOUNT_ID:   5aabb7531de0240abb000024
-SSH_PROFILE_ID:     5aabb7521de0240abb00000d
+$ concerto cloud servers show --id 5b5193675f7c880ad9c6bc16
+ID:                    5b5193675f7c880ad9c6bc16
+NAME:                  joomla-node1
+FQDN:                  s6ef3f68038ec9e8.centralus.cloudapp.azure.com
+STATE:                 operational
+PUBLIC_IP:             23.99.252.146
+TEMPLATE_ID:           5b5192b15f7c880ad9c6bc12
+SERVER_PLAN_ID:        5aac0c04348f190b3e001186
+CLOUD_ACCOUNT_ID:      5aabb7531de0240abb000024
+SSH_PROFILE_ID:        5aabb7521de0240abb00000e
+FIREWALL_PROFILE_ID:   5b519da77fb2480b0831d9d2
+RESOURCE_TYPE:         server
+LABELS:                [mysite.com Joomla]
 ```
 
 ## Firewall Management
 
-IMCO CLI's `network` command lets you manage a network settings at the workspace scope.
+IMCO CLI's `network` command lets you manage a network settings at the server scope.
 
 As we have did before, execute this command with no futher commands to get usage information:
 
@@ -559,36 +577,28 @@ As you can see, you can manage firewall from IMCO CLI.
 
 ### Firewall Update Case
 
-Workspaces in IMCO are always associated with a firewall profile. By default ports 443 and 80 are open to fit most web environments, but if you are not using those ports but some others. We would need to close HTTP and HTTPS ports and open LDAP and LDAPS instead.
+Servers in IMCO are always associated with a firewall profile. By default ports 443 and 80 are open to fit most web environments, but if you are not using those ports but some others. We would need to close HTTP and HTTPS ports and open LDAP and LDAPS instead.
 
-The first thing we will need is our workspace's related firewall identifier.
-
-```bash
-$ concerto cloud workspaces list
-ID                         NAME                  DEFAULT        SSH_PROFILE_ID             FIREWALL_PROFILE_ID
-5aabb7521de0240abb00000e   default               true           5aabb7521de0240abb00000d   5aabb7521de0240abb00000c
-5b0ea6377906e900fab96797   Wordpress_workspace   false          5aabb7521de0240abb00000d   5b0ea6377906e900fab96795
-5b0ec2e594771f0b76361dd9   My New Workspace      false          5aabb7521de0240abb00000d   5b0ec2c994771f0b76361dd6
-```
-
-We have our LDAP servers running under `My New Workspace`. If you are unsure about in which workspace are your servers running, list the servers in the workspace
+The first thing we will need is our servers's related firewall identifier. In this they can be found filtering by label assigned 'LDAP':
 
 ```bash
-concerto cloud workspaces list_workspace_servers --workspace_id 5b0ec2e594771f0b76361dd9
-ID                         NAME           FQDN                                                 STATE          PUBLIC_IP       WORKSPACE_ID               TEMPLATE_ID                SERVER_PLAN_ID             SSH_PROFILE_ID
-5b0ec38494771f0b76361ddb   openldap-1                                                          inactive                       5b0ec2e594771f0b76361dd9   5b067fe8f585000b80809a8e   5aabb76fe499780a0000059a   5aabb7521de0240abb00000d
-5b0ec3a294771f0b76361dde   openldap-2     scd9ee0721949943.northcentralus.cloudapp.azure.com   operational    23.101.166.77   5b0ec2e594771f0b76361dd9   5b067fe8f585000b80809a8e   5aac0c0e348f190b3e001433   5aabb7521de0240abb00000d
+$ concerto cloud servers list --labels LDAP
+ID                         NAME           FQDN                                                 STATE          PUBLIC_IP       TEMPLATE_ID                SERVER_PLAN_ID             CLOUD_ACCOUNT_ID           SSH_PROFILE_ID      FIREWALL_PROFILE_ID        LABELS
+5b51a9dc7fb2480b0831d9eb   openldap-1                                                          inactive                       5afd5b4c42d90d09f00000aa   5aac0c0e348f190b3e001432   5aabb7531de0240abb000024   5b51a9617fb2480b0831d9e9   5b51a9377fb2480b0831d9e6   [LDAP]
+5b51a9ff7fb2480b0831d9ee   openldap-2     sca9229d77b151d4.northcentralus.cloudapp.azure.com   operational    23.100.76.238   5afd5b4c42d90d09f00000aa   5aac0c0e348f190b3e001432   5aabb7531de0240abb000024   5b51a9617fb2480b0831d9e9   5b51a9377fb2480b0831d9e6   [LDAP]
 ```
 
 Now that we have the firewall profile ID, list it's contents
 
 ```bash
-$ concerto network firewall_profiles show --id 5b0ec2c994771f0b76361dd6
-ID:            5b0ec2c994771f0b76361dd6
-NAME:          My New Firewall Profile
-DESCRIPTION:
-DEFAULT:       false
-RULES:         [{Protocol:tcp MinPort:22 MaxPort:22 CidrIp:any} {Protocol:tcp MinPort:5985 MaxPort:5985 CidrIp:any} {Protocol:tcp MinPort:3389 MaxPort:3389 CidrIp:any} {Protocol:tcp MinPort:10050 MaxPort:10050 CidrIp:any} {Protocol:tcp MinPort:443 MaxPort:443 CidrIp:any} {Protocol:tcp MinPort:80 MaxPort:80 CidrIp:any}]
+$ concerto network firewall_profiles show --id 5b51a9377fb2480b0831d9e6
+ID:              5b51a9377fb2480b0831d9e6
+NAME:            Firewall LDAP
+DESCRIPTION:     LDAP Services firewall
+DEFAULT:         false
+RULES:           [{Protocol:tcp MinPort:22 MaxPort:22 CidrIP:any} {Protocol:tcp MinPort:5985 MaxPort:5985 CidrIP:any} {Protocol:tcp MinPort:3389 MaxPort:3389 CidrIP:any} {Protocol:tcp MinPort:10050 MaxPort:10050 CidrIP:any} {Protocol:tcp MinPort:443 MaxPort:443 CidrIP:any} {Protocol:tcp MinPort:80 MaxPort:80 CidrIP:any}]
+RESOURCE_TYPE:   firewall_profile
+LABELS:          [LDAP]
 ```
 
 The first four values are ports that IMCO may use to keep the desired state of the machine, and that will always be accessed using certificates.
@@ -596,12 +606,14 @@ The first four values are ports that IMCO may use to keep the desired state of t
 When updating, we tell IMCO a new set of rules. Execute the following command to open 389 and 686 to anyone.
 
 ```bash
-$ concerto network firewall_profiles update --id 5b0ec2c994771f0b76361dd6 --rules '[{"ip_protocol":"tcp", "min_port":389, "max_port":389, "source":"0.0.0.0/0"}, {"ip_protocol":"tcp", "min_port":636, "max_port":636, "source":"0.0.0.0/0"}]'
-ID:            5b0ec2c994771f0b76361dd6
-NAME:          My New Firewall Profile
-DESCRIPTION:
-DEFAULT:       false
-RULES:         [{Protocol:tcp MinPort:22 MaxPort:22 CidrIp:any} {Protocol:tcp MinPort:5985 MaxPort:5985 CidrIp:any} {Protocol:tcp MinPort:3389 MaxPort:3389 CidrIp:any} {Protocol:tcp MinPort:10050 MaxPort:10050 CidrIp:any} {Protocol:tcp MinPort:389 MaxPort:389 CidrIp:any} {Protocol:tcp MinPort:636 MaxPort:636 CidrIp:any}]
+$ concerto network firewall_profiles update --id 5b51a9377fb2480b0831d9e6 --rules '[{"ip_protocol":"tcp", "min_port":389, "max_port":389, "source":"0.0.0.0/0"}, {"ip_protocol":"tcp", "min_port":636, "max_port":636, "source":"0.0.0.0/0"}]'
+ID:              5b51a9377fb2480b0831d9e6
+NAME:            Firewall LDAP
+DESCRIPTION:     LDAP Services firewall
+DEFAULT:         false
+RULES:           [{Protocol:tcp MinPort:22 MaxPort:22 CidrIP:any} {Protocol:tcp MinPort:5985 MaxPort:5985 CidrIP:any} {Protocol:tcp MinPort:3389 MaxPort:3389 CidrIP:any} {Protocol:tcp MinPort:10050 MaxPort:10050 CidrIP:any} {Protocol:tcp MinPort:389 MaxPort:389 CidrIP:any} {Protocol:tcp MinPort:636 MaxPort:636 CidrIP:any}]
+RESOURCE_TYPE:   firewall_profile
+LABELS:          [LDAP]
 ```
 
 Firewall update returns the complete set of rules. As you can see, now LDAP and LDAPS ports are open.
@@ -617,45 +629,53 @@ Let's pretend there is an existing Joomla blueprint, and that we want to update 
 This is the Joomla blueprint that we created in a previous use case.
 
 ```bash
-$ concerto blueprint templates show --id 5b0ebc6e7906e900fab967a3
-ID:                         5b0ebc6e7906e900fab967a3
+$ concerto blueprint templates show --id 5b5192b15f7c880ad9c6bc12
+ID:                         5b5192b15f7c880ad9c6bc12
 NAME:                       joomla-tmplt
 GENERIC IMAGE ID:           5aabb7551de0240abb000065
 SERVICE LIST:               [joomla]
 CONFIGURATION ATTRIBUTES:   {"joomla":{"db":{"hostname":"127.0.0.1"}}}
+RESOURCE_TYPE:              template
+LABELS:                     [mysite.com Joomla]
 ```
 
 Beware of adding previous services or configuration attributes. Update will replace existing items with the ones provided. If we don't want to lose the `joomla.db.hostname` attribute, add it to our configuretion attributes parameter:
 
 ```bash
-$ concerto blueprint templates update --id 5b0ebc6e7906e900fab967a3 --configuration_attributes '{"joomla":{"db":{"hostname":"127.0.0.1", "password":"$afeP4sSw0rd"}}}'
-ID:                         5b0ebc6e7906e900fab967a3
+$ concerto blueprint templates update --id 5b5192b15f7c880ad9c6bc12 --configuration_attributes '{"joomla":{"db":{"hostname":"127.0.0.1", "password":"$afeP4sSw0rd"}}}'
+ID:                         5b5192b15f7c880ad9c6bc12
 NAME:                       joomla-tmplt
 GENERIC IMAGE ID:           5aabb7551de0240abb000065
 SERVICE LIST:               [joomla]
 CONFIGURATION ATTRIBUTES:   {"joomla":{"db":{"hostname":"127.0.0.1","password":"$afeP4sSw0rd"}}}
+RESOURCE_TYPE:              template
+LABELS:                     [mysite.com Joomla]
 ```
 
 As you can see, non specified parameters, like name and service list, remain unchanged. Let's now change the service list, adding a two cookbooks.
 
 ```bash
-$ concerto blueprint templates update --id 5b0ebc6e7906e900fab967a3  --service_list '["joomla","python@1.4.6","polipo"]'
-ID:                         5b0ebc6e7906e900fab967a3
+$ concerto blueprint templates update --id 5b5192b15f7c880ad9c6bc12  --service_list '["joomla","python@1.4.6","polipo"]'
+ID:                         5b5192b15f7c880ad9c6bc12
 NAME:                       joomla-tmplt
 GENERIC IMAGE ID:           5aabb7551de0240abb000065
 SERVICE LIST:               [joomla python@1.4.6 polipo]
 CONFIGURATION ATTRIBUTES:   {"joomla":{"db":{"hostname":"127.0.0.1","password":"$afeP4sSw0rd"}}}
+RESOURCE_TYPE:              template
+LABELS:                     [mysite.com Joomla]
 ```
 
 Of course, we can change service list and configuration attributes in one command.
 
 ```bash
-$ concerto blueprint templates update --id 5b0ebc6e7906e900fab967a3 --configuration_attributes '{"joomla":{"db":{"hostname":"127.0.0.1", "password":"$afeP4sSw0rd"}}}' --service_list '["joomla","python@1.4.6","polipo"]'
-ID:                         5b0ebc6e7906e900fab967a3
+$ concerto blueprint templates update --id 5b5192b15f7c880ad9c6bc12 --configuration_attributes '{"joomla":{"db":{"hostname":"127.0.0.1", "password":"$afeP4sSw0rd"}}}' --service_list '["joomla","python@1.4.6","polipo"]'
+ID:                         5b5192b15f7c880ad9c6bc12
 NAME:                       joomla-tmplt
 GENERIC IMAGE ID:           5aabb7551de0240abb000065
 SERVICE LIST:               [joomla python@1.4.6 polipo]
 CONFIGURATION ATTRIBUTES:   {"joomla":{"db":{"hostname":"127.0.0.1","password":"$afeP4sSw0rd"}}}
+RESOURCE_TYPE:              template
+LABELS:                     [mysite.com Joomla]
 ```
 
 ## Contribute

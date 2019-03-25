@@ -11,6 +11,8 @@ type Server struct {
 	CloudAccountID    string `json:"cloud_account_id" header:"CLOUD_ACCOUNT_ID"`
 	SSHProfileID      string `json:"ssh_profile_id" header:"SSH_PROFILE_ID"`
 	FirewallProfileID string `json:"firewall_profile_id" header:"FIREWALL_PROFILE_ID"`
+	ResourceType      string `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
+	LabelableFields
 }
 
 type Dns struct {

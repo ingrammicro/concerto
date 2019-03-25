@@ -11,6 +11,8 @@ type Template struct {
 	GenericImageID          string           `json:"generic_image_id,omitempty" header:"GENERIC IMAGE ID"`
 	ServiceList             []string         `json:"service_list,omitempty" header:"SERVICE LIST" show:"nolist"`
 	ConfigurationAttributes *json.RawMessage `json:"configuration_attributes,omitempty" header:"CONFIGURATION ATTRIBUTES" show:"nolist"`
+	ResourceType            string           `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
+	LabelableFields
 }
 
 // TemplateScript stores a templates' script info

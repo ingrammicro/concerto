@@ -18,6 +18,12 @@
   version = "v0.10.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/allan-simon/go-singleinstance"
+  packages = ["."]
+  revision = "79edcfdc2dfc93da913f46ae8d9f8a9602250431"
+
+[[projects]]
   name = "github.com/asaskevich/govalidator"
   packages = ["."]
   revision = "7664702784775e51966f0885f5cd27435916517b"
@@ -91,6 +97,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "92b7325f6a94cda806d124a617bcc6703c943d68c51e2be3182ef4ed42dc35a7"
+  inputs-digest = "110d97437b0209f38ce5b41683f4bdb8842f608d32b27d184ddc13edb6bfd8c9"
   solver-name = "gps-cdcl"
   solver-version = 1

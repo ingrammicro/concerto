@@ -15,7 +15,6 @@ import (
 
 const (
 	RetriesNumber        = 5
-	RetriesFactor        = 3
 	DefaultThresholdTime = 10
 )
 
@@ -43,7 +42,7 @@ func cmdContinuousReportRun(c *cli.Context) error {
 	// Custom method for chunks processing
 	fn := func(chunk string) error {
 		log.Debug("sendChunks")
-		err := retry(RetriesNumber, time.Second, func() error {
+		err := utils.Retry(RetriesNumber, time.Second, func() error {
 			log.Debug("Sending: ", chunk)
 
 			commandIn := map[string]interface{}{
@@ -70,26 +69,12 @@ func cmdContinuousReportRun(c *cli.Context) error {
 		return nil
 	}
 
-	exitCode, err := utils.RunContinuousCmd(fn, cmdArg, thresholdTime)
+	exitCode, err := utils.RunContinuousCmd(fn, cmdArg, thresholdTime, -1)
 	if err != nil {
 		formatter.PrintFatal("cannot process continuous report command", err)
 	}
 
 	log.Info("completed: ", exitCode)
 	os.Exit(exitCode)
-	return nil
-}
-
-func retry(attempts int, sleep time.Duration, fn func() error) error {
-	log.Debug("retry")
-
-	if err := fn(); err != nil {
-		if attempts--; attempts > 0 {
-			log.Debug("Waiting to retry: ", sleep)
-			time.Sleep(sleep)
-			return retry(attempts, RetriesFactor*sleep, fn)
-		}
-		return err
-	}
 	return nil
 }

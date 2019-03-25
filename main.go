@@ -1,6 +1,7 @@
 package main
 
 import (
+	//"context"
 	"fmt"
 	"os"
 	"sort"
@@ -11,6 +12,7 @@ import (
 	"github.com/ingrammicro/concerto/blueprint/scripts"
 	"github.com/ingrammicro/concerto/blueprint/services"
 	"github.com/ingrammicro/concerto/blueprint/templates"
+	"github.com/ingrammicro/concerto/bootstrapping"
 	"github.com/ingrammicro/concerto/brownfield"
 	cl_prov "github.com/ingrammicro/concerto/cloud/cloud_providers"
 	"github.com/ingrammicro/concerto/cloud/generic_images"
@@ -22,6 +24,7 @@ import (
 	"github.com/ingrammicro/concerto/converge"
 	"github.com/ingrammicro/concerto/dispatcher"
 	"github.com/ingrammicro/concerto/firewall"
+	"github.com/ingrammicro/concerto/labels"
 	"github.com/ingrammicro/concerto/network/firewall_profiles"
 	"github.com/ingrammicro/concerto/settings/cloud_accounts"
 	"github.com/ingrammicro/concerto/setup"
@@ -65,6 +68,13 @@ var ServerCommands = []cli.Command{
 		Usage: "Manages polling commands",
 		Subcommands: append(
 			cmdpolling.SubCommands(),
+		),
+	},
+	{
+		Name:  "bootstrap",
+		Usage: "Manages bootstrapping commands",
+		Subcommands: append(
+			bootstrapping.SubCommands(),
 		),
 	},
 }
@@ -245,6 +255,14 @@ var ClientCommands = []cli.Command{
 		Usage:     "Manages wizard related commands for apps, locations, cloud providers, server plans",
 		Subcommands: append(
 			WizardCommands,
+		),
+	},
+	{
+		Name:      "labels",
+		ShortName: "lbl",
+		Usage:     "Provides information about labels",
+		Subcommands: append(
+			labels.SubCommands(),
 		),
 	},
 }

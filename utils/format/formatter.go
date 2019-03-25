@@ -16,7 +16,6 @@ var osExit = os.Exit
 type Formatter interface {
 	PrintItem(item interface{}) error
 	PrintList(items interface{}) error
-	//PrintList(items [][]string, headers []string) error
 	PrintError(context string, err error)
 	PrintFatal(context string, err error)
 }
@@ -24,8 +23,8 @@ type Formatter interface {
 var formatter Formatter
 
 // InitializeFormatter creates a singleton Formatter
-func InitializeFormatter(ftype string, out io.Writer) {
-	if ftype == "json" {
+func InitializeFormatter(formatterType string, out io.Writer) {
+	if formatterType == "json" {
 		formatter = NewJSONFormatter(out)
 	} else {
 		formatter = NewTextFormatter(out)

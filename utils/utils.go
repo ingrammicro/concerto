@@ -2,12 +2,15 @@ package utils
 
 import (
 	"archive/zip"
+	"context"
 	"fmt"
 	"io"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -57,6 +60,24 @@ func Unzip(archive, target string) error {
 		}
 	}
 
+	return nil
+}
+
+func Untar(ctx context.Context, source, target string) error {
+
+	if err := os.MkdirAll(target, 0600); err != nil {
+		return err
+	}
+
+	tarExecutable := "tar"
+	if runtime.GOOS == "windows" {
+		tarExecutable = "C:\\opscode\\chef\\bin\\tar.exe"
+	}
+	cmd := exec.CommandContext(ctx, tarExecutable, "-xzf", source, "-C", target)
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+	
 	return nil
 }
 
@@ -167,6 +188,7 @@ func CheckRequiredFlags(c *cli.Context, flags []string) {
 	}
 }
 
+// RandomString generates a random string from lowercase letters and numbers
 func RandomString(strlen int) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -175,4 +197,70 @@ func RandomString(strlen int) string {
 		result[i] = chars[r.Intn(len(chars))]
 	}
 	return string(result)
+}
+
+// RemoveDuplicates returns the slice removing duplicates if exist
+func RemoveDuplicates(elements []string) []string {
+	encountered := map[string]bool{}
+
+	// Create a map of all unique elements.
+	for v := range elements {
+		encountered[elements[v]] = true
+	}
+
+	// Place all keys from the map into a slice.
+	result := []string{}
+	for key := range encountered {
+		result = append(result, key)
+	}
+	return result
+}
+
+// Contains evaluates whether s contains x.
+func Contains(s []string, x string) bool {
+	for _, n := range s {
+		if x == n {
+			return true
+		}
+	}
+	return false
+}
+
+// Subset returns true if the first slice is completely contained in the second slice.
+// There must be at least the same number of duplicate values in second as there are in first.
+func Subset(s1, s2 []string) bool {
+	if len(s1) > len(s2) {
+		return false
+	}
+	for _, e := range s1 {
+		if !Contains(s2, e) {
+			return false
+		}
+	}
+	return true
+}
+
+func RemoveFileInfo(fileInfo os.FileInfo, fileInfoName string) error {
+	if fileInfo.IsDir() {
+		d, err := os.Open(fileInfoName)
+		if err != nil {
+			return err
+		}
+		defer d.Close()
+		names, err := d.Readdirnames(-1)
+		if err != nil {
+			return err
+		}
+		for _, name := range names {
+			err = os.RemoveAll(filepath.Join(fileInfoName, name))
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	if err := os.Remove(fileInfoName); err != nil {
+		return err
+	}
+	return nil
 }
