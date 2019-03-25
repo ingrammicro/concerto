@@ -28,7 +28,7 @@ func GetLocationListMocked(t *testing.T, locationsIn *[]types.Location) *[]types
 	assert.Nil(err, "Location test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/wizard/locations").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/wizard/locations").Return(dIn, 200, nil)
 	locationsOut, err := ds.GetLocationList()
 	assert.Nil(err, "Error getting location list")
 	assert.Equal(*locationsIn, locationsOut, "GetLocationList returned different locations")
@@ -52,7 +52,7 @@ func GetLocationListFailErrMocked(t *testing.T, locationsIn *[]types.Location) *
 	assert.Nil(err, "Location test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/wizard/locations").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/v2/wizard/locations").Return(dIn, 200, fmt.Errorf("Mocked error"))
 	locationsOut, err := ds.GetLocationList()
 
 	assert.NotNil(err, "We are expecting an error")
@@ -78,7 +78,7 @@ func GetLocationListFailStatusMocked(t *testing.T, locationsIn *[]types.Location
 	assert.Nil(err, "Location test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/wizard/locations").Return(dIn, 499, nil)
+	cs.On("Get", "/v2/wizard/locations").Return(dIn, 499, nil)
 	locationsOut, err := ds.GetLocationList()
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -103,7 +103,7 @@ func GetLocationListFailJSONMocked(t *testing.T, locationsIn *[]types.Location) 
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v1/wizard/locations").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/wizard/locations").Return(dIn, 200, nil)
 	locationsOut, err := ds.GetLocationList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")

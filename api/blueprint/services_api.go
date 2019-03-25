@@ -29,7 +29,7 @@ func NewServicesService(concertoService utils.ConcertoService) (*ServicesService
 func (ss *ServicesService) GetServiceList() (services []types.Service, err error) {
 	log.Debug("GetServiceList")
 
-	data, status, err := ss.concertoService.Get("/v1/blueprint/services")
+	data, status, err := ss.concertoService.Get("/v2/blueprint/services")
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (ss *ServicesService) GetServiceList() (services []types.Service, err error
 func (ss *ServicesService) GetService(ID string) (service *types.Service, err error) {
 	log.Debug("GetService")
 
-	data, status, err := ss.concertoService.Get(fmt.Sprintf("/v1/blueprint/services/%s", ID))
+	data, status, err := ss.concertoService.Get(fmt.Sprintf("/v2/blueprint/services/%s", ID))
 	if err != nil {
 		return nil, err
 	}

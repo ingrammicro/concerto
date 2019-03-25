@@ -28,7 +28,7 @@ func GetServiceListMocked(t *testing.T, servicesIn *[]types.Service) *[]types.Se
 	assert.Nil(err, "Service test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/blueprint/services").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/blueprint/services").Return(dIn, 200, nil)
 	servicesOut, err := ds.GetServiceList()
 	assert.Nil(err, "Error getting service list")
 	assert.Equal(*servicesIn, servicesOut, "GetServiceList returned different services")
@@ -52,7 +52,7 @@ func GetServiceListFailErrMocked(t *testing.T, servicesIn *[]types.Service) *[]t
 	assert.Nil(err, "Service test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/blueprint/services").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/v2/blueprint/services").Return(dIn, 200, fmt.Errorf("Mocked error"))
 	servicesOut, err := ds.GetServiceList()
 
 	assert.NotNil(err, "We are expecting an error")
@@ -78,7 +78,7 @@ func GetServiceListFailStatusMocked(t *testing.T, servicesIn *[]types.Service) *
 	assert.Nil(err, "Service test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/blueprint/services").Return(dIn, 499, nil)
+	cs.On("Get", "/v2/blueprint/services").Return(dIn, 499, nil)
 	servicesOut, err := ds.GetServiceList()
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -103,7 +103,7 @@ func GetServiceListFailJSONMocked(t *testing.T, servicesIn *[]types.Service) *[]
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v1/blueprint/services").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/blueprint/services").Return(dIn, 200, nil)
 	servicesOut, err := ds.GetServiceList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -129,7 +129,7 @@ func GetServiceMocked(t *testing.T, service *types.Service) *types.Service {
 	assert.Nil(err, "Service test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/blueprint/services/%s", service.ID)).Return(dIn, 200, nil)
 	serviceOut, err := ds.GetService(service.ID)
 	assert.Nil(err, "Error getting service")
 	assert.Equal(*service, *serviceOut, "GetService returned different services")
@@ -153,7 +153,7 @@ func GetServiceFailErrMocked(t *testing.T, service *types.Service) *types.Servic
 	assert.Nil(err, "Service test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/v2/blueprint/services/%s", service.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	serviceOut, err := ds.GetService(service.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -179,7 +179,7 @@ func GetServiceFailStatusMocked(t *testing.T, service *types.Service) *types.Ser
 	assert.Nil(err, "Service test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.ID)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/v2/blueprint/services/%s", service.ID)).Return(dIn, 499, nil)
 	serviceOut, err := ds.GetService(service.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -204,7 +204,7 @@ func GetServiceFailJSONMocked(t *testing.T, service *types.Service) *types.Servi
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/services/%s", service.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/blueprint/services/%s", service.ID)).Return(dIn, 200, nil)
 	serviceOut, err := ds.GetService(service.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")

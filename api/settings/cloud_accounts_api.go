@@ -29,7 +29,7 @@ func NewCloudAccountService(concertoService utils.ConcertoService) (*CloudAccoun
 func (ca *CloudAccountService) GetCloudAccountList() (cloudAccounts []types.CloudAccount, err error) {
 	log.Debug("GetCloudAccountList")
 
-	data, status, err := ca.concertoService.Get("/v1/settings/cloud_accounts")
+	data, status, err := ca.concertoService.Get("/v2/settings/cloud_accounts")
 	if err != nil {
 		return nil, err
 	}

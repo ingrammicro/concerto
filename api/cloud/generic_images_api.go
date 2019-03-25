@@ -28,7 +28,7 @@ func NewGenericImageService(concertoService utils.ConcertoService) (*GenericImag
 func (cl *GenericImageService) GetGenericImageList() (genericImages []types.GenericImage, err error) {
 	log.Debug("GetGenericImageList")
 
-	data, status, err := cl.concertoService.Get("/v1/cloud/generic_images")
+	data, status, err := cl.concertoService.Get("/v2/cloud/generic_images")
 	if err != nil {
 		return nil, err
 	}

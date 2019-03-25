@@ -72,7 +72,7 @@ package saas_accounts
 // 	webservice, err := webservice.NewWebService()
 // 	utils.CheckError(err)
 
-// 	err, data, res := webservice.Get("/v1/settings/saas_accounts")
+// 	err, data, res := webservice.Get("/v2/settings/saas_accounts")
 // 	utils.CheckError(err)
 // 	utils.CheckReturnCode(res, data)
 
@@ -106,7 +106,7 @@ package saas_accounts
 
 // 	jsonBytes, err := json.Marshal(v)
 // 	utils.CheckError(err)
-// 	err, res, code := webservice.Post("/v1/settings/saas_accounts", jsonBytes)
+// 	err, res, code := webservice.Post("/v2/settings/saas_accounts", jsonBytes)
 // 	if res == nil {
 // 		log.Fatal(err)
 // 	}
@@ -133,7 +133,7 @@ package saas_accounts
 
 // 	jsonBytes, err := json.Marshal(v)
 // 	utils.CheckError(err)
-// 	err, res, code := webservice.Put(fmt.Sprintf("/v1/settings/saas_accounts/%s", c.String("id")), jsonBytes)
+// 	err, res, code := webservice.Put(fmt.Sprintf("/v2/settings/saas_accounts/%s", c.String("id")), jsonBytes)
 
 // 	utils.CheckError(err)
 // 	utils.CheckReturnCode(code, res)
@@ -145,7 +145,7 @@ package saas_accounts
 // 	webservice, err := webservice.NewWebService()
 // 	utils.CheckError(err)
 
-// 	err, mesg, res := webservice.Delete(fmt.Sprintf("/v1/settings/saas_accounts/%s", c.String("id")))
+// 	err, mesg, res := webservice.Delete(fmt.Sprintf("/v2/settings/saas_accounts/%s", c.String("id")))
 // 	utils.CheckError(err)
 // 	utils.CheckReturnCode(res, mesg)
 // }

@@ -25,7 +25,7 @@ func GetWizCloudProviderListMocked(t *testing.T, cloudProvidersIn *[]types.Cloud
 	assert.Nil(err, "WizCloudProvider test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID)).Return(dIn, 200, nil)
 	cloudProvidersOut, err := ds.GetWizCloudProviderList(AppID, LocID)
 	assert.Nil(err, "Error getting cloudProvider list")
 	assert.Equal(*cloudProvidersIn, cloudProvidersOut, "GetWizCloudProviderList returned different cloudProviders")
@@ -49,7 +49,7 @@ func GetWizCloudProviderListFailErrMocked(t *testing.T, cloudProvidersIn *[]type
 	assert.Nil(err, "WizCloudProvider test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/v2/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	cloudProvidersOut, err := ds.GetWizCloudProviderList(AppID, LocID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -75,7 +75,7 @@ func GetWizCloudProviderListFailStatusMocked(t *testing.T, cloudProvidersIn *[]t
 	assert.Nil(err, "WizCloudProvider test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/v2/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID)).Return(dIn, 499, nil)
 	cloudProvidersOut, err := ds.GetWizCloudProviderList(AppID, LocID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -100,7 +100,7 @@ func GetWizCloudProviderListFailJSONMocked(t *testing.T, cloudProvidersIn *[]typ
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID)).Return(dIn, 200, nil)
 	cloudProvidersOut, err := ds.GetWizCloudProviderList(AppID, LocID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")

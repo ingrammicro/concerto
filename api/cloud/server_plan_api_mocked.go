@@ -28,7 +28,7 @@ func GetServerPlanListMocked(t *testing.T, serverPlansIn *[]types.ServerPlan, cl
 	assert.Nil(err, "ServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/cloud_providers/%s/server_plans", cloudProviderId)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/cloud/cloud_providers/%s/server_plans", cloudProviderId)).Return(dIn, 200, nil)
 	serverPlansOut, err := ds.GetServerPlanList(cloudProviderId)
 	assert.Nil(err, "Error getting serverPlan list")
 	assert.Equal(*serverPlansIn, serverPlansOut, "GetServerPlanList returned different serverPlans")
@@ -52,7 +52,7 @@ func GetServerPlanListFailErrMocked(t *testing.T, serverPlansIn *[]types.ServerP
 	assert.Nil(err, "ServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/cloud_providers/%s/server_plans", cloudProviderId)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/v2/cloud/cloud_providers/%s/server_plans", cloudProviderId)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	serverPlansOut, err := ds.GetServerPlanList(cloudProviderId)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -78,7 +78,7 @@ func GetServerPlanListFailStatusMocked(t *testing.T, serverPlansIn *[]types.Serv
 	assert.Nil(err, "ServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/cloud_providers/%s/server_plans", cloudProviderId)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/v2/cloud/cloud_providers/%s/server_plans", cloudProviderId)).Return(dIn, 499, nil)
 	serverPlansOut, err := ds.GetServerPlanList(cloudProviderId)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -103,7 +103,7 @@ func GetServerPlanListFailJSONMocked(t *testing.T, serverPlansIn *[]types.Server
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/cloud_providers/%s/server_plans", cloudProviderId)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/cloud/cloud_providers/%s/server_plans", cloudProviderId)).Return(dIn, 200, nil)
 	serverPlansOut, err := ds.GetServerPlanList(cloudProviderId)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -129,7 +129,7 @@ func GetServerPlanMocked(t *testing.T, serverPlan *types.ServerPlan) *types.Serv
 	assert.Nil(err, "ServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 200, nil)
 	serverPlanOut, err := ds.GetServerPlan(serverPlan.ID)
 	assert.Nil(err, "Error getting serverPlan")
 	assert.Equal(*serverPlan, *serverPlanOut, "GetServerPlan returned different serverPlans")
@@ -153,7 +153,7 @@ func GetServerPlanFailErrMocked(t *testing.T, serverPlan *types.ServerPlan) *typ
 	assert.Nil(err, "ServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/v2/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	serverPlanOut, err := ds.GetServerPlan(serverPlan.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -179,7 +179,7 @@ func GetServerPlanFailStatusMocked(t *testing.T, serverPlan *types.ServerPlan) *
 	assert.Nil(err, "ServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/v2/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 499, nil)
 	serverPlanOut, err := ds.GetServerPlan(serverPlan.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -204,7 +204,7 @@ func GetServerPlanFailJSONMocked(t *testing.T, serverPlan *types.ServerPlan) *ty
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/cloud/server_plans/%s", serverPlan.ID)).Return(dIn, 200, nil)
 	serverPlanOut, err := ds.GetServerPlan(serverPlan.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")

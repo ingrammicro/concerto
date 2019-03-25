@@ -282,11 +282,11 @@ func OperationalScriptExecute(c *cli.Context) error {
 	serverSvc, formatter := WireUpServer(c)
 
 	checkRequiredFlags(c, []string{"server_id", "script_id"}, formatter)
-	server, err := serverSvc.ExecuteOperationalScript(utils.FlagConvertParams(c), c.String("server_id"), c.String("script_id"))
+	scriptOut, err := serverSvc.ExecuteOperationalScript(utils.FlagConvertParams(c), c.String("server_id"), c.String("script_id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't execute operational script", err)
 	}
-	if err = formatter.PrintItem(*server); err != nil {
+	if err = formatter.PrintItem(*scriptOut); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
 	return nil

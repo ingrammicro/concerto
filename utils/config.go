@@ -249,6 +249,9 @@ func (config *Config) readConcertoConfig(c *cli.Context) error {
 		config.APIEndpoint = defaultConcertoEndpoint
 	}
 
+	// remove slash if exist
+	config.APIEndpoint = strings.TrimRight(config.APIEndpoint, "/")
+
 	return nil
 }
 

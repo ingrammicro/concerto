@@ -28,7 +28,7 @@ func NewServerPlanService(concertoService utils.ConcertoService) (*ServerPlanSer
 func (dm *ServerPlanService) GetServerPlanList(ProviderID string) (serverPlans []types.ServerPlan, err error) {
 	log.Debug("GetServerPlanList")
 
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v1/cloud/cloud_providers/%s/server_plans", ProviderID))
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/cloud/cloud_providers/%s/server_plans", ProviderID))
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (dm *ServerPlanService) GetServerPlanList(ProviderID string) (serverPlans [
 func (dm *ServerPlanService) GetServerPlan(ID string) (serverPlan *types.ServerPlan, err error) {
 	log.Debug("GetServerPlan")
 
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v1/cloud/server_plans/%s", ID))
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/cloud/server_plans/%s", ID))
 	if err != nil {
 		return nil, err
 	}

@@ -28,7 +28,7 @@ func NewScriptService(concertoService utils.ConcertoService) (*ScriptService, er
 func (sc *ScriptService) GetScriptList() (scripts []types.Script, err error) {
 	log.Debug("GetScriptsList")
 
-	data, status, err := sc.concertoService.Get("/v1/blueprint/scripts")
+	data, status, err := sc.concertoService.Get("/v2/blueprint/scripts")
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (sc *ScriptService) GetScriptList() (scripts []types.Script, err error) {
 func (sc *ScriptService) GetScript(ID string) (script *types.Script, err error) {
 	log.Debug("GetScript")
 
-	data, status, err := sc.concertoService.Get(fmt.Sprintf("/v1/blueprint/scripts/%s", ID))
+	data, status, err := sc.concertoService.Get(fmt.Sprintf("/v2/blueprint/scripts/%s", ID))
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (sc *ScriptService) GetScript(ID string) (script *types.Script, err error) 
 func (sc *ScriptService) CreateScript(scriptVector *map[string]interface{}) (script *types.Script, err error) {
 	log.Debug("CreateScript")
 
-	data, status, err := sc.concertoService.Post("/v1/blueprint/scripts", scriptVector)
+	data, status, err := sc.concertoService.Post("/v2/blueprint/scripts", scriptVector)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (sc *ScriptService) CreateScript(scriptVector *map[string]interface{}) (scr
 func (sc *ScriptService) UpdateScript(scriptVector *map[string]interface{}, ID string) (script *types.Script, err error) {
 	log.Debug("UpdateScript")
 
-	data, status, err := sc.concertoService.Put(fmt.Sprintf("/v1/blueprint/scripts/%s", ID), scriptVector)
+	data, status, err := sc.concertoService.Put(fmt.Sprintf("/v2/blueprint/scripts/%s", ID), scriptVector)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func (sc *ScriptService) UpdateScript(scriptVector *map[string]interface{}, ID s
 func (sc *ScriptService) DeleteScript(ID string) (err error) {
 	log.Debug("DeleteScript")
 
-	data, status, err := sc.concertoService.Delete(fmt.Sprintf("/v1/blueprint/scripts/%s", ID))
+	data, status, err := sc.concertoService.Delete(fmt.Sprintf("/v2/blueprint/scripts/%s", ID))
 	if err != nil {
 		return err
 	}

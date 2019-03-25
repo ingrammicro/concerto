@@ -29,7 +29,7 @@ func NewWizCloudProvidersService(concertoService utils.ConcertoService) (*WizClo
 func (dm *WizCloudProvidersService) GetWizCloudProviderList(AppID string, LocID string) (wizCloudProviderss []types.CloudProvider, err error) {
 	log.Debug("GetWizCloudProvidersList")
 
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v1/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID))
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID))
 	if err != nil {
 		return nil, err
 	}

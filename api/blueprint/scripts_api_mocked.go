@@ -27,7 +27,7 @@ func GetScriptListMocked(t *testing.T, scriptsIn *[]types.Script) *[]types.Scrip
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/blueprint/scripts").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/blueprint/scripts").Return(dIn, 200, nil)
 	scriptsOut, err := ds.GetScriptList()
 	assert.Nil(err, "Error getting script list")
 	assert.Equal(*scriptsIn, scriptsOut, "GetScriptList returned different scripts")
@@ -51,7 +51,7 @@ func GetScriptListFailErrMocked(t *testing.T, scriptsIn *[]types.Script) *[]type
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/blueprint/scripts").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/v2/blueprint/scripts").Return(dIn, 200, fmt.Errorf("Mocked error"))
 	scriptsOut, err := ds.GetScriptList()
 
 	assert.NotNil(err, "We are expecting an error")
@@ -77,7 +77,7 @@ func GetScriptListFailStatusMocked(t *testing.T, scriptsIn *[]types.Script) *[]t
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/blueprint/scripts").Return(dIn, 499, nil)
+	cs.On("Get", "/v2/blueprint/scripts").Return(dIn, 499, nil)
 	scriptsOut, err := ds.GetScriptList()
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -102,7 +102,7 @@ func GetScriptListFailJSONMocked(t *testing.T, scriptsIn *[]types.Script) *[]typ
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v1/blueprint/scripts").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/blueprint/scripts").Return(dIn, 200, nil)
 	scriptsOut, err := ds.GetScriptList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -128,7 +128,7 @@ func GetScriptMocked(t *testing.T, script *types.Script) *types.Script {
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/scripts/%s", script.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/blueprint/scripts/%s", script.ID)).Return(dIn, 200, nil)
 	scriptOut, err := ds.GetScript(script.ID)
 	assert.Nil(err, "Error getting script")
 	assert.Equal(*script, *scriptOut, "GetScript returned different scripts")
@@ -152,7 +152,7 @@ func GetScriptFailErrMocked(t *testing.T, script *types.Script) *types.Script {
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/scripts/%s", script.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/v2/blueprint/scripts/%s", script.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	scriptOut, err := ds.GetScript(script.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -178,7 +178,7 @@ func GetScriptFailStatusMocked(t *testing.T, script *types.Script) *types.Script
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/scripts/%s", script.ID)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/v2/blueprint/scripts/%s", script.ID)).Return(dIn, 499, nil)
 	scriptOut, err := ds.GetScript(script.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -203,7 +203,7 @@ func GetScriptFailJSONMocked(t *testing.T, script *types.Script) *types.Script {
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/blueprint/scripts/%s", script.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/blueprint/scripts/%s", script.ID)).Return(dIn, 200, nil)
 	scriptOut, err := ds.GetScript(script.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -233,7 +233,7 @@ func CreateScriptMocked(t *testing.T, scriptIn *types.Script) *types.Script {
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/blueprint/scripts", mapIn).Return(dOut, 200, nil)
+	cs.On("Post", "/v2/blueprint/scripts", mapIn).Return(dOut, 200, nil)
 	scriptOut, err := ds.CreateScript(mapIn)
 	assert.Nil(err, "Error creating script list")
 	assert.Equal(scriptIn, scriptOut, "CreateScript returned different scripts")
@@ -261,7 +261,7 @@ func CreateScriptFailErrMocked(t *testing.T, scriptIn *types.Script) *types.Scri
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/blueprint/scripts", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Post", "/v2/blueprint/scripts", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
 	scriptOut, err := ds.CreateScript(mapIn)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -291,7 +291,7 @@ func CreateScriptFailStatusMocked(t *testing.T, scriptIn *types.Script) *types.S
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/blueprint/scripts", mapIn).Return(dOut, 499, nil)
+	cs.On("Post", "/v2/blueprint/scripts", mapIn).Return(dOut, 499, nil)
 	scriptOut, err := ds.CreateScript(mapIn)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -320,7 +320,7 @@ func CreateScriptFailJSONMocked(t *testing.T, scriptIn *types.Script) *types.Scr
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Post", "/v1/blueprint/scripts", mapIn).Return(dIn, 200, nil)
+	cs.On("Post", "/v2/blueprint/scripts", mapIn).Return(dIn, 200, nil)
 	scriptOut, err := ds.CreateScript(mapIn)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -350,7 +350,7 @@ func UpdateScriptMocked(t *testing.T, scriptIn *types.Script) *types.Script {
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/blueprint/scripts/%s", scriptIn.ID), mapIn).Return(dOut, 200, nil)
+	cs.On("Put", fmt.Sprintf("/v2/blueprint/scripts/%s", scriptIn.ID), mapIn).Return(dOut, 200, nil)
 	scriptOut, err := ds.UpdateScript(mapIn, scriptIn.ID)
 	assert.Nil(err, "Error updating script list")
 	assert.Equal(scriptIn, scriptOut, "UpdateScript returned different scripts")
@@ -378,7 +378,7 @@ func UpdateScriptFailErrMocked(t *testing.T, scriptIn *types.Script) *types.Scri
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/blueprint/scripts/%s", scriptIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Put", fmt.Sprintf("/v2/blueprint/scripts/%s", scriptIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
 	scriptOut, err := ds.UpdateScript(mapIn, scriptIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -408,7 +408,7 @@ func UpdateScriptFailStatusMocked(t *testing.T, scriptIn *types.Script) *types.S
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/blueprint/scripts/%s", scriptIn.ID), mapIn).Return(dOut, 499, nil)
+	cs.On("Put", fmt.Sprintf("/v2/blueprint/scripts/%s", scriptIn.ID), mapIn).Return(dOut, 499, nil)
 	scriptOut, err := ds.UpdateScript(mapIn, scriptIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -436,7 +436,7 @@ func UpdateScriptFailJSONMocked(t *testing.T, scriptIn *types.Script) *types.Scr
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/blueprint/scripts/%s", scriptIn.ID), mapIn).Return(dIn, 200, nil)
+	cs.On("Put", fmt.Sprintf("/v2/blueprint/scripts/%s", scriptIn.ID), mapIn).Return(dIn, 200, nil)
 	scriptOut, err := ds.UpdateScript(mapIn, scriptIn.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -462,7 +462,7 @@ func DeleteScriptMocked(t *testing.T, scriptIn *types.Script) {
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/blueprint/scripts/%s", scriptIn.ID)).Return(dIn, 200, nil)
+	cs.On("Delete", fmt.Sprintf("/v2/blueprint/scripts/%s", scriptIn.ID)).Return(dIn, 200, nil)
 	err = ds.DeleteScript(scriptIn.ID)
 	assert.Nil(err, "Error deleting script")
 
@@ -484,7 +484,7 @@ func DeleteScriptFailErrMocked(t *testing.T, scriptIn *types.Script) {
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/blueprint/scripts/%s", scriptIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Delete", fmt.Sprintf("/v2/blueprint/scripts/%s", scriptIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	err = ds.DeleteScript(scriptIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -507,7 +507,7 @@ func DeleteScriptFailStatusMocked(t *testing.T, scriptIn *types.Script) {
 	assert.Nil(err, "Script test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/blueprint/scripts/%s", scriptIn.ID)).Return(dIn, 499, nil)
+	cs.On("Delete", fmt.Sprintf("/v2/blueprint/scripts/%s", scriptIn.ID)).Return(dIn, 499, nil)
 	err = ds.DeleteScript(scriptIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")

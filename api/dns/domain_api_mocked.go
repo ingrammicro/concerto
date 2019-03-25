@@ -28,7 +28,7 @@ func GetDomainListMocked(t *testing.T, domainsIn *[]types.Domain) *[]types.Domai
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/dns/domains").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/dns/domains").Return(dIn, 200, nil)
 	domainsOut, err := ds.GetDomainList()
 	assert.Nil(err, "Error getting domain list")
 	assert.Equal(*domainsIn, domainsOut, "GetDomainList returned different domains")
@@ -52,7 +52,7 @@ func GetDomainListFailErrMocked(t *testing.T, domainsIn *[]types.Domain) *[]type
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/dns/domains").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/v2/dns/domains").Return(dIn, 200, fmt.Errorf("Mocked error"))
 	domainsOut, err := ds.GetDomainList()
 
 	assert.NotNil(err, "We are expecting an error")
@@ -78,7 +78,7 @@ func GetDomainListFailStatusMocked(t *testing.T, domainsIn *[]types.Domain) *[]t
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/dns/domains").Return(dIn, 499, nil)
+	cs.On("Get", "/v2/dns/domains").Return(dIn, 499, nil)
 	domainsOut, err := ds.GetDomainList()
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -103,7 +103,7 @@ func GetDomainListFailJSONMocked(t *testing.T, domainsIn *[]types.Domain) *[]typ
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v1/dns/domains").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/dns/domains").Return(dIn, 200, nil)
 	domainsOut, err := ds.GetDomainList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -129,7 +129,7 @@ func GetDomainMocked(t *testing.T, domain *types.Domain) *types.Domain {
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s", domain.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s", domain.ID)).Return(dIn, 200, nil)
 	domainOut, err := ds.GetDomain(domain.ID)
 	assert.Nil(err, "Error getting domain")
 	assert.Equal(*domain, *domainOut, "GetDomain returned different domains")
@@ -153,7 +153,7 @@ func GetDomainFailErrMocked(t *testing.T, domain *types.Domain) *types.Domain {
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s", domain.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s", domain.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	domainOut, err := ds.GetDomain(domain.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -179,7 +179,7 @@ func GetDomainFailStatusMocked(t *testing.T, domain *types.Domain) *types.Domain
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s", domain.ID)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s", domain.ID)).Return(dIn, 499, nil)
 	domainOut, err := ds.GetDomain(domain.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -204,7 +204,7 @@ func GetDomainFailJSONMocked(t *testing.T, domain *types.Domain) *types.Domain {
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s", domain.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s", domain.ID)).Return(dIn, 200, nil)
 	domainOut, err := ds.GetDomain(domain.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -234,7 +234,7 @@ func CreateDomainMocked(t *testing.T, domainIn *types.Domain) *types.Domain {
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/dns/domains/", mapIn).Return(dOut, 200, nil)
+	cs.On("Post", "/v2/dns/domains/", mapIn).Return(dOut, 200, nil)
 	domainOut, err := ds.CreateDomain(mapIn)
 	assert.Nil(err, "Error creating domain list")
 	assert.Equal(domainIn, domainOut, "CreateDomain returned different domains")
@@ -262,7 +262,7 @@ func CreateDomainFailErrMocked(t *testing.T, domainIn *types.Domain) *types.Doma
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/dns/domains/", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Post", "/v2/dns/domains/", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
 	domainOut, err := ds.CreateDomain(mapIn)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -292,7 +292,7 @@ func CreateDomainFailStatusMocked(t *testing.T, domainIn *types.Domain) *types.D
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/dns/domains/", mapIn).Return(dOut, 499, nil)
+	cs.On("Post", "/v2/dns/domains/", mapIn).Return(dOut, 499, nil)
 	domainOut, err := ds.CreateDomain(mapIn)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -321,7 +321,7 @@ func CreateDomainFailJSONMocked(t *testing.T, domainIn *types.Domain) *types.Dom
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Post", "/v1/dns/domains/", mapIn).Return(dIn, 200, nil)
+	cs.On("Post", "/v2/dns/domains/", mapIn).Return(dIn, 200, nil)
 	domainOut, err := ds.CreateDomain(mapIn)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -351,7 +351,7 @@ func UpdateDomainMocked(t *testing.T, domainIn *types.Domain) *types.Domain {
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/dns/domains/%s", domainIn.ID), mapIn).Return(dOut, 200, nil)
+	cs.On("Put", fmt.Sprintf("/v2/dns/domains/%s", domainIn.ID), mapIn).Return(dOut, 200, nil)
 	domainOut, err := ds.UpdateDomain(mapIn, domainIn.ID)
 	assert.Nil(err, "Error updating domain list")
 	assert.Equal(domainIn, domainOut, "UpdateDomain returned different domains")
@@ -379,7 +379,7 @@ func UpdateDomainFailErrMocked(t *testing.T, domainIn *types.Domain) *types.Doma
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/dns/domains/%s", domainIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Put", fmt.Sprintf("/v2/dns/domains/%s", domainIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
 	domainOut, err := ds.UpdateDomain(mapIn, domainIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -409,7 +409,7 @@ func UpdateDomainFailStatusMocked(t *testing.T, domainIn *types.Domain) *types.D
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/dns/domains/%s", domainIn.ID), mapIn).Return(dOut, 499, nil)
+	cs.On("Put", fmt.Sprintf("/v2/dns/domains/%s", domainIn.ID), mapIn).Return(dOut, 499, nil)
 	domainOut, err := ds.UpdateDomain(mapIn, domainIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -437,7 +437,7 @@ func UpdateDomainFailJSONMocked(t *testing.T, domainIn *types.Domain) *types.Dom
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/dns/domains/%s", domainIn.ID), mapIn).Return(dIn, 200, nil)
+	cs.On("Put", fmt.Sprintf("/v2/dns/domains/%s", domainIn.ID), mapIn).Return(dIn, 200, nil)
 	domainOut, err := ds.UpdateDomain(mapIn, domainIn.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -463,7 +463,7 @@ func DeleteDomainMocked(t *testing.T, domainIn *types.Domain) {
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/dns/domains/%s", domainIn.ID)).Return(dIn, 200, nil)
+	cs.On("Delete", fmt.Sprintf("/v2/dns/domains/%s", domainIn.ID)).Return(dIn, 200, nil)
 	err = ds.DeleteDomain(domainIn.ID)
 	assert.Nil(err, "Error deleting domain")
 }
@@ -484,7 +484,7 @@ func DeleteDomainFailErrMocked(t *testing.T, domainIn *types.Domain) {
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/dns/domains/%s", domainIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Delete", fmt.Sprintf("/v2/dns/domains/%s", domainIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	err = ds.DeleteDomain(domainIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -507,7 +507,7 @@ func DeleteDomainFailStatusMocked(t *testing.T, domainIn *types.Domain) {
 	assert.Nil(err, "Domain test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/dns/domains/%s", domainIn.ID)).Return(dIn, 499, nil)
+	cs.On("Delete", fmt.Sprintf("/v2/dns/domains/%s", domainIn.ID)).Return(dIn, 499, nil)
 	err = ds.DeleteDomain(domainIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -530,7 +530,7 @@ func GetDomainRecordListMocked(t *testing.T, domainRecordsIn *[]types.DomainReco
 	assert.Nil(err, "Domain record test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s/records", domainID)).Return(drsIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s/records", domainID)).Return(drsIn, 200, nil)
 	drsOut, err := ds.GetDomainRecordList(domainID)
 	assert.Nil(err, "Error getting domain list")
 	assert.Equal(*domainRecordsIn, *drsOut, "GetDomainList returned different domains")
@@ -554,7 +554,7 @@ func GetDomainRecordListFailErrMocked(t *testing.T, domainRecordsIn *[]types.Dom
 	assert.Nil(err, "DomainRecord test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s/records", domainID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s/records", domainID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	domainRecordsOut, err := ds.GetDomainRecordList(domainID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -580,7 +580,7 @@ func GetDomainRecordListFailStatusMocked(t *testing.T, domainRecordsIn *[]types.
 	assert.Nil(err, "DomainRecord test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s/records", domainID)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s/records", domainID)).Return(dIn, 499, nil)
 	domainRecordsOut, err := ds.GetDomainRecordList(domainID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -605,7 +605,7 @@ func GetDomainRecordListFailJSONMocked(t *testing.T, domainRecordsIn *[]types.Do
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s/records", domainID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s/records", domainID)).Return(dIn, 200, nil)
 	domainRecordsOut, err := ds.GetDomainRecordList(domainID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -631,7 +631,7 @@ func GetDomainRecordMocked(t *testing.T, dr *types.DomainRecord) *types.DomainRe
 	assert.Nil(err, "Domain record test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s/records/%s", dr.DomainID, dr.ID)).Return(drIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s/records/%s", dr.DomainID, dr.ID)).Return(drIn, 200, nil)
 	drOut, err := ds.GetDomainRecord(dr.DomainID, dr.ID)
 	assert.Nil(err, "Error getting domain")
 	assert.Equal(*dr, *drOut, "GetDomainRecord returned different domain records")
@@ -655,7 +655,7 @@ func GetDomainRecordFailErrMocked(t *testing.T, domainRecord *types.DomainRecord
 	assert.Nil(err, "DomainRecord test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s/records/%s", domainRecord.DomainID, domainRecord.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s/records/%s", domainRecord.DomainID, domainRecord.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	domainRecordOut, err := ds.GetDomainRecord(domainRecord.DomainID, domainRecord.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -681,7 +681,7 @@ func GetDomainRecordFailStatusMocked(t *testing.T, domainRecord *types.DomainRec
 	assert.Nil(err, "DomainRecord test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s/records/%s", domainRecord.DomainID, domainRecord.ID)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s/records/%s", domainRecord.DomainID, domainRecord.ID)).Return(dIn, 499, nil)
 	domainRecordOut, err := ds.GetDomainRecord(domainRecord.DomainID, domainRecord.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -706,7 +706,7 @@ func GetDomainRecordFailJSONMocked(t *testing.T, domainRecord *types.DomainRecor
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/dns/domains/%s/records/%s", domainRecord.DomainID, domainRecord.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/dns/domains/%s/records/%s", domainRecord.DomainID, domainRecord.ID)).Return(dIn, 200, nil)
 	domainRecordOut, err := ds.GetDomainRecord(domainRecord.DomainID, domainRecord.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -736,7 +736,7 @@ func CreateDomainRecordMocked(t *testing.T, dr *types.DomainRecord) *types.Domai
 	assert.Nil(err, "Domain record test data corrupted")
 
 	// call service
-	cs.On("Post", fmt.Sprintf("/v1/dns/domains/%s/records", dr.DomainID), mapIn).Return(drIn, 200, nil)
+	cs.On("Post", fmt.Sprintf("/v2/dns/domains/%s/records", dr.DomainID), mapIn).Return(drIn, 200, nil)
 	drOut, err := ds.CreateDomainRecord(mapIn, dr.DomainID)
 	assert.Nil(err, "Error getting domain")
 	assert.Equal(*dr, *drOut, "CreateDomainRecord returned different domain records")
@@ -764,7 +764,7 @@ func CreateDomainRecordFailErrMocked(t *testing.T, domainRecordIn *types.DomainR
 	assert.Nil(err, "DomainRecord test data corrupted")
 
 	// call service
-	cs.On("Post", fmt.Sprintf("/v1/dns/domains/%s/records", domainRecordIn.DomainID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Post", fmt.Sprintf("/v2/dns/domains/%s/records", domainRecordIn.DomainID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
 	domainRecordOut, err := ds.CreateDomainRecord(mapIn, domainRecordIn.DomainID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -794,7 +794,7 @@ func CreateDomainRecordFailStatusMocked(t *testing.T, domainRecordIn *types.Doma
 	assert.Nil(err, "DomainRecord test data corrupted")
 
 	// call service
-	cs.On("Post", fmt.Sprintf("/v1/dns/domains/%s/records", domainRecordIn.DomainID), mapIn).Return(dOut, 499, nil)
+	cs.On("Post", fmt.Sprintf("/v2/dns/domains/%s/records", domainRecordIn.DomainID), mapIn).Return(dOut, 499, nil)
 	domainRecordOut, err := ds.CreateDomainRecord(mapIn, domainRecordIn.DomainID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -823,7 +823,7 @@ func CreateDomainRecordFailJSONMocked(t *testing.T, domainRecordIn *types.Domain
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Post", fmt.Sprintf("/v1/dns/domains/%s/records", domainRecordIn.DomainID), mapIn).Return(dIn, 200, nil)
+	cs.On("Post", fmt.Sprintf("/v2/dns/domains/%s/records", domainRecordIn.DomainID), mapIn).Return(dIn, 200, nil)
 	domainRecordOut, err := ds.CreateDomainRecord(mapIn, domainRecordIn.DomainID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -853,7 +853,7 @@ func UpdateDomainRecordMocked(t *testing.T, dr *types.DomainRecord) *types.Domai
 	assert.Nil(err, "Domain record test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/dns/domains/%s/records/%s", dr.DomainID, dr.ID), mapIn).Return(drIn, 200, nil)
+	cs.On("Put", fmt.Sprintf("/v2/dns/domains/%s/records/%s", dr.DomainID, dr.ID), mapIn).Return(drIn, 200, nil)
 	drOut, err := ds.UpdateDomainRecord(mapIn, dr.DomainID, dr.ID)
 	assert.Nil(err, "Error updating domain list")
 	assert.Equal(*dr, *drOut, "UpdateDomainRecord returned different domain records")
@@ -881,7 +881,7 @@ func UpdateDomainRecordFailErrMocked(t *testing.T, domainRecordIn *types.DomainR
 	assert.Nil(err, "DomainRecord test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/dns/domains/%s/records/%s", domainRecordIn.DomainID, domainRecordIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Put", fmt.Sprintf("/v2/dns/domains/%s/records/%s", domainRecordIn.DomainID, domainRecordIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
 	domainRecordOut, err := ds.UpdateDomainRecord(mapIn, domainRecordIn.DomainID, domainRecordIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -911,7 +911,7 @@ func UpdateDomainRecordFailStatusMocked(t *testing.T, domainRecordIn *types.Doma
 	assert.Nil(err, "DomainRecord test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/dns/domains/%s/records/%s", domainRecordIn.DomainID, domainRecordIn.ID), mapIn).Return(dOut, 499, nil)
+	cs.On("Put", fmt.Sprintf("/v2/dns/domains/%s/records/%s", domainRecordIn.DomainID, domainRecordIn.ID), mapIn).Return(dOut, 499, nil)
 	domainRecordOut, err := ds.UpdateDomainRecord(mapIn, domainRecordIn.DomainID, domainRecordIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -939,7 +939,7 @@ func UpdateDomainRecordFailJSONMocked(t *testing.T, domainRecordIn *types.Domain
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/dns/domains/%s/records/%s", domainRecordIn.DomainID, domainRecordIn.ID), mapIn).Return(dIn, 200, nil)
+	cs.On("Put", fmt.Sprintf("/v2/dns/domains/%s/records/%s", domainRecordIn.DomainID, domainRecordIn.ID), mapIn).Return(dIn, 200, nil)
 	domainRecordOut, err := ds.UpdateDomainRecord(mapIn, domainRecordIn.DomainID, domainRecordIn.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -965,7 +965,7 @@ func DeleteDomainRecordMocked(t *testing.T, dr *types.DomainRecord) {
 	assert.Nil(err, "Domain record test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/dns/domains/%s/records/%s", dr.DomainID, dr.ID)).Return(drIn, 200, nil)
+	cs.On("Delete", fmt.Sprintf("/v2/dns/domains/%s/records/%s", dr.DomainID, dr.ID)).Return(drIn, 200, nil)
 	err = ds.DeleteDomainRecord(dr.DomainID, dr.ID)
 	assert.Nil(err, "Error deleting domain record")
 }
@@ -986,7 +986,7 @@ func DeleteDomainRecordFailErrMocked(t *testing.T, domainRecordIn *types.DomainR
 	assert.Nil(err, "DomainRecord test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/dns/domains/%s/records/%s", domainRecordIn.DomainID, domainRecordIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Delete", fmt.Sprintf("/v2/dns/domains/%s/records/%s", domainRecordIn.DomainID, domainRecordIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	err = ds.DeleteDomainRecord(domainRecordIn.DomainID, domainRecordIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -1009,7 +1009,7 @@ func DeleteDomainRecordFailStatusMocked(t *testing.T, domainRecordIn *types.Doma
 	assert.Nil(err, "DomainRecord test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/dns/domains/%s/records/%s", domainRecordIn.DomainID, domainRecordIn.ID)).Return(dIn, 499, nil)
+	cs.On("Delete", fmt.Sprintf("/v2/dns/domains/%s/records/%s", domainRecordIn.DomainID, domainRecordIn.ID)).Return(dIn, 499, nil)
 	err = ds.DeleteDomainRecord(domainRecordIn.DomainID, domainRecordIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")

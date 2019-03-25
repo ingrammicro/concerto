@@ -1,6 +1,7 @@
 package testdata
 
 import (
+	"encoding/json"
 	"github.com/ingrammicro/concerto/api/types"
 )
 
@@ -63,22 +64,47 @@ func GetDNSData() *[]types.Dns {
 // GetScriptCharData loads test data
 func GetScriptCharData() *[]types.ScriptChar {
 
+	param0 := json.RawMessage(`{"fakeConf01":"x","fakeConf02":"y"}`)
+	param1 := json.RawMessage(`{"fakeConf11":"x","fakeConf12":"y"}`)
+
 	testScriptChars := []types.ScriptChar{
 		{
-			ID:   "fakeID0",
-			Type: "fakeType0",
-			// Parameter_values: struct{"fakeInst0", "fakeInst1"},
-			TemplateID: "fakeTemplateID0",
-			ScriptID:   "fakeScriptID0",
+			ID:              "fakeID0",
+			Type:            "fakeType0",
+			ParameterValues: &param0,
+			TemplateID:      "fakeTemplateID0",
+			ScriptID:        "fakeScriptID0",
+			ExecutionOrder:  0,
+			ResourceType:    "fakeResourceType0",
 		},
 		{
-			ID:   "fakeID1",
-			Type: "fakeType1",
-			// Parameter_values: struct{"fakeInst2", "fakeInst2", "fakeInst3"},
-			TemplateID: "fakeTemplateID1",
-			ScriptID:   "fakeScriptID1",
+			ID:              "fakeID1",
+			Type:            "fakeType1",
+			ParameterValues: &param1,
+			TemplateID:      "fakeTemplateID1",
+			ScriptID:        "fakeScriptID1",
+			ExecutionOrder:  1,
+			ResourceType:    "fakeResourceType1",
 		},
 	}
 
 	return &testScriptChars
+}
+
+// GetScriptCharResponseData loads test data
+func GetScriptCharResponseData() *types.ScriptCharResponse {
+
+	testScriptCharResponse := types.ScriptCharResponse{
+		ResourceType: "fakeResourceType",
+		ID:           "fakeID",
+		Level:        "fakeLevel",
+		Header:       "fakeHeader",
+		Description:  "fakeDescription",
+		Timestamp:    "fakeTimestamp",
+		ServerID:     "fakeServerID",
+		Category:     "fakeCategory",
+		Device:       "fakeDevice",
+	}
+
+	return &testScriptCharResponse
 }

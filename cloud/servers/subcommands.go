@@ -159,8 +159,7 @@ func SubCommands() []cli.Command {
 		{
 			Name:  "execute_script",
 			Usage: "This action initiates the execution of the script characterisation with the given id on the server with the given id.",
-			// Action: cmd.OperationalScriptExecute,
-			Action: cmdExecuteScript,
+			Action: cmd.OperationalScriptExecute,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "server_id",

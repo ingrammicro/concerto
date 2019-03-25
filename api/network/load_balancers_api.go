@@ -28,7 +28,7 @@ func NewLoadBalancerService(concertoService utils.ConcertoService) (*LoadBalance
 func (lb *LoadBalancerService) GetLoadBalancerList() (loadBalancers []types.LoadBalancer, err error) {
 	log.Debug("GetLoadBalancerList")
 
-	data, status, err := lb.concertoService.Get("/v1/network/load_balancers")
+	data, status, err := lb.concertoService.Get("/v2/network/load_balancers")
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (lb *LoadBalancerService) GetLoadBalancerList() (loadBalancers []types.Load
 func (lb *LoadBalancerService) GetLoadBalancer(ID string) (loadBalancer *types.LoadBalancer, err error) {
 	log.Debug("GetLoadBalancer")
 
-	data, status, err := lb.concertoService.Get(fmt.Sprintf("/v1/network/load_balancers/%s", ID))
+	data, status, err := lb.concertoService.Get(fmt.Sprintf("/v2/network/load_balancers/%s", ID))
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (lb *LoadBalancerService) GetLoadBalancer(ID string) (loadBalancer *types.L
 func (lb *LoadBalancerService) CreateLoadBalancer(loadBalancerVector *map[string]interface{}) (loadBalancer *types.LoadBalancer, err error) {
 	log.Debug("CreateLoadBalancer")
 
-	data, status, err := lb.concertoService.Post("/v1/network/load_balancers/", loadBalancerVector)
+	data, status, err := lb.concertoService.Post("/v2/network/load_balancers/", loadBalancerVector)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (lb *LoadBalancerService) CreateLoadBalancer(loadBalancerVector *map[string
 func (lb *LoadBalancerService) UpdateLoadBalancer(loadBalancerVector *map[string]interface{}, ID string) (loadBalancer *types.LoadBalancer, err error) {
 	log.Debug("UpdateLoadBalancer")
 
-	data, status, err := lb.concertoService.Put(fmt.Sprintf("/v1/network/load_balancers/%s", ID), loadBalancerVector)
+	data, status, err := lb.concertoService.Put(fmt.Sprintf("/v2/network/load_balancers/%s", ID), loadBalancerVector)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func (lb *LoadBalancerService) UpdateLoadBalancer(loadBalancerVector *map[string
 func (lb *LoadBalancerService) DeleteLoadBalancer(ID string) (err error) {
 	log.Debug("DeleteLoadBalancer")
 
-	data, status, err := lb.concertoService.Delete(fmt.Sprintf("/v1/network/load_balancers/%s", ID))
+	data, status, err := lb.concertoService.Delete(fmt.Sprintf("/v2/network/load_balancers/%s", ID))
 	if err != nil {
 		return err
 	}
@@ -124,7 +124,7 @@ func (lb *LoadBalancerService) DeleteLoadBalancer(ID string) (err error) {
 func (lb *LoadBalancerService) GetLBNodeList(loadBalancerID string) (lBNode *[]types.LBNode, err error) {
 	log.Debug("ListLBNodes")
 
-	data, status, err := lb.concertoService.Get(fmt.Sprintf("/v1/network/load_balancers/%s/nodes", loadBalancerID))
+	data, status, err := lb.concertoService.Get(fmt.Sprintf("/v2/network/load_balancers/%s/nodes", loadBalancerID))
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +144,7 @@ func (lb *LoadBalancerService) GetLBNodeList(loadBalancerID string) (lBNode *[]t
 func (lb *LoadBalancerService) CreateLBNode(lBNodeVector *map[string]interface{}, lbID string) (lBNode *types.LBNode, err error) {
 	log.Debug("CreateLBNode")
 
-	data, status, err := lb.concertoService.Post(fmt.Sprintf("/v1/network/load_balancers/%s/nodes", lbID), lBNodeVector)
+	data, status, err := lb.concertoService.Post(fmt.Sprintf("/v2/network/load_balancers/%s/nodes", lbID), lBNodeVector)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func (lb *LoadBalancerService) CreateLBNode(lBNodeVector *map[string]interface{}
 func (lb *LoadBalancerService) DeleteLBNode(lbID string, ID string) (err error) {
 	log.Debug("DeleteLBNode")
 
-	data, status, err := lb.concertoService.Delete(fmt.Sprintf("/v1/network/load_balancers/%s/nodes/%s", lbID, ID))
+	data, status, err := lb.concertoService.Delete(fmt.Sprintf("/v2/network/load_balancers/%s/nodes/%s", lbID, ID))
 	if err != nil {
 		return err
 	}

@@ -28,7 +28,7 @@ func GetSaasAccountListMocked(t *testing.T, saasAccountsIn *[]types.SaasAccount)
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/settings/saas_accounts").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/settings/saas_accounts").Return(dIn, 200, nil)
 	saasAccountsOut, err := ds.GetSaasAccountList()
 	assert.Nil(err, "Error getting saasAccount list")
 	assert.Equal(*saasAccountsIn, saasAccountsOut, "GetSaasAccountList returned different saasAccounts")
@@ -52,7 +52,7 @@ func GetSaasAccountListFailErrMocked(t *testing.T, saasAccountsIn *[]types.SaasA
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/settings/saas_accounts").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/v2/settings/saas_accounts").Return(dIn, 200, fmt.Errorf("Mocked error"))
 	saasAccountsOut, err := ds.GetSaasAccountList()
 
 	assert.NotNil(err, "We are expecting an error")
@@ -78,7 +78,7 @@ func GetSaasAccountListFailStatusMocked(t *testing.T, saasAccountsIn *[]types.Sa
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/settings/saas_accounts").Return(dIn, 499, nil)
+	cs.On("Get", "/v2/settings/saas_accounts").Return(dIn, 499, nil)
 	saasAccountsOut, err := ds.GetSaasAccountList()
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -103,7 +103,7 @@ func GetSaasAccountListFailJSONMocked(t *testing.T, saasAccountsIn *[]types.Saas
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v1/settings/saas_accounts").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/settings/saas_accounts").Return(dIn, 200, nil)
 	saasAccountsOut, err := ds.GetSaasAccountList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -133,7 +133,7 @@ func CreateSaasAccountMocked(t *testing.T, saasAccountIn *types.SaasAccount) *ty
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/settings/saas_accounts/", mapIn).Return(dOut, 200, nil)
+	cs.On("Post", "/v2/settings/saas_accounts/", mapIn).Return(dOut, 200, nil)
 	saasAccountOut, err := ds.CreateSaasAccount(mapIn)
 	assert.Nil(err, "Error creating saasAccount list")
 	assert.Equal(saasAccountIn, saasAccountOut, "CreateSaasAccount returned different saasAccounts")
@@ -161,7 +161,7 @@ func CreateSaasAccountFailErrMocked(t *testing.T, saasAccountIn *types.SaasAccou
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/settings/saas_accounts/", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Post", "/v2/settings/saas_accounts/", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
 	saasAccountOut, err := ds.CreateSaasAccount(mapIn)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -191,7 +191,7 @@ func CreateSaasAccountFailStatusMocked(t *testing.T, saasAccountIn *types.SaasAc
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Post", "/v1/settings/saas_accounts/", mapIn).Return(dOut, 499, nil)
+	cs.On("Post", "/v2/settings/saas_accounts/", mapIn).Return(dOut, 499, nil)
 	saasAccountOut, err := ds.CreateSaasAccount(mapIn)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -220,7 +220,7 @@ func CreateSaasAccountFailJSONMocked(t *testing.T, saasAccountIn *types.SaasAcco
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Post", "/v1/settings/saas_accounts/", mapIn).Return(dIn, 200, nil)
+	cs.On("Post", "/v2/settings/saas_accounts/", mapIn).Return(dIn, 200, nil)
 	saasAccountOut, err := ds.CreateSaasAccount(mapIn)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -250,7 +250,7 @@ func UpdateSaasAccountMocked(t *testing.T, saasAccountIn *types.SaasAccount) *ty
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dOut, 200, nil)
+	cs.On("Put", fmt.Sprintf("/v2/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dOut, 200, nil)
 	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.ID)
 	assert.Nil(err, "Error updating saasAccount list")
 	assert.Equal(saasAccountIn, saasAccountOut, "UpdateSaasAccount returned different saasAccounts")
@@ -278,7 +278,7 @@ func UpdateSaasAccountFailErrMocked(t *testing.T, saasAccountIn *types.SaasAccou
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Put", fmt.Sprintf("/v2/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
 	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -308,7 +308,7 @@ func UpdateSaasAccountFailStatusMocked(t *testing.T, saasAccountIn *types.SaasAc
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dOut, 499, nil)
+	cs.On("Put", fmt.Sprintf("/v2/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dOut, 499, nil)
 	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -336,7 +336,7 @@ func UpdateSaasAccountFailJSONMocked(t *testing.T, saasAccountIn *types.SaasAcco
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dIn, 200, nil)
+	cs.On("Put", fmt.Sprintf("/v2/settings/saas_accounts/%s", saasAccountIn.ID), mapIn).Return(dIn, 200, nil)
 	saasAccountOut, err := ds.UpdateSaasAccount(mapIn, saasAccountIn.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -362,7 +362,7 @@ func DeleteSaasAccountMocked(t *testing.T, saasAccountIn *types.SaasAccount) {
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID)).Return(dIn, 200, nil)
+	cs.On("Delete", fmt.Sprintf("/v2/settings/saas_accounts/%s", saasAccountIn.ID)).Return(dIn, 200, nil)
 	err = ds.DeleteSaasAccount(saasAccountIn.ID)
 	assert.Nil(err, "Error deleting saasAccount")
 }
@@ -383,7 +383,7 @@ func DeleteSaasAccountFailErrMocked(t *testing.T, saasAccountIn *types.SaasAccou
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Delete", fmt.Sprintf("/v2/settings/saas_accounts/%s", saasAccountIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	err = ds.DeleteSaasAccount(saasAccountIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -406,7 +406,7 @@ func DeleteSaasAccountFailStatusMocked(t *testing.T, saasAccountIn *types.SaasAc
 	assert.Nil(err, "SaasAccount test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v1/settings/saas_accounts/%s", saasAccountIn.ID)).Return(dIn, 499, nil)
+	cs.On("Delete", fmt.Sprintf("/v2/settings/saas_accounts/%s", saasAccountIn.ID)).Return(dIn, 499, nil)
 	err = ds.DeleteSaasAccount(saasAccountIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
