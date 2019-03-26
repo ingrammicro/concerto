@@ -102,18 +102,6 @@ func TestDeleteServer(t *testing.T) {
 	}
 }
 
-//======= DNS ==========v
-func TestGetDNSList(t *testing.T) {
-	serversIn := testdata.GetServerData()
-	dnssIn := testdata.GetDNSData()
-	for _, serverIn := range *serversIn {
-		GetDNSListMocked(t, &serverIn, dnssIn)
-		GetDNSListFailErrMocked(t, &serverIn, dnssIn)
-		GetDNSListFailStatusMocked(t, &serverIn, dnssIn)
-		GetDNSListFailJSONMocked(t, &serverIn, dnssIn)
-	}
-}
-
 //======= Events ==========
 func TestGetEventsList(t *testing.T) {
 	serversIn := testdata.GetServerData()

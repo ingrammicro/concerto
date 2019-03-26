@@ -4,21 +4,21 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"github.com/ingrammicro/concerto/api/cloud"
 	"testing"
 
 	"github.com/ingrammicro/concerto/api/blueprint"
-	"github.com/ingrammicro/concerto/api/dns"
 	"github.com/ingrammicro/concerto/testdata"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPrintItemDomainJSON(t *testing.T) {
+func TestPrintItemJSON(t *testing.T) {
 
 	assert := assert.New(t)
-	domainsIn := testdata.GetDomainData()
-	for _, domainIn := range *domainsIn {
+	serversIn := testdata.GetServerData()
+	for _, serverIn := range *serversIn {
 
-		domainOut := dns.GetDomainMocked(t, &domainIn)
+		serverOut := cloud.GetServerMocked(t, &serverIn)
 
 		var b bytes.Buffer
 		mockOut := bufio.NewWriter(&b)
@@ -26,7 +26,7 @@ func TestPrintItemDomainJSON(t *testing.T) {
 		f := GetFormatter()
 		assert.NotNil(f, "Formatter")
 
-		err := f.PrintItem(*domainOut)
+		err := f.PrintItem(*serverOut)
 		assert.Nil(err, "JSON formatter PrintItem error")
 		mockOut.Flush()
 
@@ -58,11 +58,11 @@ func TestPrintItemTemplateJSON(t *testing.T) {
 	}
 }
 
-func TestPrintListDomainsJSON(t *testing.T) {
+func TestPrintListJSON(t *testing.T) {
 
 	assert := assert.New(t)
-	domainsIn := testdata.GetDomainData()
-	domainOut := dns.GetDomainListMocked(t, domainsIn)
+	serversIn := testdata.GetServerData()
+	serverOut := cloud.GetServerListMocked(t, serversIn)
 
 	var b bytes.Buffer
 	mockOut := bufio.NewWriter(&b)
@@ -70,7 +70,7 @@ func TestPrintListDomainsJSON(t *testing.T) {
 	f := GetFormatter()
 	assert.NotNil(f, "Formatter")
 
-	err := f.PrintList(domainOut)
+	err := f.PrintList(serverOut)
 	assert.Nil(err, "JSON formatter PrintList error")
 	mockOut.Flush()
 

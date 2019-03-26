@@ -201,27 +201,6 @@ func (dm *ServerService) DeleteServer(ID string) (err error) {
 	return nil
 }
 
-//======= DNS ==========
-// GetDNSList returns a list of dns by server ID
-func (dm *ServerService) GetDNSList(serverID string) (dns []types.Dns, err error) {
-	log.Debug("ListDNS")
-
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/cloud/servers/%s/records", serverID))
-	if err != nil {
-		return nil, err
-	}
-
-	if err = utils.CheckStandardStatus(status, data); err != nil {
-		return nil, err
-	}
-
-	if err = json.Unmarshal(data, &dns); err != nil {
-		return nil, err
-	}
-
-	return dns, nil
-}
-
 //======= Events ==========
 // GetEventsList returns a list of events by server ID
 func (dm *ServerService) GetEventsList(serverID string) (events []types.Event, err error) {

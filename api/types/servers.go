@@ -17,15 +17,6 @@ type Server struct {
 	LabelableFields
 }
 
-type Dns struct {
-	ID       string `json:"id" header:"ID"`
-	Name     string `json:"name" header:"NAME"`
-	Content  string `json:"content" header:"CONTENT"`
-	Type     string `json:"type" header:"TYPE"`
-	IsFQDN   bool   `json:"is_fqdn" header:"IS_FQDN"`
-	DomainID string `json:"domain_id" header:"DOMAIN_ID"`
-}
-
 type ScriptChar struct {
 	ResourceType    string           `json:"resource_type" header:"RESOURCE_TYPE" show:"noshow,nolist"`
 	ID              string           `json:"id" header:"ID"`

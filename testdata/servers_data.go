@@ -36,31 +36,6 @@ func GetServerData() *[]types.Server {
 	return &testServers
 }
 
-// GetDNSData loads test data
-func GetDNSData() *[]types.Dns {
-
-	testDnss := []types.Dns{
-		{
-			ID:       "fakeID0",
-			Name:     "fakeName0",
-			Content:  "fakeContent0",
-			Type:     "fakeType0",
-			IsFQDN:   true,
-			DomainID: "fakeDomainID0",
-		},
-		{
-			ID:       "fakeID1",
-			Name:     "fakeName1",
-			Content:  "fakeContent1",
-			Type:     "fakeType1",
-			IsFQDN:   false,
-			DomainID: "fakeDomainID1",
-		},
-	}
-
-	return &testDnss
-}
-
 // GetScriptCharData loads test data
 func GetScriptCharData() *[]types.ScriptChar {
 
