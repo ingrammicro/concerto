@@ -90,21 +90,3 @@ func GetScriptCharData() *[]types.ScriptChar {
 
 	return &testScriptChars
 }
-
-// GetScriptCharResponseData loads test data
-func GetScriptCharResponseData() *types.ScriptCharResponse {
-
-	testScriptCharResponse := types.ScriptCharResponse{
-		ResourceType: "fakeResourceType",
-		ID:           "fakeID",
-		Level:        "fakeLevel",
-		Header:       "fakeHeader",
-		Description:  "fakeDescription",
-		Timestamp:    "fakeTimestamp",
-		ServerID:     "fakeServerID",
-		Category:     "fakeCategory",
-		Device:       "fakeDevice",
-	}
-
-	return &testScriptCharResponse
-}

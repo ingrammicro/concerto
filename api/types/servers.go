@@ -35,15 +35,3 @@ type ScriptChar struct {
 	ScriptID        string           `json:"script_id" header:"SCRIPT_ID"`
 	ExecutionOrder  int              `json:"execution_order" header:"EXECUTION_ORDER" show:"noshow,nolist"`
 }
-
-type ScriptCharResponse struct {
-	ResourceType string `json:"resource_type" header:"RESOURCE_TYPE" show:"noshow"`
-	ID           string `json:"id" header:"ID"`
-	Level        string `json:"level" header:"LEVEL"`
-	Header       string `json:"header" header:"HEADER"`
-	Description  string `json:"description" header:"DESCRIPTION"`
-	Timestamp    string `json:"timestamp" header:"TIMESTAMP"`
-	ServerID     string `json:"server_id" header:"SERVER_ID" show:"noshow"`
-	Category     string `json:"category" header:"CATEGORY" show:"noshow"`
-	Device       string `json:"device" header:"DEVICE" show:"noshow"`
-}

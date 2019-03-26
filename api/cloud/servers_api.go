@@ -265,7 +265,7 @@ func (dm *ServerService) GetOperationalScriptsList(serverID string) (scripts []t
 }
 
 // ExecuteOperationalScript executes an operational script by its server ID and the script id
-func (dm *ServerService) ExecuteOperationalScript(serverVector *map[string]interface{}, ID string, scriptID string) (script *types.ScriptCharResponse, err error) {
+func (dm *ServerService) ExecuteOperationalScript(serverVector *map[string]interface{}, ID string, scriptID string) (script *types.Event, err error) {
 	log.Debug("ExecuteOperationalScript")
 
 	data, status, err := dm.concertoService.Put(fmt.Sprintf("/v2/cloud/servers/%s/operational_scripts/%s/execute", ID, scriptID), serverVector)

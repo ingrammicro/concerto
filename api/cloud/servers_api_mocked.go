@@ -1285,7 +1285,7 @@ func GetOperationalScriptFailJSONMocked(t *testing.T, scriptsIn *[]types.ScriptC
 }
 
 // ExecuteOperationalScriptListMocked test mocked function
-func ExecuteOperationalScriptListMocked(t *testing.T, scriptIn *types.ScriptChar, serverID string, scriptResponseIn *types.ScriptCharResponse) *types.ScriptCharResponse {
+func ExecuteOperationalScriptListMocked(t *testing.T, scriptIn *types.ScriptChar, serverID string, eventDataIn types.Event) *types.Event {
 
 	assert := assert.New(t)
 
@@ -1298,21 +1298,21 @@ func ExecuteOperationalScriptListMocked(t *testing.T, scriptIn *types.ScriptChar
 	// to json
 	params, err := utils.ItemConvertParams(*scriptIn)
 	assert.Nil(err, "Server operational scripts test data corrupted")
-	oscIn, err := json.Marshal(scriptResponseIn)
+	oscIn, err := json.Marshal(eventDataIn)
 	assert.Nil(err, "Server operational scripts test data corrupted")
 
 	// call service
 	cs.On("Put", fmt.Sprintf("/v2/cloud/servers/%s/operational_scripts/%s/execute", serverID, scriptIn.ID), params).Return(oscIn, 200, nil)
-	scriptResponseOut, err := ds.ExecuteOperationalScript(params, serverID, scriptIn.ID)
+	eventDataOut, err := ds.ExecuteOperationalScript(params, serverID, scriptIn.ID)
 
 	assert.Nil(err, "Error executing operational script")
-	assert.Equal(scriptResponseIn, scriptResponseOut, "ExecuteOperationalScriptList returned different outputs")
+	assert.Equal(eventDataIn, *eventDataOut, "ExecuteOperationalScriptList returned different outputs")
 
-	return scriptResponseOut
+	return eventDataOut
 }
 
 // ExecuteOperationalScriptFailErrMocked test mocked function
-func ExecuteOperationalScriptFailErrMocked(t *testing.T, scriptIn *types.ScriptChar, serverID string) *types.ScriptCharResponse {
+func ExecuteOperationalScriptFailErrMocked(t *testing.T, scriptIn *types.ScriptChar, serverID string) *types.Event {
 
 	assert := assert.New(t)
 
@@ -1340,7 +1340,7 @@ func ExecuteOperationalScriptFailErrMocked(t *testing.T, scriptIn *types.ScriptC
 }
 
 // ExecuteOperationalScriptFailStatusMocked test mocked function
-func ExecuteOperationalScriptFailStatusMocked(t *testing.T, scriptIn *types.ScriptChar, serverID string) *types.ScriptCharResponse {
+func ExecuteOperationalScriptFailStatusMocked(t *testing.T, scriptIn *types.ScriptChar, serverID string) *types.Event {
 
 	assert := assert.New(t)
 
@@ -1368,7 +1368,7 @@ func ExecuteOperationalScriptFailStatusMocked(t *testing.T, scriptIn *types.Scri
 }
 
 // ExecuteOperationalScriptFailJSONMocked test mocked function
-func ExecuteOperationalScriptFailJSONMocked(t *testing.T, scriptIn *types.ScriptChar, serverID string) *types.ScriptCharResponse {
+func ExecuteOperationalScriptFailJSONMocked(t *testing.T, scriptIn *types.ScriptChar, serverID string) *types.Event {
 
 	assert := assert.New(t)
 
