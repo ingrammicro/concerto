@@ -27,7 +27,6 @@ import (
 	"github.com/ingrammicro/concerto/labels"
 	"github.com/ingrammicro/concerto/network/firewall_profiles"
 	"github.com/ingrammicro/concerto/settings/cloud_accounts"
-	"github.com/ingrammicro/concerto/setup"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 	"github.com/ingrammicro/concerto/wizard/apps"
@@ -200,14 +199,6 @@ var WizardCommands = []cli.Command{
 }
 
 var ClientCommands = []cli.Command{
-	{
-		Name:      "setup",
-		ShortName: "se",
-		Usage:     "Configures and setups concerto cli enviroment",
-		Subcommands: append(
-			setup.SubCommands(),
-		),
-	},
 	{
 		Name:      "events",
 		ShortName: "ev",
