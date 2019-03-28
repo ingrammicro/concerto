@@ -105,6 +105,26 @@ func (tp *TemplateService) UpdateTemplate(templateVector *map[string]interface{}
 	return template, nil
 }
 
+// CompileTemplate requests compile for a given template by its ID
+func (tp *TemplateService) CompileTemplate(payload *map[string]interface{}, ID string) (template *types.Template, err error) {
+	log.Debug("CompileTemplate")
+
+	data, status, err := tp.concertoService.Put(fmt.Sprintf("/v2/blueprint/templates/%s/compile", ID), payload)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = utils.CheckStandardStatus(status, data); err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal(data, &template); err != nil {
+		return nil, err
+	}
+
+	return template, nil
+}
+
 // DeleteTemplate deletes a template by its ID
 func (tp *TemplateService) DeleteTemplate(ID string) (err error) {
 	log.Debug("DeleteTemplate")

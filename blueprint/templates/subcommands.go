@@ -80,6 +80,17 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
+			Name:   "compile",
+			Usage:  "Compiles an existing template",
+			Action: cmd.TemplateCompile,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Template Id",
+				},
+			},
+		},
+		{
 			Name:   "delete",
 			Usage:  "Deletes a template",
 			Action: cmd.TemplateDelete,

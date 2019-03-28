@@ -148,6 +148,25 @@ func TemplateUpdate(c *cli.Context) error {
 	return nil
 }
 
+// TemplateCompile subcommand function
+func TemplateCompile(c *cli.Context) error {
+	debugCmdFuncInfo(c)
+	templateSvc, formatter := WireUpTemplate(c)
+
+	checkRequiredFlags(c, []string{"id"}, formatter)
+	template, err := templateSvc.CompileTemplate(utils.FlagConvertParams(c), c.String("id"))
+	if err != nil {
+		formatter.PrintFatal("Couldn't compile template", err)
+	}
+
+	_, labelNamesByID := LabelLoadsMapping(c)
+	template.FillInLabelNames(labelNamesByID)
+	if err = formatter.PrintItem(*template); err != nil {
+		formatter.PrintFatal("Couldn't print/format result", err)
+	}
+	return nil
+}
+
 // TemplateDelete subcommand function
 func TemplateDelete(c *cli.Context) error {
 	debugCmdFuncInfo(c)

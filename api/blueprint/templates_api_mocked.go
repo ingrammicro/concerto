@@ -436,6 +436,108 @@ func UpdateTemplateFailJSONMocked(t *testing.T, templateIn *types.Template) *typ
 	return templateOut
 }
 
+// CompileTemplateMocked test mocked function
+func CompileTemplateMocked(t *testing.T, templateIn *types.Template) *types.Template {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewTemplateService(cs)
+	assert.Nil(err, "Couldn't load template service")
+	assert.NotNil(ds, "Template service not instanced")
+
+	// to json
+	dOut, err := json.Marshal(templateIn)
+	assert.Nil(err, "Template test data corrupted")
+
+	// call service
+	payload := new(map[string]interface{})
+	cs.On("Put", fmt.Sprintf("/v2/blueprint/templates/%s/compile", templateIn.ID), payload).Return(dOut, 200, nil)
+	templateOut, err := ds.CompileTemplate(payload, templateIn.ID)
+	assert.Nil(err, "Error compiling template list")
+	assert.Equal(templateIn, templateOut, "CompileTemplate returned different templates")
+
+	return templateOut
+}
+
+// CompileTemplateFailErrMocked test mocked function
+func CompileTemplateFailErrMocked(t *testing.T, templateIn *types.Template) *types.Template {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewTemplateService(cs)
+	assert.Nil(err, "Couldn't load template service")
+	assert.NotNil(ds, "Template service not instanced")
+
+	// to json
+	dOut, err := json.Marshal(templateIn)
+	assert.Nil(err, "Template test data corrupted")
+
+	// call service
+	payload := new(map[string]interface{})
+	cs.On("Put", fmt.Sprintf("/v2/blueprint/templates/%s/compile", templateIn.ID), payload).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	templateOut, err := ds.CompileTemplate(payload, templateIn.ID)
+	assert.NotNil(err, "We are expecting an error")
+	assert.Nil(templateOut, "Expecting nil output")
+	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+
+	return templateOut
+}
+
+/// CompileTemplateFailStatusMocked test mocked function
+func CompileTemplateFailStatusMocked(t *testing.T, templateIn *types.Template) *types.Template {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewTemplateService(cs)
+	assert.Nil(err, "Couldn't load template service")
+	assert.NotNil(ds, "Template service not instanced")
+
+	// to json
+	dOut, err := json.Marshal(templateIn)
+	assert.Nil(err, "Template test data corrupted")
+
+	// call service
+	payload := new(map[string]interface{})
+	cs.On("Put", fmt.Sprintf("/v2/blueprint/templates/%s/compile", templateIn.ID), payload).Return(dOut, 409, nil)
+	templateOut, err := ds.CompileTemplate(payload, templateIn.ID)
+	assert.NotNil(err, "We are expecting an status code error")
+	assert.Nil(templateOut, "Expecting nil output")
+	assert.Contains(err.Error(), "409", "Error should contain http code 409")
+
+	return templateOut
+}
+
+// CompileTemplateFailJSONMocked test mocked function
+func CompileTemplateFailJSONMocked(t *testing.T, templateIn *types.Template) *types.Template {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewTemplateService(cs)
+	assert.Nil(err, "Couldn't load template service")
+	assert.NotNil(ds, "Template service not instanced")
+
+	// wrong json
+	dOut := []byte{10, 20, 30}
+
+	// call service
+	payload := new(map[string]interface{})
+	cs.On("Put", fmt.Sprintf("/v2/blueprint/templates/%s/compile", templateIn.ID), payload).Return(dOut, 200, nil)
+	templateOut, err := ds.CompileTemplate(payload, templateIn.ID)
+	assert.NotNil(err, "We are expecting a marshalling error")
+	assert.Nil(templateOut, "Expecting nil output")
+	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
+
+	return templateOut
+}
+
 // DeleteTemplateMocked test mocked function
 func DeleteTemplateMocked(t *testing.T, templateIn *types.Template) {
 
