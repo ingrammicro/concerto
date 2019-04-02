@@ -487,7 +487,7 @@ func CompileTemplateFailErrMocked(t *testing.T, templateIn *types.Template) *typ
 	return templateOut
 }
 
-/// CompileTemplateFailStatusMocked test mocked function
+// CompileTemplateFailStatusMocked test mocked function
 func CompileTemplateFailStatusMocked(t *testing.T, templateIn *types.Template) *types.Template {
 
 	assert := assert.New(t)

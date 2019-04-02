@@ -43,12 +43,16 @@ func SubCommands() []cli.Command {
 					Usage: "Identifier of the OS image that the template builds on",
 				},
 				cli.StringFlag{
-					Name:  "service_list",
+					Name:  "run_list",
 					Usage: "A list of space separated service recipes that is run on the servers at start-up",
 				},
 				cli.StringFlag{
+					Name:  "cookbook_versions",
+					Usage: "The cookbook versions used to configure the service recipes in the run_list",
+				},
+				cli.StringFlag{
 					Name:  "configuration_attributes",
-					Usage: "The attributes used to configure the services in the service_list",
+					Usage: "The attributes used to configure the service recipes in the run_list",
 				},
 				cli.StringFlag{
 					Name:  "labels",
@@ -70,12 +74,16 @@ func SubCommands() []cli.Command {
 					Usage: "Name of the template",
 				},
 				cli.StringFlag{
-					Name:  "service_list",
+					Name:  "run_list",
 					Usage: "A list of service recipes that is run on the servers at start-up",
 				},
 				cli.StringFlag{
+					Name:  "cookbook_versions",
+					Usage: "The cookbook versions used to configure the service recipes in the run_list",
+				},
+				cli.StringFlag{
 					Name:  "configuration_attributes",
-					Usage: "The attributes used to configure the services in the service_list",
+					Usage: "The attributes used to configure the service recipes in the run_list",
 				},
 			},
 		},

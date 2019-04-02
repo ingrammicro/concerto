@@ -42,7 +42,7 @@ func TemplateList(c *cli.Context) error {
 	}
 
 	labelables := make([]types.Labelable, len(templates))
-	for i:=0; i< len(templates); i++ {
+	for i := 0; i < len(templates); i++ {
 		labelables[i] = types.Labelable(&templates[i])
 	}
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
@@ -91,7 +91,7 @@ func TemplateCreate(c *cli.Context) error {
 
 	checkRequiredFlags(c, []string{"name", "generic_image_id"}, formatter)
 	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"service_list", "configuration_attributes"})
+	params, err := utils.FlagConvertParamsJSON(c, []string{"run_list", "cookbook_versions", "configuration_attributes"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
@@ -99,7 +99,8 @@ func TemplateCreate(c *cli.Context) error {
 	templateIn := map[string]interface{}{
 		"name":                     c.String("name"),
 		"generic_image_id":         c.String("generic_image_id"),
-		"service_list":             (*params)["service_list"],
+		"run_list":                 (*params)["run_list"],
+		"cookbook_versions":        (*params)["cookbook_versions"],
 		"configuration_attributes": (*params)["configuration_attributes"],
 	}
 
@@ -130,7 +131,7 @@ func TemplateUpdate(c *cli.Context) error {
 	checkRequiredFlags(c, []string{"id"}, formatter)
 
 	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"service_list", "configuration_attributes"})
+	params, err := utils.FlagConvertParamsJSON(c, []string{"run_list", "cookbook_versions", "configuration_attributes"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
