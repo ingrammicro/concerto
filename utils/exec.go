@@ -45,19 +45,19 @@ func ExecCode(code string, path string, filename string) (output string, exitCod
 	}
 
 	if err != nil {
-		log.Fatalf("Error creating temp file : ", err)
+		log.Fatalf("Error creating temp file: %v", err)
 	}
 
 	defer tmp.Close()
 
 	_, err = tmp.WriteString(code)
 	if err != nil {
-		log.Fatalf("Error writing to file : ", err)
+		log.Fatalf("Error writing to file: %v", err)
 	}
 
 	os.Chmod(tmp.Name(), 0777)
 	if err != nil {
-		log.Fatalf("Error changing permision to file : ", err)
+		log.Fatalf("Error changing permission to file: %v", err)
 	}
 
 	return RunFile(tmp.Name())

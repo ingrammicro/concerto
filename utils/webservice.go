@@ -117,7 +117,7 @@ func (hcs *HTTPConcertoservice) Post(path string, payload *map[string]interface{
 		return nil, 0, err
 	}
 
-	log.Debugf("Sending POST request to %s with payload %s ", url, jsPayload)
+	log.Debugf("Sending POST request to %s with payload %v ", url, jsPayload)
 	req, err := http.NewRequest("POST", url, jsPayload)
 	req.Header.Add("Content-Type", "application/json")
 	if hcs.config.BrownfieldToken != "" {
@@ -145,7 +145,7 @@ func (hcs *HTTPConcertoservice) Put(path string, payload *map[string]interface{}
 		return nil, 0, err
 	}
 
-	log.Debugf("Sending PUT request to %s with payload %s ", url, jsPayload)
+	log.Debugf("Sending PUT request to %s with payload %v ", url, jsPayload)
 	request, err := http.NewRequest("PUT", url, jsPayload)
 	if err != nil {
 		return nil, 0, err

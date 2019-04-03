@@ -60,7 +60,7 @@ func (w *Webservice) Post(endpoint string, json []byte) (error, []byte, int) {
 	output := strings.NewReader(string(json))
 	response, err := w.client.Post(w.config.APIEndpoint+endpoint, "application/json", output)
 
-	log.Debugf("Posting: %s", output)
+	log.Debugf("Posting: %v", output)
 	if err != nil {
 		return err, nil, 4000
 	}

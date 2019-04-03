@@ -295,7 +295,7 @@ func (config *Config) evaluateConcertoConfigFile(c *cli.Context) error {
 
 		if runtime.GOOS == "windows" {
 			if config.CurrentUserIsAdmin && (config.BrownfieldToken != "" || (config.CommandPollingToken != "" && config.ServerID != "") || FileExists(windowsServerConfigFile)) {
-				log.Debug("Current user is administrator, setting config file as %s", windowsServerConfigFile)
+				log.Debugf("Current user is administrator, setting config file as %s", windowsServerConfigFile)
 				config.ConfFile = windowsServerConfigFile
 			} else {
 				// User mode Windows
