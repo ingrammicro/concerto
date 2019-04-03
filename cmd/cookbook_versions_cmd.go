@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/blueprint"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 )
@@ -38,6 +39,24 @@ func CookbookVersionList(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive cookbook versions data", err)
 	}
+
+	labelables := make([]types.Labelable, len(cookbookVersions))
+	for i:=0; i< len(cookbookVersions); i++ {
+		labelables[i] = types.Labelable(&cookbookVersions[i])
+	}
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
+	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
+	cookbookVersions = make([]types.CookbookVersion, len(filteredLabelables))
+	for i, labelable := range filteredLabelables {
+		s, ok := labelable.(*types.CookbookVersion)
+		if !ok {
+			formatter.PrintFatal("Label filtering returned unexpected result",
+				fmt.Errorf("expected labelable to be a *types.CookbookVersion, got a %T", labelable))
+		}
+		cookbookVersions[i] = *s
+	}
+
 	if err = formatter.PrintList(cookbookVersions); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -54,6 +73,9 @@ func CookbookVersionShow(c *cli.Context) error {
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive cookbook version data", err)
 	}
+
+	_, labelNamesByID := LabelLoadsMapping(c)
+	cookbookVersion.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*cookbookVersion); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
@@ -73,8 +95,15 @@ func CookbookVersionUpload(c *cli.Context) error {
 		formatter.PrintFatal("Invalid file path", fmt.Errorf("no such file or directory: %s", sourceFilePath))
 	}
 
+	cbIn := map[string]interface{}{}
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	if c.IsSet("labels") {
+		labelsIdsArr := LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
+		cbIn["label_ids"] = labelsIdsArr
+	}
+
 	// creates new cookbook_version
-	cookbookVersion, err := svc.CreateCookbookVersion(utils.FlagConvertParams(c))
+	cookbookVersion, err := svc.CreateCookbookVersion(&cbIn)
 	if err != nil {
 		formatter.PrintFatal("Couldn't create cookbook version data", err)
 	}
@@ -91,6 +120,7 @@ func CookbookVersionUpload(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't process cookbook version", err)
 	}
 
+	cookbookVersion.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*cookbookVersion); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}

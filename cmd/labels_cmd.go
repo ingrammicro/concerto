@@ -135,7 +135,8 @@ func LabelsUnifyInputNames(labelsNames string, formatter format.Formatter) []str
 // LabelResolution subcommand function retrieves a labels map(Name<->ID) based on label names received to be processed.
 // The function evaluates the received labels names (comma separated string); with them, solves the assigned IDs for the given labels names.
 // If the label name is not available in IMCO yet, it is created.
-func LabelResolution(c *cli.Context, labelsNames string, labelIDsByName map[string]string) []string {
+// If new label is created, mapping structures labelNamesByID/labelIDsByName are updated
+func LabelResolution(c *cli.Context, labelsNames string, labelNamesByID *map[string]string, labelIDsByName *map[string]string) []string {
 	debugCmdFuncInfo(c)
 
 	labelsSvc, formatter := WireUpLabel(c)
@@ -145,7 +146,7 @@ func LabelResolution(c *cli.Context, labelsNames string, labelIDsByName map[stri
 	labelsOutMap := make(map[string]string)
 	for _, name := range labelNamesIn {
 		// check if the label already exists in IMCO, creates it if it does not exist
-		if labelIDsByName[name] == "" {
+		if (*labelIDsByName)[name] == "" {
 			labelPayload := make(map[string]interface{})
 			labelPayload["name"] = name
 			newLabel, err := labelsSvc.CreateLabel(&labelPayload)
@@ -153,8 +154,11 @@ func LabelResolution(c *cli.Context, labelsNames string, labelIDsByName map[stri
 				formatter.PrintFatal("Couldn't create label", err)
 			}
 			labelsOutMap[name] = newLabel.ID
+			// updates the mapping!
+			(*labelIDsByName)[name] = newLabel.ID
+			(*labelNamesByID)[newLabel.ID] = name
 		} else {
-			labelsOutMap[name] = labelIDsByName[name]
+			labelsOutMap[name] = (*labelIDsByName)[name]
 		}
 	}
 	labelsIdsArr := make([]string, 0)
@@ -171,8 +175,8 @@ func LabelAdd(c *cli.Context) error {
 	labelsSvc, formatter := WireUpLabel(c)
 	checkRequiredFlags(c, []string{"id", "label"}, formatter)
 
-	labelIDsByName, _ := LabelLoadsMapping(c)
-	labelsIdsArr := LabelResolution(c, c.String("label"), labelIDsByName)
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	labelsIdsArr := LabelResolution(c, c.String("label"), &labelNamesByID, &labelIDsByName)
 	if len(labelsIdsArr) > 1 {
 		formatter.PrintFatal("Too many label names. Please, Use only one label name", fmt.Errorf("Invalid parameter: %v - %v", c.String("label"), labelsIdsArr))
 	}

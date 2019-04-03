@@ -32,6 +32,10 @@ func SubCommands() []cli.Command {
 					Name:  "filepath",
 					Usage: "path to cookbook version file",
 				},
+				cli.StringFlag{
+					Name:  "labels",
+					Usage: "A list of comma separated label names to be associated with cookbook version",
+				},
 			},
 		},
 		{
@@ -42,6 +46,48 @@ func SubCommands() []cli.Command {
 				cli.StringFlag{
 					Name:  "id",
 					Usage: "Cookbook version Id",
+				},
+			},
+		},
+		{
+			Name:   "add-label",
+			Usage:  "This action assigns a single label from a single labelable resource",
+			Action: cmd.LabelAdd,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Cookbook version Id",
+				},
+				cli.StringFlag{
+					Name:  "label",
+					Usage: "Label name",
+				},
+				cli.StringFlag{
+					Name:   "resource_type",
+					Usage:  "Resource Type",
+					Value:  "cookbook_version",
+					Hidden: true,
+				},
+			},
+		},
+		{
+			Name:   "remove-label",
+			Usage:  "This action unassigns a single label from a single labelable resource",
+			Action: cmd.LabelRemove,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Cookbook version Id",
+				},
+				cli.StringFlag{
+					Name:  "label",
+					Usage: "Label name",
+				},
+				cli.StringFlag{
+					Name:   "resource_type",
+					Usage:  "Resource Type",
+					Value:  "cookbook_version",
+					Hidden: true,
 				},
 			},
 		},

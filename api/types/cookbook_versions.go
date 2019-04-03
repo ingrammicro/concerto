@@ -13,4 +13,5 @@ type CookbookVersion struct {
 	GlobalLegacy      bool     `json:"global_legacy" header:"GLOBAL_LEGACY" show:"nolist"`
 	UploadURL         string   `json:"upload_url" header:"UPLOAD_URL" show:"noshow,nolist"`
 	ErrorMessage      string   `json:"error_message" header:"ERROR_MESSAGE" show:"nolist"`
+	LabelableFields
 }
