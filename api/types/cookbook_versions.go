@@ -9,9 +9,8 @@ type CookbookVersion struct {
 	RevisionID        string   `json:"revision_id,omitempty" header:"REVISION_ID"`
 	Recipes           []string `json:"recipes"  header:"RECIPES" show:"nolist"`
 	ResourceType      string   `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
-	PubliclyAvailable bool     `json:"publicly_available" header:"PUBLICLY_AVAILABLE" show:"noshow,nolist"`
-	Destroyable       bool     `json:"destroyable" header:"DESTROYABLE" show:"noshow,nolist"`
-	GlobalLegacy      bool     `json:"global_legacy" header:"GLOBAL_LEGACY" show:"noshow,nolist"`
+	PubliclyAvailable bool     `json:"publicly_available" header:"PUBLICLY_AVAILABLE" show:"nolist"`
+	GlobalLegacy      bool     `json:"global_legacy" header:"GLOBAL_LEGACY" show:"nolist"`
 	UploadURL         string   `json:"upload_url" header:"UPLOAD_URL" show:"noshow,nolist"`
-	ErrorMessage      string   `json:"error_message" header:"ERROR_MESSAGE" show:"noshow,nolist"`
+	ErrorMessage      string   `json:"error_message" header:"ERROR_MESSAGE" show:"nolist"`
 }
