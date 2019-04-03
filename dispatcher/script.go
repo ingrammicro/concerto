@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	characterizationsEndpoint = "blueprint/script_characterizations?type=%s"
-	characterizationEndpoint  = "blueprint/script_characterizations/%s"
-	conclusionsEndpoint       = "blueprint/script_conclusions"
+	characterizationsEndpoint = "/blueprint/script_characterizations?type=%s"
+	characterizationEndpoint  = "/blueprint/script_characterizations/%s"
+	conclusionsEndpoint       = "/blueprint/script_conclusions"
 )
 
 type ScriptCharacterization struct {
