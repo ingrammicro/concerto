@@ -9,8 +9,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/audit"
+	"github.com/ingrammicro/concerto/blueprint/cookbook_versions"
 	"github.com/ingrammicro/concerto/blueprint/scripts"
-	"github.com/ingrammicro/concerto/blueprint/services"
 	"github.com/ingrammicro/concerto/blueprint/templates"
 	"github.com/ingrammicro/concerto/bootstrapping"
 	"github.com/ingrammicro/concerto/brownfield"
@@ -27,7 +27,6 @@ import (
 	"github.com/ingrammicro/concerto/labels"
 	"github.com/ingrammicro/concerto/network/firewall_profiles"
 	"github.com/ingrammicro/concerto/settings/cloud_accounts"
-	"github.com/ingrammicro/concerto/setup"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 	"github.com/ingrammicro/concerto/wizard/apps"
@@ -88,10 +87,10 @@ var BlueprintCommands = []cli.Command{
 		),
 	},
 	{
-		Name:  "services",
-		Usage: "Provides information on services",
+		Name:  "cookbook_versions",
+		Usage: "Provides information on chef cookbook versions",
 		Subcommands: append(
-			services.SubCommands(),
+			cookbook_versions.SubCommands(),
 		),
 	},
 	{
@@ -200,14 +199,6 @@ var WizardCommands = []cli.Command{
 }
 
 var ClientCommands = []cli.Command{
-	{
-		Name:      "setup",
-		ShortName: "se",
-		Usage:     "Configures and setups concerto cli enviroment",
-		Subcommands: append(
-			setup.SubCommands(),
-		),
-	},
 	{
 		Name:      "events",
 		ShortName: "ev",

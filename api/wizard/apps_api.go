@@ -29,7 +29,7 @@ func NewAppService(concertoService utils.ConcertoService) (*AppService, error) {
 func (as *AppService) GetAppList() (apps []types.WizardApp, err error) {
 	log.Debug("GetAppList")
 
-	data, status, err := as.concertoService.Get("/v1/wizard/apps")
+	data, status, err := as.concertoService.Get("/v2/wizard/apps")
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (as *AppService) GetAppList() (apps []types.WizardApp, err error) {
 func (as *AppService) DeployApp(appVector *map[string]interface{}, ID string) (app *types.WizardApp, err error) {
 	log.Debug("DeployApp")
 
-	data, status, err := as.concertoService.Post(fmt.Sprintf("/v1/wizard/apps/%s/deploy", ID), appVector)
+	data, status, err := as.concertoService.Post(fmt.Sprintf("/v2/wizard/apps/%s/deploy", ID), appVector)
 	if err != nil {
 		return nil, err
 	}

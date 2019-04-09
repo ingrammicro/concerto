@@ -28,7 +28,7 @@ func NewCloudProviderService(concertoService utils.ConcertoService) (*CloudProvi
 func (cl *CloudProviderService) GetCloudProviderList() (cloudProviders []types.CloudProvider, err error) {
 	log.Debug("GetCloudProviderList")
 
-	data, status, err := cl.concertoService.Get("/v1/cloud/cloud_providers")
+	data, status, err := cl.concertoService.Get("/v2/cloud/cloud_providers")
 	if err != nil {
 		return nil, err
 	}

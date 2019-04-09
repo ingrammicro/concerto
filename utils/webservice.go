@@ -20,6 +20,7 @@ type ConcertoService interface {
 	Delete(path string) ([]byte, int, error)
 	Get(path string) ([]byte, int, error)
 	GetFile(path string, filePath string) (string, int, error)
+	PutFile(sourceFilePath string, targetURL string) ([]byte, int, error)
 }
 
 // HTTPConcertoservice web service manager.
@@ -116,7 +117,7 @@ func (hcs *HTTPConcertoservice) Post(path string, payload *map[string]interface{
 		return nil, 0, err
 	}
 
-	log.Debugf("Sending POST request to %s with payload %s ", url, jsPayload)
+	log.Debugf("Sending POST request to %s with payload %v ", url, jsPayload)
 	req, err := http.NewRequest("POST", url, jsPayload)
 	req.Header.Add("Content-Type", "application/json")
 	if hcs.config.BrownfieldToken != "" {
@@ -144,7 +145,7 @@ func (hcs *HTTPConcertoservice) Put(path string, payload *map[string]interface{}
 		return nil, 0, err
 	}
 
-	log.Debugf("Sending PUT request to %s with payload %s ", url, jsPayload)
+	log.Debugf("Sending PUT request to %s with payload %v ", url, jsPayload)
 	request, err := http.NewRequest("PUT", url, jsPayload)
 	if err != nil {
 		return nil, 0, err
@@ -228,6 +229,30 @@ func (hcs *HTTPConcertoservice) GetFile(path string, filePath string) (string, i
 
 	log.Debugf("%#v bytes downloaded", n)
 	return realFileName, response.StatusCode, nil
+}
+
+// PutFile sends PUT request to send a file
+func (hcs *HTTPConcertoservice) PutFile(sourceFilePath string, targetURL string) ([]byte, int, error) {
+
+	data, err := os.Open(sourceFilePath)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	req, err := http.NewRequest("PUT", targetURL, data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	res, err := hcs.client.Do(req)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer res.Body.Close()
+
+	buf, err := ioutil.ReadAll(res.Body)
+	status := res.StatusCode
+	return buf, status, nil
 }
 
 func (hcs *HTTPConcertoservice) prepareCall(path string, payload *map[string]interface{}) (url string, jsPayload *strings.Reader, err error) {

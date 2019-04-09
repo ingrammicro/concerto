@@ -102,18 +102,6 @@ func TestDeleteServer(t *testing.T) {
 	}
 }
 
-//======= DNS ==========v
-func TestGetDNSList(t *testing.T) {
-	serversIn := testdata.GetServerData()
-	dnssIn := testdata.GetDNSData()
-	for _, serverIn := range *serversIn {
-		GetDNSListMocked(t, &serverIn, dnssIn)
-		GetDNSListFailErrMocked(t, &serverIn, dnssIn)
-		GetDNSListFailStatusMocked(t, &serverIn, dnssIn)
-		GetDNSListFailJSONMocked(t, &serverIn, dnssIn)
-	}
-}
-
 //======= Events ==========
 func TestGetEventsList(t *testing.T) {
 	serversIn := testdata.GetServerData()
@@ -141,9 +129,10 @@ func TestGetOperationalScriptList(t *testing.T) {
 func TestExecuteOperationalScript(t *testing.T) {
 	serversIn := testdata.GetServerData()
 	scriptsIn := testdata.GetScriptCharData()
+	eventDataIn := testdata.GetEventData()
 	for _, serverIn := range *serversIn {
 		for _, scriptIn := range *scriptsIn {
-			ExecuteOperationalScriptListMocked(t, &scriptIn, serverIn.ID)
+			ExecuteOperationalScriptListMocked(t, &scriptIn, serverIn.ID, (*eventDataIn)[0])
 			ExecuteOperationalScriptFailErrMocked(t, &scriptIn, serverIn.ID)
 			ExecuteOperationalScriptFailStatusMocked(t, &scriptIn, serverIn.ID)
 			ExecuteOperationalScriptFailJSONMocked(t, &scriptIn, serverIn.ID)

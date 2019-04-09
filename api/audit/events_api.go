@@ -28,7 +28,7 @@ func NewEventService(concertoService utils.ConcertoService) (*EventService, erro
 func (cl *EventService) GetEventList() (events []types.Event, err error) {
 	log.Debug("GetEventList")
 
-	data, status, err := cl.concertoService.Get("/v1/audit/events")
+	data, status, err := cl.concertoService.Get("/v2/audit/events")
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (cl *EventService) GetEventList() (events []types.Event, err error) {
 func (cl *EventService) GetSysEventList() (events []types.Event, err error) {
 	log.Debug("GetEventList")
 
-	data, status, err := cl.concertoService.Get("/v1/audit/system_events")
+	data, status, err := cl.concertoService.Get("/v2/audit/system_events")
 	if err != nil {
 		return nil, err
 	}

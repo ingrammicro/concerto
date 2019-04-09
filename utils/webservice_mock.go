@@ -38,3 +38,9 @@ func (m *MockConcertoService) GetFile(path string, filePath string) (string, int
 	args := m.Called(path, filePath)
 	return args.String(0), args.Int(1), args.Error(2)
 }
+
+// PutFile sends PUT request to send a file
+func (m *MockConcertoService) PutFile(sourceFilePath string, targetURL string) ([]byte, int, error) {
+	args := m.Called(sourceFilePath, targetURL)
+	return args.Get(0).([]byte), args.Int(1), args.Error(2)
+}

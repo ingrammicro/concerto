@@ -29,7 +29,7 @@ func NewLocationService(concertoService utils.ConcertoService) (*LocationService
 func (dm *LocationService) GetLocationList() (locations []types.Location, err error) {
 	log.Debug("GetLocationList")
 
-	data, status, err := dm.concertoService.Get("/v1/wizard/locations")
+	data, status, err := dm.concertoService.Get("/v2/wizard/locations")
 	if err != nil {
 		return nil, err
 	}

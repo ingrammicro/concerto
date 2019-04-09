@@ -25,7 +25,7 @@ func GetSaasProviderListMocked(t *testing.T, saasProvidersIn *[]types.SaasProvid
 	assert.Nil(err, "SaasProvider test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/cloud/saas_providers").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/cloud/saas_providers").Return(dIn, 200, nil)
 	saasProvidersOut, err := ds.GetSaasProviderList()
 	assert.Nil(err, "Error getting saasProvider list")
 	assert.Equal(*saasProvidersIn, saasProvidersOut, "GetSaasProviderList returned different saasProviders")
@@ -49,7 +49,7 @@ func GetSaasProviderListFailErrMocked(t *testing.T, saasProvidersIn *[]types.Saa
 	assert.Nil(err, "SaasProvider test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/cloud/saas_providers").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/v2/cloud/saas_providers").Return(dIn, 200, fmt.Errorf("Mocked error"))
 	saasProvidersOut, err := ds.GetSaasProviderList()
 
 	assert.NotNil(err, "We are expecting an error")
@@ -75,7 +75,7 @@ func GetSaasProviderListFailStatusMocked(t *testing.T, saasProvidersIn *[]types.
 	assert.Nil(err, "SaasProvider test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/cloud/saas_providers").Return(dIn, 499, nil)
+	cs.On("Get", "/v2/cloud/saas_providers").Return(dIn, 499, nil)
 	saasProvidersOut, err := ds.GetSaasProviderList()
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -100,7 +100,7 @@ func GetSaasProviderListFailJSONMocked(t *testing.T, saasProvidersIn *[]types.Sa
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v1/cloud/saas_providers").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/cloud/saas_providers").Return(dIn, 200, nil)
 	saasProvidersOut, err := ds.GetSaasProviderList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")

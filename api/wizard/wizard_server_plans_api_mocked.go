@@ -25,7 +25,7 @@ func GetWizServerPlanListMocked(t *testing.T, serverPlansIn *[]types.ServerPlan,
 	assert.Nil(err, "WizServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/wizard/server_plans?app_id=%s&location_id=%s&cloud_provider_id=%s", AppID, LocID, ProviderID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/wizard/server_plans?app_id=%s&location_id=%s&cloud_provider_id=%s", AppID, LocID, ProviderID)).Return(dIn, 200, nil)
 	serverPlansOut, err := ds.GetWizServerPlanList(AppID, LocID, ProviderID)
 	assert.Nil(err, "Error getting serverPlan list")
 	assert.Equal(*serverPlansIn, serverPlansOut, "GetWizServerPlanList returned different serverPlans")
@@ -49,7 +49,7 @@ func GetWizServerPlanListFailErrMocked(t *testing.T, serverPlansIn *[]types.Serv
 	assert.Nil(err, "WizServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/wizard/server_plans?app_id=%s&location_id=%s&cloud_provider_id=%s", AppID, LocID, ProviderID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/v2/wizard/server_plans?app_id=%s&location_id=%s&cloud_provider_id=%s", AppID, LocID, ProviderID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
 	serverPlansOut, err := ds.GetWizServerPlanList(AppID, LocID, ProviderID)
 
 	assert.NotNil(err, "We are expecting an error")
@@ -75,7 +75,7 @@ func GetWizServerPlanListFailStatusMocked(t *testing.T, serverPlansIn *[]types.S
 	assert.Nil(err, "WizServerPlan test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/wizard/server_plans?app_id=%s&location_id=%s&cloud_provider_id=%s", AppID, LocID, ProviderID)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/v2/wizard/server_plans?app_id=%s&location_id=%s&cloud_provider_id=%s", AppID, LocID, ProviderID)).Return(dIn, 499, nil)
 	serverPlansOut, err := ds.GetWizServerPlanList(AppID, LocID, ProviderID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -100,7 +100,7 @@ func GetWizServerPlanListFailJSONMocked(t *testing.T, serverPlansIn *[]types.Ser
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v1/wizard/server_plans?app_id=%s&location_id=%s&cloud_provider_id=%s", AppID, LocID, ProviderID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/v2/wizard/server_plans?app_id=%s&location_id=%s&cloud_provider_id=%s", AppID, LocID, ProviderID)).Return(dIn, 200, nil)
 	serverPlansOut, err := ds.GetWizServerPlanList(AppID, LocID, ProviderID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")

@@ -28,7 +28,7 @@ func GetCloudAccountListMocked(t *testing.T, cloudAccountsIn *[]types.CloudAccou
 	assert.Nil(err, "CloudAccount test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/settings/cloud_accounts").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/settings/cloud_accounts").Return(dIn, 200, nil)
 	cloudAccountsOut, err := clAccService.GetCloudAccountList()
 	assert.Nil(err, "Error getting cloudAccount list")
 	assert.Equal(*cloudAccountsIn, cloudAccountsOut, "GetCloudAccountList returned different cloudAccounts")
@@ -52,7 +52,7 @@ func GetCloudAccountListFailErrMocked(t *testing.T, cloudAccountsIn *[]types.Clo
 	assert.Nil(err, "CloudAccount test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/settings/cloud_accounts").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/v2/settings/cloud_accounts").Return(dIn, 200, fmt.Errorf("Mocked error"))
 	cloudAccountsOut, err := clAccService.GetCloudAccountList()
 
 	assert.NotNil(err, "We are expecting an error")
@@ -78,7 +78,7 @@ func GetCloudAccountListFailStatusMocked(t *testing.T, cloudAccountsIn *[]types.
 	assert.Nil(err, "CloudAccount test data corrupted")
 
 	// call service
-	cs.On("Get", "/v1/settings/cloud_accounts").Return(dIn, 499, nil)
+	cs.On("Get", "/v2/settings/cloud_accounts").Return(dIn, 499, nil)
 	cloudAccountsOut, err := clAccService.GetCloudAccountList()
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -103,7 +103,7 @@ func GetCloudAccountListFailJSONMocked(t *testing.T, cloudAccountsIn *[]types.Cl
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v1/settings/cloud_accounts").Return(dIn, 200, nil)
+	cs.On("Get", "/v2/settings/cloud_accounts").Return(dIn, 200, nil)
 	cloudAccountsOut, err := clAccService.GetCloudAccountList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")

@@ -13,7 +13,7 @@ import (
 	"github.com/ingrammicro/concerto/webservice"
 )
 
-const endpoint = "cloud/firewall_profile"
+const endpoint = "/cloud/firewall_profile"
 
 type FirewallProfile struct {
 	Profile Policy `json:"firewall_profile"`

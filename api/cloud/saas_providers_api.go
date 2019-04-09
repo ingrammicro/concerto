@@ -28,7 +28,7 @@ func NewSaasProviderService(concertoService utils.ConcertoService) (*SaasProvide
 func (cl *SaasProviderService) GetSaasProviderList() (saasProviders []types.SaasProvider, err error) {
 	log.Debug("GetSaasProviderList")
 
-	data, status, err := cl.concertoService.Get("/v1/cloud/saas_providers")
+	data, status, err := cl.concertoService.Get("/v2/cloud/saas_providers")
 	if err != nil {
 		return nil, err
 	}

@@ -33,6 +33,8 @@ func (f *TextFormatter) printItemAux(w *tabwriter.Writer, item interface{}) erro
 		showTags := strings.Split(it.Type().Field(i).Tag.Get("show"), ",")
 		if !utils.Contains(showTags, "noshow") {
 			switch it.Field(i).Type().String() {
+			case "time.Time":
+				fmt.Fprintln(w, fmt.Sprintf("%s:\t%+v", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
 			case "json.RawMessage":
 				fmt.Fprintln(w, fmt.Sprintf("%s:\t%s", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
 			case "*json.RawMessage":
@@ -85,6 +87,8 @@ func (f *TextFormatter) printListBodyAux(w *tabwriter.Writer, t reflect.Value) {
 		if !utils.Contains(showTags, "nolist") {
 			field := t.Field(i)
 			switch field.Type().String() {
+			case "time.Time":
+				fmt.Fprint(w, fmt.Sprintf("%+v\t", field.Interface()))
 			case "json.RawMessage":
 				fmt.Fprint(w, fmt.Sprintf("%s\t", field.Interface()))
 			case "*json.RawMessage":

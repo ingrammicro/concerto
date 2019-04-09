@@ -53,6 +53,16 @@ func TestUpdateTemplate(t *testing.T) {
 	}
 }
 
+func TestCompileTemplate(t *testing.T) {
+	templatesIn := testdata.GetTemplateData()
+	for _, templateIn := range *templatesIn {
+		CompileTemplateMocked(t, &templateIn)
+		CompileTemplateFailErrMocked(t, &templateIn)
+		CompileTemplateFailStatusMocked(t, &templateIn)
+		CompileTemplateFailJSONMocked(t, &templateIn)
+	}
+}
+
 func TestDeleteTemplate(t *testing.T) {
 	templatesIn := testdata.GetTemplateData()
 	for _, templateIn := range *templatesIn {

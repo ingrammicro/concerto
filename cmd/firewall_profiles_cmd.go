@@ -103,7 +103,7 @@ func FirewallProfileCreate(c *cli.Context) error {
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"), labelIDsByName)
+		labelsIdsArr := LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
 		firewallProfileIn["label_ids"] = labelsIdsArr
 	}
 

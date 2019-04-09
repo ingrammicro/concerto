@@ -99,7 +99,7 @@ func ServerCreate(c *cli.Context) error {
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"), labelIDsByName)
+		labelsIdsArr := LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
 		serverIn["label_ids"] = labelsIdsArr
 	}
 
@@ -223,32 +223,15 @@ func ServerDelete(c *cli.Context) error {
 	return nil
 }
 
-// ========= DNS ========
-// DNSList subcommand function
-func DNSList(c *cli.Context) error {
-	debugCmdFuncInfo(c)
-	dnsSvc, formatter := WireUpServer(c)
-
-	checkRequiredFlags(c, []string{"id"}, formatter)
-	dnss, err := dnsSvc.GetDNSList(c.String("id"))
-	if err != nil {
-		formatter.PrintFatal("Couldn't receive dns data", err)
-	}
-	if err = formatter.PrintList(dnss); err != nil {
-		formatter.PrintFatal("Couldn't print/format result", err)
-	}
-	return nil
-}
-
 // ========= Events ========
 
 // EventsList subcommand function
 func EventsList(c *cli.Context) error {
 	debugCmdFuncInfo(c)
-	dnsSvc, formatter := WireUpServer(c)
+	svc, formatter := WireUpServer(c)
 
 	checkRequiredFlags(c, []string{"id"}, formatter)
-	events, err := dnsSvc.GetEventsList(c.String("id"))
+	events, err := svc.GetEventsList(c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive event data", err)
 	}
@@ -263,10 +246,10 @@ func EventsList(c *cli.Context) error {
 // OperationalScriptsList subcommand function
 func OperationalScriptsList(c *cli.Context) error {
 	debugCmdFuncInfo(c)
-	dnsSvc, formatter := WireUpServer(c)
+	svc, formatter := WireUpServer(c)
 
 	checkRequiredFlags(c, []string{"id"}, formatter)
-	scripts, err := dnsSvc.GetOperationalScriptsList(c.String("id"))
+	scripts, err := svc.GetOperationalScriptsList(c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive script data", err)
 	}
@@ -282,11 +265,11 @@ func OperationalScriptExecute(c *cli.Context) error {
 	serverSvc, formatter := WireUpServer(c)
 
 	checkRequiredFlags(c, []string{"server_id", "script_id"}, formatter)
-	server, err := serverSvc.ExecuteOperationalScript(utils.FlagConvertParams(c), c.String("server_id"), c.String("script_id"))
+	scriptOut, err := serverSvc.ExecuteOperationalScript(utils.FlagConvertParams(c), c.String("server_id"), c.String("script_id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't execute operational script", err)
 	}
-	if err = formatter.PrintItem(*server); err != nil {
+	if err = formatter.PrintItem(*scriptOut); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
 	return nil

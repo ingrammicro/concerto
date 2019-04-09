@@ -1,5 +1,7 @@
 package types
 
+import "encoding/json"
+
 type Server struct {
 	ID                string `json:"id" header:"ID"`
 	Name              string `json:"name" header:"NAME"`
@@ -15,19 +17,12 @@ type Server struct {
 	LabelableFields
 }
 
-type Dns struct {
-	ID       string `json:"id" header:"ID"`
-	Name     string `json:"name" header:"NAME"`
-	Content  string `json:"content" header:"CONTENT"`
-	Type     string `json:"type" header:"TYPE"`
-	IsFQDN   bool   `json:"is_fqdn" header:"IS_FQDN"`
-	DomainID string `json:"domain_id" header:"DOMAIN_ID"`
-}
-
 type ScriptChar struct {
-	ID              string   `json:"id" header:"ID"`
-	Type            string   `json:"type" header:"TYPE"`
-	ParameterValues struct{} `json:"parameter_values" header:"PARAMETER_VALUES"`
-	TemplateID      string   `json:"template_id" header:"TEMPLATE_ID"`
-	ScriptID        string   `json:"script_id" header:"SCRIPT_ID"`
+	ResourceType    string           `json:"resource_type" header:"RESOURCE_TYPE" show:"noshow,nolist"`
+	ID              string           `json:"id" header:"ID"`
+	Type            string           `json:"type" header:"TYPE"`
+	ParameterValues *json.RawMessage `json:"parameter_values" header:"PARAMETER_VALUES"`
+	TemplateID      string           `json:"template_id" header:"TEMPLATE_ID"`
+	ScriptID        string           `json:"script_id" header:"SCRIPT_ID"`
+	ExecutionOrder  int              `json:"execution_order" header:"EXECUTION_ORDER" show:"noshow,nolist"`
 }

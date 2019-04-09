@@ -29,7 +29,7 @@ func NewWizServerPlanService(concertoService utils.ConcertoService) (*WizServerP
 func (dm *WizServerPlanService) GetWizServerPlanList(AppID string, LocID string, ProviderID string) (serverPlans []types.ServerPlan, err error) {
 	log.Debug("GetWizServerPlanList")
 
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v1/wizard/server_plans?app_id=%s&location_id=%s&cloud_provider_id=%s", AppID, LocID, ProviderID))
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/wizard/server_plans?app_id=%s&location_id=%s&cloud_provider_id=%s", AppID, LocID, ProviderID))
 	if err != nil {
 		return nil, err
 	}

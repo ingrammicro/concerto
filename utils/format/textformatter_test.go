@@ -7,18 +7,18 @@ import (
 	"testing"
 
 	"github.com/ingrammicro/concerto/api/blueprint"
-	"github.com/ingrammicro/concerto/api/dns"
+	"github.com/ingrammicro/concerto/api/cloud"
 	"github.com/ingrammicro/concerto/testdata"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPrintItemDomainTXT(t *testing.T) {
+func TestPrintItemTXT(t *testing.T) {
 
 	assert := assert.New(t)
-	domainsIn := testdata.GetDomainData()
-	for _, domainIn := range *domainsIn {
+	serversIn := testdata.GetServerData()
+	for _, serverIn := range *serversIn {
 
-		domainOut := dns.GetDomainMocked(t, &domainIn)
+		serverOut := cloud.GetServerMocked(t, &serverIn)
 
 		var b bytes.Buffer
 		mockOut := bufio.NewWriter(&b)
@@ -26,7 +26,7 @@ func TestPrintItemDomainTXT(t *testing.T) {
 		f := GetFormatter()
 		assert.NotNil(f, "Formatter")
 
-		err := f.PrintItem(*domainOut)
+		err := f.PrintItem(*serverOut)
 		assert.Nil(err, "Text formatter PrintItem error")
 		mockOut.Flush()
 
@@ -60,11 +60,11 @@ func TestPrintItemTemplateTXT(t *testing.T) {
 	}
 }
 
-func TestPrintListDomainsTXT(t *testing.T) {
+func TestPrintListTXT(t *testing.T) {
 
 	assert := assert.New(t)
-	domainsIn := testdata.GetDomainData()
-	domainOut := dns.GetDomainListMocked(t, domainsIn)
+	serversIn := testdata.GetServerData()
+	serversOut := cloud.GetServerListMocked(t, serversIn)
 
 	var b bytes.Buffer
 	mockOut := bufio.NewWriter(&b)
@@ -72,12 +72,12 @@ func TestPrintListDomainsTXT(t *testing.T) {
 	f := GetFormatter()
 	assert.NotNil(f, "Formatter")
 
-	err := f.PrintList(*domainOut)
+	err := f.PrintList(*serversOut)
 	assert.Nil(err, "Text formatter PrintList error")
 	mockOut.Flush()
 
 	// TODO add more accurate parsing
-	assert.Regexp(fmt.Sprintf("^ID.*\n%s.*\n.*", (*domainOut)[0].ID), b.String(), "Text output didn't match regular expression")
+	assert.Regexp(fmt.Sprintf("^ID.*\n%s.*\n.*", (*serversOut)[0].ID), b.String(), "Text output didn't match regular expression")
 }
 
 func TestPrintListTemplateTXT(t *testing.T) {
