@@ -13,7 +13,6 @@ type Template struct {
 	ConfigurationAttributes *json.RawMessage `json:"configuration_attributes,omitempty" header:"CONFIGURATION_ATTRIBUTES" show:"nolist"`
 	ResourceType            string           `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
 	CookbookVersions        *json.RawMessage `json:"cookbook_versions,omitempty" header:"COOKBOOK_VERSIONS" show:"nolist"`
-	Variables               *json.RawMessage `json:"variables,omitempty" header:"VARIABLES" show:"nolist"`
 	State                   string           `json:"state" header:"STATE" show:"nolist"`
 	LabelableFields
 }
