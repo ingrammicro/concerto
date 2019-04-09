@@ -44,7 +44,7 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "run_list",
-					Usage: "A list of space separated service recipes that is run on the servers at start-up",
+					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up",
 				},
 				cli.StringFlag{
 					Name:  "cookbook_versions",
@@ -75,7 +75,7 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "run_list",
-					Usage: "A list of service recipes that is run on the servers at start-up",
+					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up",
 				},
 				cli.StringFlag{
 					Name:  "cookbook_versions",

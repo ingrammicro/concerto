@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"fmt"
-
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/blueprint"
 	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
+	"strings"
 )
 
 // WireUpTemplate prepares common resources to send request to Concerto API
@@ -91,7 +91,7 @@ func TemplateCreate(c *cli.Context) error {
 
 	checkRequiredFlags(c, []string{"name", "generic_image_id"}, formatter)
 	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"run_list", "cookbook_versions", "configuration_attributes"})
+	params, err := utils.FlagConvertParamsJSON(c, []string{"cookbook_versions", "configuration_attributes"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
@@ -99,9 +99,16 @@ func TemplateCreate(c *cli.Context) error {
 	templateIn := map[string]interface{}{
 		"name":                     c.String("name"),
 		"generic_image_id":         c.String("generic_image_id"),
-		"run_list":                 (*params)["run_list"],
-		"cookbook_versions":        (*params)["cookbook_versions"],
-		"configuration_attributes": (*params)["configuration_attributes"],
+	}
+
+	if c.IsSet("run_list") {
+		templateIn["run_list"] = utils.RemoveDuplicates(strings.Split(c.String("run_list"), ","))
+	}
+	if c.IsSet("cookbook_versions") {
+		templateIn["cookbook_versions"] = (*params)["cookbook_versions"]
+	}
+	if c.IsSet("configuration_attributes") {
+		templateIn["configuration_attributes"] = (*params)["configuration_attributes"]
 	}
 
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
@@ -131,12 +138,26 @@ func TemplateUpdate(c *cli.Context) error {
 	checkRequiredFlags(c, []string{"id"}, formatter)
 
 	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"run_list", "cookbook_versions", "configuration_attributes"})
+	params, err := utils.FlagConvertParamsJSON(c, []string{"cookbook_versions", "configuration_attributes"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
 
-	template, err := templateSvc.UpdateTemplate(params, c.String("id"))
+	templateIn := map[string]interface{}{}
+	if c.IsSet("name") {
+		templateIn["name"] = c.String("name")
+	}
+	if c.IsSet("run_list") {
+		templateIn["run_list"] = utils.RemoveDuplicates(strings.Split(c.String("run_list"), ","))
+	}
+	if c.IsSet("cookbook_versions") {
+		templateIn["cookbook_versions"] = (*params)["cookbook_versions"]
+	}
+	if c.IsSet("configuration_attributes") {
+		templateIn["configuration_attributes"] = (*params)["configuration_attributes"]
+	}
+
+	template, err := templateSvc.UpdateTemplate(&templateIn, c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't update template", err)
 	}
