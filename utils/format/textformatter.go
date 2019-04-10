@@ -26,8 +26,6 @@ func NewTextFormatter(out io.Writer) *TextFormatter {
 }
 
 func (f *TextFormatter) printItemAux(w *tabwriter.Writer, item interface{}) error {
-	log.Debug("printItemAux")
-
 	it := reflect.ValueOf(item)
 	for i := 0; i < it.NumField(); i++ {
 		showTags := strings.Split(it.Type().Field(i).Tag.Get("show"), ",")
@@ -63,8 +61,6 @@ func (f *TextFormatter) PrintItem(item interface{}) error {
 }
 
 func (f *TextFormatter) printListHeadersAux(w *tabwriter.Writer, t reflect.Type) {
-	log.Debug("printListHeadersAux")
-
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
@@ -80,8 +76,6 @@ func (f *TextFormatter) printListHeadersAux(w *tabwriter.Writer, t reflect.Type)
 }
 
 func (f *TextFormatter) printListBodyAux(w *tabwriter.Writer, t reflect.Value) {
-	log.Debug("printListBodyAux")
-
 	for i := 0; i < t.NumField(); i++ {
 		showTags := strings.Split(t.Type().Field(i).Tag.Get("show"), ",")
 		if !utils.Contains(showTags, "nolist") {

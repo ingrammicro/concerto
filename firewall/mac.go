@@ -4,13 +4,14 @@ package firewall
 
 import (
 	"fmt"
+	"github.com/ingrammicro/concerto/api/types"
 )
 
 func driverName() string {
 	return "darwin"
 }
 
-func apply(policy Policy) error {
+func Apply(policy types.Policy) error {
 	fmt.Println("iptables -A INPUT -i lo -j ACCEPT")
 	fmt.Println("iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT")
 

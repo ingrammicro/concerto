@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	fw "github.com/ingrammicro/concerto/firewall"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/firewall/discovery"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
@@ -25,13 +25,13 @@ func configureConcertoFirewall(cs *utils.HTTPConcertoservice, f format.Formatter
 	if err != nil {
 		f.PrintFatal("Error starting the firewall mapping", err)
 	}
-	err = apply(policy)
+	err = Apply(policy)
 	if err != nil {
 		f.PrintFatal("Applying Concerto firewall", err)
 	}
 }
 
-func startFirewallMapping(cs *utils.HTTPConcertoservice, rules []*discovery.FirewallRule) (p *fw.Policy, err error) {
+func startFirewallMapping(cs *utils.HTTPConcertoservice, rules []*discovery.FirewallRule) (p *types.Policy, err error) {
 	payload := convertFirewallChainToPayload(rules)
 	fmt.Printf("DEBUG: Sending following firewall profile: %+v\n", payload)
 	body, status, err := cs.Post("/cloud/firewall_profile", &payload)
@@ -42,7 +42,7 @@ func startFirewallMapping(cs *utils.HTTPConcertoservice, rules []*discovery.Fire
 		err = fmt.Errorf("server responded with %d code: %s", status, string(body))
 		return
 	}
-	responseData := &fw.FirewallProfile{}
+	responseData := &types.Firewall{}
 	err = json.Unmarshal(body, &responseData)
 	if err != nil {
 		return
@@ -75,7 +75,7 @@ func convertRuleToPayload(rule *discovery.FirewallRule) []interface{} {
 	}
 	if protocol == "all" || protocol == "tcp" {
 		rules = append(rules,
-			fw.Rule{
+			types.PolicyRule{
 				Name:     rule.Name,
 				Protocol: "tcp",
 				Cidr:     rule.Source,
@@ -85,7 +85,7 @@ func convertRuleToPayload(rule *discovery.FirewallRule) []interface{} {
 	}
 	if protocol == "all" || protocol == "udp" {
 		rules = append(rules,
-			fw.Rule{
+			types.PolicyRule{
 				Name:     rule.Name,
 				Protocol: "udp",
 				Cidr:     rule.Source,
