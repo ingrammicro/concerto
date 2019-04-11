@@ -22,7 +22,7 @@ func WireUpServerPlan(c *cli.Context) (ds *cloud.ServerPlanService, f format.For
 	}
 	ds, err = cloud.NewServerPlanService(hcs)
 	if err != nil {
-		f.PrintFatal("Couldn't wire up serverPlan service", err)
+		f.PrintFatal("Couldn't wire up server plan service", err)
 	}
 
 	return ds, f

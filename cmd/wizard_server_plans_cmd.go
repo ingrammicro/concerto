@@ -22,7 +22,7 @@ func WireUpWizServerPlan(c *cli.Context) (ds *wizard.WizServerPlanService, f for
 	}
 	ds, err = wizard.NewWizServerPlanService(hcs)
 	if err != nil {
-		f.PrintFatal("Couldn't wire up serverPlan service", err)
+		f.PrintFatal("Couldn't wire up wizard server plan service", err)
 	}
 
 	return ds, f
