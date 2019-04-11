@@ -27,7 +27,7 @@ func cmdShutdown(c *cli.Context) error {
 }
 
 func execute(c *cli.Context, phase string, scriptCharacterizationUUID string) {
-	var scriptChars []types.ScriptCharacterization
+	var scriptChars *[]types.ScriptCharacterization
 	dispatcherSvc, formatter := cmd.WireUpDispatcher(c)
 
 	var err error
@@ -41,7 +41,7 @@ func execute(c *cli.Context, phase string, scriptCharacterizationUUID string) {
 		formatter.PrintFatal("Couldn't receive Script Characterization data", err)
 	}
 
-	for _, sc := range scriptChars {
+	for _, sc := range *scriptChars {
 		log.Infof("------------------------------------------------------------------------------------------------")
 		path, err := ioutil.TempDir("", "cio")
 		if err != nil {
