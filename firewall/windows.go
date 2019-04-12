@@ -5,6 +5,7 @@ package firewall
 import (
 	"fmt"
 
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/firewall/discovery"
 
 	"github.com/ingrammicro/concerto/utils"
@@ -14,7 +15,7 @@ func driverName() string {
 	return "windows"
 }
 
-func apply(policy Policy) error {
+func Apply(policy types.Policy) error {
 	err := flush()
 	if err != nil {
 		return err

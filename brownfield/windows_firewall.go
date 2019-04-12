@@ -3,9 +3,13 @@
 package brownfield
 
 import (
-	fw "github.com/ingrammicro/concerto/firewall"
+	"github.com/ingrammicro/concerto/api/types"
+	"github.com/ingrammicro/concerto/firewall"
 )
 
-func apply(p *fw.Policy) error {
-	return p.Apply()
+func Apply(p *types.Policy) error {
+	if len(p.Rules) > 0 {
+		return firewall.Apply(*p)
+	}
+	return nil
 }

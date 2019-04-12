@@ -4,6 +4,7 @@ package firewall
 
 import (
 	"fmt"
+	"github.com/ingrammicro/concerto/api/types"
 	"os"
 
 	log "github.com/Sirupsen/logrus"
@@ -14,7 +15,7 @@ func driverName() string {
 	return "iptables"
 }
 
-func apply(policy Policy) error {
+func Apply(policy types.Policy) error {
 	var exitCode int
 	utils.RunCmd("/sbin/iptables -w -N CONCERTO")
 	utils.RunCmd("/sbin/iptables -w -F CONCERTO")

@@ -84,7 +84,7 @@ func (bs *BootstrappingService) ReportBootstrappingLog(BootstrappingContinuousRe
 func (bs *BootstrappingService) DownloadPolicyfile(url string, filePath string) (realFileName string, status int, err error) {
 	log.Debug("DownloadPolicyfile")
 
-	realFileName, status, err = bs.concertoService.GetFile(url, filePath)
+	realFileName, status, err = bs.concertoService.GetFile(url, filePath, false)
 	if err != nil {
 		return realFileName, status, err
 	}
