@@ -41,20 +41,21 @@ func ServerList(c *cli.Context) error {
 	}
 
 	labelables := make([]types.Labelable, len(servers))
-	for i:=0; i< len(servers); i++ {
-		labelables[i] = types.Labelable(&servers[i])
+	for i := 0; i < len(servers); i++ {
+		labelables[i] = types.Labelable(servers[i])
 	}
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
-	servers = make([]types.Server, len(filteredLabelables))
-	for i, labelable := range filteredLabelables {
+
+	servers = make([]*types.Server, len(filteredLabelables))
+	for _, labelable := range filteredLabelables {
 		s, ok := labelable.(*types.Server)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.Server, got a %T", labelable))
 		}
-		servers[i] = *s
+		servers = append(servers, s)
 	}
 	if err = formatter.PrintList(servers); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
@@ -86,14 +87,14 @@ func ServerCreate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	serverSvc, formatter := WireUpServer(c)
 
-	checkRequiredFlags(c, []string{"name", "ssh_profile_id", "firewall_profile_id", "template_id", "server_plan_id", "cloud_account_id"}, formatter)
+	checkRequiredFlags(c, []string{"name", "ssh-profile-id", "firewall-profile-id", "template-id", "server-plan-id", "cloud-account-id"}, formatter)
 	serverIn := map[string]interface{}{
 		"name":                c.String("name"),
-		"ssh_profile_id":      c.String("ssh_profile_id"),
-		"firewall_profile_id": c.String("firewall_profile_id"),
-		"template_id":         c.String("template_id"),
-		"server_plan_id":      c.String("server_plan_id"),
-		"cloud_account_id":    c.String("cloud_account_id"),
+		"ssh_profile_id":      c.String("ssh-profile-id"),
+		"firewall_profile_id": c.String("firewall-profile-id"),
+		"template_id":         c.String("template-id"),
+		"server_plan_id":      c.String("server-plan-id"),
+		"cloud_account_id":    c.String("cloud-account-id"),
 	}
 
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
@@ -264,8 +265,9 @@ func OperationalScriptExecute(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	serverSvc, formatter := WireUpServer(c)
 
-	checkRequiredFlags(c, []string{"server_id", "script_id"}, formatter)
-	scriptOut, err := serverSvc.ExecuteOperationalScript(utils.FlagConvertParams(c), c.String("server_id"), c.String("script_id"))
+	checkRequiredFlags(c, []string{"server-id", "script-id"}, formatter)
+	in := &map[string]interface{}{}
+	scriptOut, err := serverSvc.ExecuteOperationalScript(in, c.String("server-id"), c.String("script-id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't execute operational script", err)
 	}

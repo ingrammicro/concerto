@@ -5,6 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands returns templates commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
@@ -39,20 +40,20 @@ func SubCommands() []cli.Command {
 					Usage: "Name of the template",
 				},
 				cli.StringFlag{
-					Name:  "generic_image_id",
+					Name:  "generic-image-id",
 					Usage: "Identifier of the OS image that the template builds on",
 				},
 				cli.StringFlag{
-					Name:  "run_list",
+					Name:  "run-list",
 					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up",
 				},
 				cli.StringFlag{
-					Name:  "cookbook_versions",
-					Usage: "The cookbook versions used to configure the service recipes in the run_list",
+					Name:  "cookbook-versions",
+					Usage: "The cookbook versions used to configure the service recipes in the run-list",
 				},
 				cli.StringFlag{
-					Name:  "configuration_attributes",
-					Usage: "The attributes used to configure the service recipes in the run_list",
+					Name:  "configuration-attributes",
+					Usage: "The attributes used to configure the service recipes in the run-list",
 				},
 				cli.StringFlag{
 					Name:  "labels",
@@ -74,16 +75,16 @@ func SubCommands() []cli.Command {
 					Usage: "Name of the template",
 				},
 				cli.StringFlag{
-					Name:  "run_list",
+					Name:  "run-list",
 					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up",
 				},
 				cli.StringFlag{
-					Name:  "cookbook_versions",
-					Usage: "The cookbook versions used to configure the service recipes in the run_list",
+					Name:  "cookbook-versions",
+					Usage: "The cookbook versions used to configure the service recipes in the run-list",
 				},
 				cli.StringFlag{
-					Name:  "configuration_attributes",
-					Usage: "The attributes used to configure the service recipes in the run_list",
+					Name:  "configuration-attributes",
+					Usage: "The attributes used to configure the service recipes in the run-list",
 				},
 			},
 		},
@@ -110,12 +111,12 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "list_template_scripts",
+			Name:   "list-template-scripts",
 			Usage:  "Shows the script characterisations of a template",
 			Action: cmd.TemplateScriptList,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "template_id",
+					Name:  "template-id",
 					Usage: "Template Id",
 				},
 				cli.StringFlag{
@@ -125,12 +126,12 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "show_template_script",
+			Name:   "show-template-script",
 			Usage:  "Shows information about a specific script characterisation",
 			Action: cmd.TemplateScriptShow,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "template_id",
+					Name:  "template-id",
 					Usage: "Template Id",
 				},
 				cli.StringFlag{
@@ -140,12 +141,12 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "create_template_script",
+			Name:   "create-template-script",
 			Usage:  "Creates a new script characterisation for a template and appends it to the list of script characterisations of the same type.",
 			Action: cmd.TemplateScriptCreate,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "template_id",
+					Name:  "template-id",
 					Usage: "Template Id",
 				},
 				cli.StringFlag{
@@ -153,26 +154,26 @@ func SubCommands() []cli.Command {
 					Usage: "Must be \"operational\", \"boot\" or \"shutdown\"",
 				},
 				cli.StringFlag{
-					Name:  "script_id",
+					Name:  "script-id",
 					Usage: "Identifier for the script that is parameterised by the script characterisation",
 				},
 				cli.StringFlag{
-					Name:  "parameter_values",
+					Name:  "parameter-values",
 					Usage: "A map that assigns a value to each script parameter. Example: '{\"param1\":\"val1\",\"param2\":\"val2\"}'",
 				},
 			},
 		},
 		{
-			Name:   "update_template_script",
+			Name:   "update-template-script",
 			Usage:  "Updates an existing script characterisation for a template.",
 			Action: cmd.TemplateScriptUpdate,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "template_id",
+					Name:  "template-id",
 					Usage: "Template Id",
 				},
 				cli.StringFlag{
-					Name:  "script_id",
+					Name:  "script-id",
 					Usage: "Identifier for the script that is parameterised by the script characterisation",
 				},
 				cli.StringFlag{
@@ -180,18 +181,18 @@ func SubCommands() []cli.Command {
 					Usage: "Identifier for the template-script that is parameterised by the script characterisation",
 				},
 				cli.StringFlag{
-					Name:  "parameter_values",
+					Name:  "parameter-values",
 					Usage: "A map that assigns a value to each script parameter. Example: '{\"param1\":\"val1\",\"param2\":\"val2\"}'",
 				},
 			},
 		},
 		{
-			Name:   "reorder_template_scripts",
+			Name:   "reorder-template-scripts",
 			Usage:  "Reorders the scripts of the template and type specified according to the provided order, changing their execution order as corresponds.",
 			Action: cmd.TemplateScriptReorder,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "template_id",
+					Name:  "template-id",
 					Usage: "Template Id",
 				},
 				cli.StringFlag{
@@ -199,18 +200,18 @@ func SubCommands() []cli.Command {
 					Usage: "Must be \"operational\", \"boot\", or \"shutdown\"",
 				},
 				cli.StringFlag{
-					Name:  "script_ids",
+					Name:  "script-ids",
 					Usage: "An array that must contain all the ids of scripts of the given template and type in the desired execution order",
 				},
 			},
 		},
 		{
-			Name:   "delete_template_script",
+			Name:   "delete-template-script",
 			Usage:  "Removes a parametrized script from a template",
 			Action: cmd.TemplateScriptDelete,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "template_id",
+					Name:  "template-id",
 					Usage: "Template Id",
 				},
 				cli.StringFlag{
@@ -220,12 +221,12 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "list_template_servers",
+			Name:   "list-template-servers",
 			Usage:  "Returns information about the servers that use a specific template. ",
 			Action: cmd.TemplateServersList,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "template_id",
+					Name:  "template-id",
 					Usage: "Template Id",
 				},
 			},
@@ -244,7 +245,7 @@ func SubCommands() []cli.Command {
 					Usage: "Label name",
 				},
 				cli.StringFlag{
-					Name:   "resource_type",
+					Name:   "resource-type",
 					Usage:  "Resource Type",
 					Value:  "template",
 					Hidden: true,
@@ -265,7 +266,7 @@ func SubCommands() []cli.Command {
 					Usage: "Label name",
 				},
 				cli.StringFlag{
-					Name:   "resource_type",
+					Name:   "resource-type",
 					Usage:  "Resource Type",
 					Value:  "template",
 					Hidden: true,

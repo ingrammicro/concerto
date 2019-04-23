@@ -5,9 +5,9 @@ import (
 )
 
 // GetLabelData loads test data
-func GetLabelData() *[]types.Label {
+func GetLabelData() []*types.Label {
 
-	testLabels := []types.Label{
+	return []*types.Label{
 		{
 			ID:           "fakeID0",
 			Name:         "fakeName0",
@@ -19,14 +19,12 @@ func GetLabelData() *[]types.Label {
 			ResourceType: "label",
 		},
 	}
-
-	return &testLabels
 }
 
 // GetLabelWithNamespaceData loads test data
-func GetLabelWithNamespaceData() *[]types.Label {
+func GetLabelWithNamespaceData() []*types.Label {
 
-	testLabels := []types.Label{
+	return []*types.Label{
 		{
 			ID:           "fakeID0",
 			Name:         "fakeName0",
@@ -42,14 +40,12 @@ func GetLabelWithNamespaceData() *[]types.Label {
 			Value:        "fakeValue1",
 		},
 	}
-
-	return &testLabels
 }
 
 // GetLabeledResourcesData loads test data
-func GetLabeledResourcesData() *[]types.LabeledResource {
+func GetLabeledResourcesData() []*types.LabeledResource {
 
-	testLabeledResources := []types.LabeledResource{
+	return []*types.LabeledResource{
 		{
 			ID:           "fakeID0",
 			ResourceType: "server",
@@ -59,6 +55,4 @@ func GetLabeledResourcesData() *[]types.LabeledResource {
 			ResourceType: "template",
 		},
 	}
-
-	return &testLabeledResources
 }

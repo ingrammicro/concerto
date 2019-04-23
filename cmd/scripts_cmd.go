@@ -43,22 +43,22 @@ func ScriptsList(c *cli.Context) error {
 	}
 
 	labelables := make([]types.Labelable, len(scripts))
-	for i:=0; i< len(scripts); i++ {
-		labelables[i] = types.Labelable(&scripts[i])
+	for i := 0; i < len(scripts); i++ {
+		labelables[i] = types.Labelable(scripts[i])
 	}
 
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 
-	scripts = make([]types.Script, len(filteredLabelables))
-	for i, labelable := range filteredLabelables {
+	scripts = make([]*types.Script, len(filteredLabelables))
+	for _, labelable := range filteredLabelables {
 		s, ok := labelable.(*types.Script)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.Script, got a %T", labelable))
 		}
-		scripts[i] = *s
+		scripts = append(scripts, s)
 	}
 
 	if err = formatter.PrintList(scripts); err != nil {
@@ -126,7 +126,21 @@ func ScriptUpdate(c *cli.Context) error {
 	scriptSvc, formatter := WireUpScript(c)
 
 	checkRequiredFlags(c, []string{"id"}, formatter)
-	script, err := scriptSvc.UpdateScript(utils.FlagConvertParams(c), c.String("id"))
+	scriptIn := map[string]interface{}{}
+	if c.String("name") != "" {
+		scriptIn["name"] = strings.Split(c.String("name"), ",")
+	}
+	if c.String("description") != "" {
+		scriptIn["description"] = strings.Split(c.String("description"), ",")
+	}
+	if c.String("code") != "" {
+		scriptIn["code"] = strings.Split(c.String("code"), ",")
+	}
+	if c.String("parameters") != "" {
+		scriptIn["parameters"] = strings.Split(c.String("parameters"), ",")
+	}
+
+	script, err := scriptSvc.UpdateScript(&scriptIn, c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't update script", err)
 	}

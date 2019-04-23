@@ -29,7 +29,7 @@ func GetBootstrappingConfigurationMocked(t *testing.T, bcConfIn *types.Bootstrap
 	bcConfOut, status, err := ds.GetBootstrappingConfiguration()
 	assert.Nil(err, "Error getting bootstrapping configuration")
 	assert.Equal(status, 200, "GetBootstrappingConfiguration returned invalid response")
-	assert.Equal(bcConfIn, bcConfOut, "GetBootstrappingConfiguration returned different services")
+	assert.Equal(*bcConfIn, *bcConfOut, "GetBootstrappingConfiguration returned different services")
 	return bcConfOut
 }
 
@@ -49,12 +49,12 @@ func GetBootstrappingConfigurationFailErrMocked(t *testing.T, bcConfIn *types.Bo
 	assert.Nil(err, "Bootstrapping test data corrupted")
 
 	// call service
-	cs.On("Get", "/blueprint/configuration").Return(dIn, 404, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/blueprint/configuration").Return(dIn, 404, fmt.Errorf("mocked error"))
 	bcConfOut, _, err := ds.GetBootstrappingConfiguration()
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(bcConfOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return bcConfOut
 }
@@ -151,10 +151,10 @@ func ReportBootstrappingAppliedConfigurationFailErrMocked(t *testing.T, commandI
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Put", fmt.Sprintf("/blueprint/applied_configuration"), &payload).Return(dIn, 499, fmt.Errorf("Mocked error"))
+	cs.On("Put", fmt.Sprintf("/blueprint/applied_configuration"), &payload).Return(dIn, 499, fmt.Errorf("mocked error"))
 	err = ds.ReportBootstrappingAppliedConfiguration(&payload)
 	assert.NotNil(err, "We are expecting an error")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 }
 
 // ReportBootstrappingAppliedConfigurationFailStatusMocked test mocked function
@@ -176,7 +176,7 @@ func ReportBootstrappingAppliedConfigurationFailStatusMocked(t *testing.T, comma
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Put", fmt.Sprintf("/blueprint/applied_configuration"), &payload).Return(dIn, 499, fmt.Errorf("Error 499 Mocked error"))
+	cs.On("Put", fmt.Sprintf("/blueprint/applied_configuration"), &payload).Return(dIn, 499, fmt.Errorf("error 499 Mocked error"))
 	err = ds.ReportBootstrappingAppliedConfiguration(&payload)
 	assert.NotNil(err, "We are expecting a status code error")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
@@ -249,12 +249,12 @@ func ReportBootstrappingLogFailErrMocked(t *testing.T, commandIn *types.Bootstra
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Post", fmt.Sprintf("/blueprint/bootstrap_logs"), &payload).Return(dIn, 499, fmt.Errorf("Mocked error"))
+	cs.On("Post", fmt.Sprintf("/blueprint/bootstrap_logs"), &payload).Return(dIn, 499, fmt.Errorf("mocked error"))
 	commandOut, _, err := ds.ReportBootstrappingLog(&payload)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(commandOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return commandOut
 }
@@ -278,7 +278,7 @@ func ReportBootstrappingLogFailStatusMocked(t *testing.T, commandIn *types.Boots
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Post", fmt.Sprintf("/blueprint/bootstrap_logs"), &payload).Return(dIn, 499, fmt.Errorf("Error 499 Mocked error"))
+	cs.On("Post", fmt.Sprintf("/blueprint/bootstrap_logs"), &payload).Return(dIn, 499, fmt.Errorf("error 499 Mocked error"))
 	commandOut, status, err := ds.ReportBootstrappingLog(&payload)
 
 	assert.Equal(status, 499, "ReportBootstrappingLog returned an unexpected status code")
@@ -315,7 +315,7 @@ func ReportBootstrappingLogFailJSONMocked(t *testing.T, commandIn *types.Bootstr
 	return commandOut
 }
 
-// DownloadPolicyfileMocked
+// DownloadPolicyfileMocked test mocked function
 func DownloadPolicyfileMocked(t *testing.T, dataIn map[string]string) {
 	assert := assert.New(t)
 
@@ -336,7 +336,7 @@ func DownloadPolicyfileMocked(t *testing.T, dataIn map[string]string) {
 	assert.Equal(realFileName, pathFile, "Invalid downloaded file path")
 }
 
-// DownloadPolicyfileFailErrMocked
+// DownloadPolicyfileFailErrMocked test mocked function
 func DownloadPolicyfileFailErrMocked(t *testing.T, dataIn map[string]string) {
 	assert := assert.New(t)
 
@@ -350,9 +350,9 @@ func DownloadPolicyfileFailErrMocked(t *testing.T, dataIn map[string]string) {
 	pathFile := dataIn["fakeFileDownloadFile"]
 
 	// call service
-	cs.On("GetFile", urlSource, pathFile).Return("", 499, fmt.Errorf("Mocked error"))
+	cs.On("GetFile", urlSource, pathFile).Return("", 499, fmt.Errorf("mocked error"))
 	_, status, err := ds.DownloadPolicyfile(urlSource, pathFile)
 	assert.NotNil(err, "We are expecting an error")
 	assert.Equal(status, 499, "DownloadPolicyfile returned an unexpected status code")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 }

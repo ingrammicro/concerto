@@ -16,7 +16,7 @@ type SaasProviderService struct {
 // NewSaasProviderService returns a Concerto saasProvider service
 func NewSaasProviderService(concertoService utils.ConcertoService) (*SaasProviderService, error) {
 	if concertoService == nil {
-		return nil, fmt.Errorf("Must initialize ConcertoService before using it")
+		return nil, fmt.Errorf("must initialize ConcertoService before using it")
 	}
 
 	return &SaasProviderService{
@@ -25,10 +25,10 @@ func NewSaasProviderService(concertoService utils.ConcertoService) (*SaasProvide
 }
 
 // GetSaasProviderList returns the list of saasProviders as an array of SaasProvider
-func (cl *SaasProviderService) GetSaasProviderList() (saasProviders []types.SaasProvider, err error) {
+func (cl *SaasProviderService) GetSaasProviderList() (saasProviders []*types.SaasProvider, err error) {
 	log.Debug("GetSaasProviderList")
 
-	data, status, err := cl.concertoService.Get("/v2/cloud/saas_providers")
+	data, status, err := cl.concertoService.Get("/cloud/saas_providers")
 	if err != nil {
 		return nil, err
 	}

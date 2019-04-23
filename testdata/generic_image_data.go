@@ -5,9 +5,9 @@ import (
 )
 
 // GetGenericImageData loads test data
-func GetGenericImageData() *[]types.GenericImage {
+func GetGenericImageData() []*types.GenericImage {
 
-	testGenericImages := []types.GenericImage{
+	return []*types.GenericImage{
 		{
 			ID:   "fakeID0",
 			Name: "fakeName0",
@@ -17,6 +17,4 @@ func GetGenericImageData() *[]types.GenericImage {
 			Name: "fakeName1",
 		},
 	}
-
-	return &testGenericImages
 }

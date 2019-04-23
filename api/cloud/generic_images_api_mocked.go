@@ -12,7 +12,7 @@ import (
 // TODO exclude from release compile
 
 // GetGenericImageListMocked test mocked function
-func GetGenericImageListMocked(t *testing.T, genericImagesIn *[]types.GenericImage) *[]types.GenericImage {
+func GetGenericImageListMocked(t *testing.T, genericImagesIn []*types.GenericImage) []*types.GenericImage {
 
 	assert := assert.New(t)
 
@@ -27,16 +27,16 @@ func GetGenericImageListMocked(t *testing.T, genericImagesIn *[]types.GenericIma
 	assert.Nil(err, "GenericImage test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/cloud/generic_images").Return(dIn, 200, nil)
+	cs.On("Get", "/cloud/generic_images").Return(dIn, 200, nil)
 	genericImagesOut, err := ds.GetGenericImageList()
 	assert.Nil(err, "Error getting genericImage list")
-	assert.Equal(*genericImagesIn, genericImagesOut, "GetGenericImageList returned different genericImages")
+	assert.Equal(genericImagesIn, genericImagesOut, "GetGenericImageList returned different genericImages")
 
-	return &genericImagesOut
+	return genericImagesOut
 }
 
 // GetGenericImageListFailErrMocked test mocked function
-func GetGenericImageListFailErrMocked(t *testing.T, genericImagesIn *[]types.GenericImage) *[]types.GenericImage {
+func GetGenericImageListFailErrMocked(t *testing.T, genericImagesIn []*types.GenericImage) []*types.GenericImage {
 
 	assert := assert.New(t)
 
@@ -51,18 +51,18 @@ func GetGenericImageListFailErrMocked(t *testing.T, genericImagesIn *[]types.Gen
 	assert.Nil(err, "GenericImage test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/cloud/generic_images").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/cloud/generic_images").Return(dIn, 200, fmt.Errorf("mocked error"))
 	genericImagesOut, err := ds.GetGenericImageList()
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(genericImagesOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
-	return &genericImagesOut
+	return genericImagesOut
 }
 
 // GetGenericImageListFailStatusMocked test mocked function
-func GetGenericImageListFailStatusMocked(t *testing.T, genericImagesIn *[]types.GenericImage) *[]types.GenericImage {
+func GetGenericImageListFailStatusMocked(t *testing.T, genericImagesIn []*types.GenericImage) []*types.GenericImage {
 
 	assert := assert.New(t)
 
@@ -77,18 +77,18 @@ func GetGenericImageListFailStatusMocked(t *testing.T, genericImagesIn *[]types.
 	assert.Nil(err, "GenericImage test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/cloud/generic_images").Return(dIn, 499, nil)
+	cs.On("Get", "/cloud/generic_images").Return(dIn, 499, nil)
 	genericImagesOut, err := ds.GetGenericImageList()
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(genericImagesOut, "Expecting nil output")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 
-	return &genericImagesOut
+	return genericImagesOut
 }
 
 // GetGenericImageListFailJSONMocked test mocked function
-func GetGenericImageListFailJSONMocked(t *testing.T, genericImagesIn *[]types.GenericImage) *[]types.GenericImage {
+func GetGenericImageListFailJSONMocked(t *testing.T, genericImagesIn []*types.GenericImage) []*types.GenericImage {
 
 	assert := assert.New(t)
 
@@ -102,12 +102,12 @@ func GetGenericImageListFailJSONMocked(t *testing.T, genericImagesIn *[]types.Ge
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v2/cloud/generic_images").Return(dIn, 200, nil)
+	cs.On("Get", "/cloud/generic_images").Return(dIn, 200, nil)
 	genericImagesOut, err := ds.GetGenericImageList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(genericImagesOut, "Expecting nil output")
 	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
 
-	return &genericImagesOut
+	return genericImagesOut
 }

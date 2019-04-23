@@ -2,16 +2,6 @@
 
 
 [[projects]]
-  name = "github.com/DATA-DOG/godog"
-  packages = [
-    ".",
-    "colors",
-    "gherkin"
-  ]
-  revision = "0371765570d36374bef4ab9f62ed0491f0862a3c"
-  version = "v0.7.6"
-
-[[projects]]
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
   revision = "4b6ea7319e214d98c938f12692336f7ca9348d6b"
@@ -22,12 +12,6 @@
   name = "github.com/allan-simon/go-singleinstance"
   packages = ["."]
   revision = "79edcfdc2dfc93da913f46ae8d9f8a9602250431"
-
-[[projects]]
-  name = "github.com/asaskevich/govalidator"
-  packages = ["."]
-  revision = "7664702784775e51966f0885f5cd27435916517b"
-  version = "v4"
 
 [[projects]]
   name = "github.com/codegangsta/cli"
@@ -68,35 +52,14 @@
   version = "v1.2.1"
 
 [[projects]]
-  name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
-  revision = "5bcd134fee4dd1475da17714aac19c0aa0142e2f"
-
-[[projects]]
-  name = "golang.org/x/net"
-  packages = [
-    "html",
-    "html/atom",
-    "idna",
-    "publicsuffix"
-  ]
-  revision = "0c607074acd38c5f23d1344dfe74c977464d1257"
-
-[[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
   revision = "7db1c3b1a98089d0071c84f646ff5c96aad43682"
 
-[[projects]]
-  name = "gopkg.in/cucumber/gherkin-go.v3"
-  packages = ["."]
-  revision = "493a95eaa11180c87c841a303097a269fb1f670d"
-  version = "v3.2.0"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "110d97437b0209f38ce5b41683f4bdb8842f608d32b27d184ddc13edb6bfd8c9"
+  inputs-digest = "9c19872b5be9f97d13c9247d6c1a5be31e1697f3bf90840c67ba842e00b09ace"
   solver-name = "gps-cdcl"
   solver-version = 1

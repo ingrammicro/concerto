@@ -16,7 +16,7 @@ type CloudProviderService struct {
 // NewCloudProviderService returns a Concerto cloudProvider service
 func NewCloudProviderService(concertoService utils.ConcertoService) (*CloudProviderService, error) {
 	if concertoService == nil {
-		return nil, fmt.Errorf("Must initialize ConcertoService before using it")
+		return nil, fmt.Errorf("must initialize ConcertoService before using it")
 	}
 
 	return &CloudProviderService{
@@ -25,10 +25,10 @@ func NewCloudProviderService(concertoService utils.ConcertoService) (*CloudProvi
 }
 
 // GetCloudProviderList returns the list of cloudProviders as an array of CloudProvider
-func (cl *CloudProviderService) GetCloudProviderList() (cloudProviders []types.CloudProvider, err error) {
+func (cl *CloudProviderService) GetCloudProviderList() (cloudProviders []*types.CloudProvider, err error) {
 	log.Debug("GetCloudProviderList")
 
-	data, status, err := cl.concertoService.Get("/v2/cloud/cloud_providers")
+	data, status, err := cl.concertoService.Get("/cloud/cloud_providers")
 	if err != nil {
 		return nil, err
 	}

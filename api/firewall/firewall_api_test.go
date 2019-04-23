@@ -31,7 +31,7 @@ func TestAddPolicyRule(t *testing.T) {
 	}
 }
 
-func TestUpdateServer(t *testing.T) {
+func TestUpdatePolicy(t *testing.T) {
 	pIn := testdata.GetPolicyData()
 	UpdatePolicyMocked(t, pIn)
 	UpdatePolicyFailErrMocked(t, pIn)

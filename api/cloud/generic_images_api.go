@@ -16,7 +16,7 @@ type GenericImageService struct {
 // NewGenericImageService returns a Concerto genericImage service
 func NewGenericImageService(concertoService utils.ConcertoService) (*GenericImageService, error) {
 	if concertoService == nil {
-		return nil, fmt.Errorf("Must initialize ConcertoService before using it")
+		return nil, fmt.Errorf("must initialize ConcertoService before using it")
 	}
 
 	return &GenericImageService{
@@ -24,11 +24,11 @@ func NewGenericImageService(concertoService utils.ConcertoService) (*GenericImag
 	}, nil
 }
 
-// GetGenericImageList returns the list of genericImages as an array of GenericImage
-func (cl *GenericImageService) GetGenericImageList() (genericImages []types.GenericImage, err error) {
+// GetGenericImageList returns the list of generic images as an array of GenericImage
+func (cl *GenericImageService) GetGenericImageList() (genericImages []*types.GenericImage, err error) {
 	log.Debug("GetGenericImageList")
 
-	data, status, err := cl.concertoService.Get("/v2/cloud/generic_images")
+	data, status, err := cl.concertoService.Get("/cloud/generic_images")
 	if err != nil {
 		return nil, err
 	}

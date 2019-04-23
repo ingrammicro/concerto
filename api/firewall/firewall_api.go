@@ -17,7 +17,7 @@ type FirewallService struct {
 // NewFirewallService returns a Concerto firewall service
 func NewFirewallService(concertoService utils.ConcertoService) (*FirewallService, error) {
 	if concertoService == nil {
-		return nil, fmt.Errorf("Must initialize ConcertoService before using it")
+		return nil, fmt.Errorf("must initialize ConcertoService before using it")
 	}
 
 	return &FirewallService{
@@ -25,7 +25,7 @@ func NewFirewallService(concertoService utils.ConcertoService) (*FirewallService
 	}, nil
 }
 
-// GetPolicy returns server firewall policy
+// GetPolicy returns firewall policy
 func (fs *FirewallService) GetPolicy() (policy *types.Policy, err error) {
 	log.Debug("GetPolicy")
 
@@ -65,7 +65,7 @@ func (fs *FirewallService) AddPolicyRule(ruleVector *map[string]interface{}) (po
 	return policyRule, nil
 }
 
-// UpdatePolicy update server firewall profile
+// UpdatePolicy update firewall policy
 func (fs *FirewallService) UpdatePolicy(policyVector *map[string]interface{}) (policy *types.Policy, err error) {
 	log.Debug("UpdatePolicy")
 

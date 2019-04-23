@@ -5,9 +5,9 @@ import (
 )
 
 // GetSSHProfileData loads test data
-func GetSSHProfileData() *[]types.SSHProfile {
+func GetSSHProfileData() []*types.SSHProfile {
 
-	testSSHProfiles := []types.SSHProfile{
+	return []*types.SSHProfile{
 		{
 			ID:         "fakeID0",
 			Name:       "fakeName0",
@@ -21,6 +21,4 @@ func GetSSHProfileData() *[]types.SSHProfile {
 			PrivateKey: "fakePrivateKey1",
 		},
 	}
-
-	return &testSSHProfiles
 }

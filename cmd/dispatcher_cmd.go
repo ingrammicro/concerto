@@ -22,7 +22,7 @@ func WireUpDispatcher(c *cli.Context) (ds *dispatcher.DispatcherService, f forma
 	}
 	ds, err = dispatcher.NewDispatcherService(hcs)
 	if err != nil {
-		f.PrintFatal("Couldn't wire up serverPlan service", err)
+		f.PrintFatal("Couldn't wire up dispatcher service", err)
 	}
 
 	return ds, f

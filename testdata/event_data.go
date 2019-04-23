@@ -7,9 +7,9 @@ import (
 )
 
 // GetEventData loads test data
-func GetEventData() *[]types.Event {
+func GetEventData() []*types.Event {
 
-	testEvents := []types.Event{
+	return []*types.Event{
 		{
 			ID:          "fakeID0",
 			Timestamp:   time.Date(2014, 1, 1, 12, 0, 0, 0, time.UTC),
@@ -25,6 +25,4 @@ func GetEventData() *[]types.Event {
 			Description: "fakeDescription1",
 		},
 	}
-
-	return &testEvents
 }

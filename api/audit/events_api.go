@@ -16,7 +16,7 @@ type EventService struct {
 // NewEventService returns a Concerto event service
 func NewEventService(concertoService utils.ConcertoService) (*EventService, error) {
 	if concertoService == nil {
-		return nil, fmt.Errorf("Must initialize ConcertoService before using it")
+		return nil, fmt.Errorf("must initialize ConcertoService before using it")
 	}
 
 	return &EventService{
@@ -25,10 +25,10 @@ func NewEventService(concertoService utils.ConcertoService) (*EventService, erro
 }
 
 // GetEventList returns the list of events as an array of Event
-func (cl *EventService) GetEventList() (events []types.Event, err error) {
+func (cl *EventService) GetEventList() (events []*types.Event, err error) {
 	log.Debug("GetEventList")
 
-	data, status, err := cl.concertoService.Get("/v2/audit/events")
+	data, status, err := cl.concertoService.Get("/audit/events")
 	if err != nil {
 		return nil, err
 	}
@@ -45,10 +45,10 @@ func (cl *EventService) GetEventList() (events []types.Event, err error) {
 }
 
 // GetSysEventList returns the list of events as an array of Event
-func (cl *EventService) GetSysEventList() (events []types.Event, err error) {
-	log.Debug("GetEventList")
+func (cl *EventService) GetSysEventList() (events []*types.Event, err error) {
+	log.Debug("GetSysEventList")
 
-	data, status, err := cl.concertoService.Get("/v2/audit/system_events")
+	data, status, err := cl.concertoService.Get("/audit/system_events")
 	if err != nil {
 		return nil, err
 	}

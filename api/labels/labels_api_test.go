@@ -25,30 +25,30 @@ func TestGetLabelsList(t *testing.T) {
 
 func TestCreateLabel(t *testing.T) {
 	labelsIn := testdata.GetLabelData()
-	for _, labelIn := range *labelsIn {
-		CreateLabelMocked(t, &labelIn)
-		CreateLabelFailErrMocked(t, &labelIn)
-		CreateLabelFailStatusMocked(t, &labelIn)
-		CreateLabelFailJSONMocked(t, &labelIn)
+	for _, labelIn := range labelsIn {
+		CreateLabelMocked(t, labelIn)
+		CreateLabelFailErrMocked(t, labelIn)
+		CreateLabelFailStatusMocked(t, labelIn)
+		CreateLabelFailJSONMocked(t, labelIn)
 	}
 }
 
 func TestAddLabel(t *testing.T) {
 	labelsIn := testdata.GetLabelData()
 	labeledResourcesOut := testdata.GetLabeledResourcesData()
-	for _, labelIn := range *labelsIn {
-		AddLabelMocked(t, &labelIn, *labeledResourcesOut)
-		AddLabelFailErrMocked(t, &labelIn, *labeledResourcesOut)
-		AddLabelFailStatusMocked(t, &labelIn, *labeledResourcesOut)
-		AddLabelFailJSONMocked(t, &labelIn, *labeledResourcesOut)
+	for _, labelIn := range labelsIn {
+		AddLabelMocked(t, labelIn, labeledResourcesOut)
+		AddLabelFailErrMocked(t, labelIn, labeledResourcesOut)
+		AddLabelFailStatusMocked(t, labelIn, labeledResourcesOut)
+		AddLabelFailJSONMocked(t, labelIn, labeledResourcesOut)
 	}
 }
 
 func TestRemoveLabel(t *testing.T) {
 	labelsIn := testdata.GetLabelData()
-	for _, labelIn := range *labelsIn {
-		RemoveLabelMocked(t, &labelIn)
-		RemoveLabelFailErrMocked(t, &labelIn)
-		RemoveLabelFailStatusMocked(t, &labelIn)
+	for _, labelIn := range labelsIn {
+		RemoveLabelMocked(t, labelIn)
+		RemoveLabelFailErrMocked(t, labelIn)
+		RemoveLabelFailStatusMocked(t, labelIn)
 	}
 }

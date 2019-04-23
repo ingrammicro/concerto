@@ -9,7 +9,6 @@ import (
 	"github.com/ingrammicro/concerto/utils"
 )
 
-
 // BootstrappingService manages bootstrapping operations
 type BootstrappingService struct {
 	concertoService utils.ConcertoService
@@ -47,7 +46,7 @@ func (bs *BootstrappingService) GetBootstrappingConfiguration() (bootstrappingCo
 	return bootstrappingConfigurations, status, nil
 }
 
-// ReportBootstrappingAppliedConfiguration
+// ReportBootstrappingAppliedConfiguration informs the platform of applied changes
 func (bs *BootstrappingService) ReportBootstrappingAppliedConfiguration(BootstrappingAppliedConfigurationVector *map[string]interface{}) (err error) {
 	log.Debug("ReportBootstrappingAppliedConfiguration")
 
@@ -78,7 +77,6 @@ func (bs *BootstrappingService) ReportBootstrappingLog(BootstrappingContinuousRe
 
 	return command, status, nil
 }
-
 
 // DownloadPolicyfile gets a file from given url saving file into given file path
 func (bs *BootstrappingService) DownloadPolicyfile(url string, filePath string) (realFileName string, status int, err error) {

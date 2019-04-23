@@ -42,20 +42,20 @@ func SSHProfileList(c *cli.Context) error {
 	}
 
 	labelables := make([]types.Labelable, len(sshProfiles))
-	for i:=0; i< len(sshProfiles); i++ {
-		labelables[i] = types.Labelable(&sshProfiles[i])
+	for i := 0; i < len(sshProfiles); i++ {
+		labelables[i] = types.Labelable(sshProfiles[i])
 	}
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
-	sshProfiles = make([]types.SSHProfile, len(filteredLabelables))
-	for i, labelable := range filteredLabelables {
+	sshProfiles = make([]*types.SSHProfile, len(filteredLabelables))
+	for _, labelable := range filteredLabelables {
 		sshP, ok := labelable.(*types.SSHProfile)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.SSHProfile, got a %T", labelable))
 		}
-		sshProfiles[i] = *sshP
+		sshProfiles = append(sshProfiles, sshP)
 	}
 
 	if err = formatter.PrintList(sshProfiles); err != nil {
@@ -87,13 +87,13 @@ func SSHProfileCreate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	sshProfileSvc, formatter := WireUpSSHProfile(c)
 
-	checkRequiredFlags(c, []string{"name", "public_key"}, formatter)
+	checkRequiredFlags(c, []string{"name", "public-key"}, formatter)
 	sshProfileIn := map[string]interface{}{
 		"name":       c.String("name"),
-		"public_key": c.String("public_key"),
+		"public_key": c.String("public-key"),
 	}
-	if c.String("private_key") != "" {
-		sshProfileIn["private_key"] = c.String("private_key")
+	if c.String("private-key") != "" {
+		sshProfileIn["private_key"] = c.String("private-key")
 	}
 
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)

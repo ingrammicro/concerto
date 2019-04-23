@@ -5,12 +5,19 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands returns cookbook versions commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
 			Name:   "list",
 			Usage:  "Lists all available cookbook versions",
 			Action: cmd.CookbookVersionList,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "labels",
+					Usage: "A list of comma separated label as a query filter",
+				},
+			},
 		},
 		{
 			Name:   "show",
@@ -63,7 +70,7 @@ func SubCommands() []cli.Command {
 					Usage: "Label name",
 				},
 				cli.StringFlag{
-					Name:   "resource_type",
+					Name:   "resource-type",
 					Usage:  "Resource Type",
 					Value:  "cookbook_version",
 					Hidden: true,
@@ -84,7 +91,7 @@ func SubCommands() []cli.Command {
 					Usage: "Label name",
 				},
 				cli.StringFlag{
-					Name:   "resource_type",
+					Name:   "resource-type",
 					Usage:  "Resource Type",
 					Value:  "cookbook_version",
 					Hidden: true,

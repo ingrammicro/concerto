@@ -5,7 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
-// SubCommands provides operations about apps
+// SubCommands returns apps commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
@@ -23,15 +23,15 @@ func SubCommands() []cli.Command {
 					Usage: "Identifier of the App which will be deployed",
 				},
 				cli.StringFlag{
-					Name:  "location_id",
+					Name:  "location-id",
 					Usage: "Identifier of the Location on which the App will be deployed",
 				},
 				cli.StringFlag{
-					Name:  "cloud_account_id",
+					Name:  "cloud-account-id",
 					Usage: "Identifier of the Cloud Account with which the App will be deployed",
 				},
 				cli.StringFlag{
-					Name:  "server_plan_id",
+					Name:  "server-plan-id",
 					Usage: "Identifier of the Server Plan on which the App will be deployed",
 				},
 				cli.StringFlag{

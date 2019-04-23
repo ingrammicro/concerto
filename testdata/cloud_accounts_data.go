@@ -3,9 +3,9 @@ package testdata
 import "github.com/ingrammicro/concerto/api/types"
 
 // GetCloudAccountData loads test data
-func GetCloudAccountData() *[]types.CloudAccount {
+func GetCloudAccountData() []*types.CloudAccount {
 
-	testCloudAccounts := []types.CloudAccount{
+	return []*types.CloudAccount{
 		{
 			ID:                "fakeID0",
 			Name:              "fakeName0",
@@ -19,6 +19,4 @@ func GetCloudAccountData() *[]types.CloudAccount {
 			CloudProviderName: "CloudProviderName1",
 		},
 	}
-
-	return &testCloudAccounts
 }

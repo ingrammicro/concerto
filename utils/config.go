@@ -63,7 +63,7 @@ var cachedConfig *Config
 // GetConcertoConfig returns concerto configuration
 func GetConcertoConfig() (*Config, error) {
 	if cachedConfig == nil {
-		return nil, fmt.Errorf("Configuration hasn't been initialized")
+		return nil, fmt.Errorf("configuration hasn't been initialized")
 	}
 	return cachedConfig, nil
 }
@@ -211,11 +211,11 @@ func (config *Config) readConcertoConfig(c *cli.Context) error {
 		defer xmlFile.Close()
 		b, err := ioutil.ReadAll(xmlFile)
 		if err != nil {
-			return fmt.Errorf("Configuration File %s couldn't be read.", config.ConfFile)
+			return fmt.Errorf("configuration File %s couldn't be read", config.ConfFile)
 		}
 
 		if err = xml.Unmarshal(b, &config); err != nil {
-			return fmt.Errorf("Configuration File %s does not have valid XML format.", config.ConfFile)
+			return fmt.Errorf("configuration File %s does not have valid XML format", config.ConfFile)
 		}
 
 	} else {
@@ -261,7 +261,7 @@ func (config *Config) evaluateCurrentUser() (*user.User, error) {
 		log.Debugf("Couldn't use os.user to get user details: %s", err.Error())
 		dir, err := homedir.Dir()
 		if err != nil {
-			return nil, fmt.Errorf("Couldn't get home dir for current user: %s", err.Error())
+			return nil, fmt.Errorf("couldn't get home dir for current user: %s", err.Error())
 		}
 		currUser = &user.User{
 			Username: getUsername(),
@@ -271,9 +271,9 @@ func (config *Config) evaluateCurrentUser() (*user.User, error) {
 	if runtime.GOOS == "windows" {
 		currUser.Username = currUser.Username[strings.LastIndex(currUser.Username, "\\")+1:]
 		log.Debugf("Windows username is %s", currUser.Username)
-		config.CurrentUserIsAdmin = (currUser.Gid == "S-1-5-32-544" || isWinAdministrator(currUser.Username) || canPerformAdministratorTasks())
+		config.CurrentUserIsAdmin = currUser.Gid == "S-1-5-32-544" || isWinAdministrator(currUser.Username) || canPerformAdministratorTasks()
 	} else {
-		config.CurrentUserIsAdmin = (currUser.Uid == "0" || currUser.Username == "root")
+		config.CurrentUserIsAdmin = currUser.Uid == "0" || currUser.Username == "root"
 	}
 	config.CurrentUserName = currUser.Username
 	return currUser, nil
@@ -366,7 +366,7 @@ func canPerformAdministratorTasks() bool {
 	return true
 }
 
-// readConcertoURL reads URL from CONCERTO_URL envrionment or calculates using API URL
+// readConcertoURL reads URL from CONCERTO_URL environment or calculates using API URL
 func (config *Config) readConcertoURL() error {
 
 	if config.ConcertoURL != "" {

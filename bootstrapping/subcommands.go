@@ -4,6 +4,7 @@ import (
 	"github.com/codegangsta/cli"
 )
 
+// SubCommands returns bootstrapping commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{

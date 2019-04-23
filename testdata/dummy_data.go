@@ -13,12 +13,12 @@ type DummyStructTestFormatter struct {
 }
 
 // GetDummyData loads test data
-func GetDummyData() *[]DummyStructTestFormatter {
+func GetDummyData() []*DummyStructTestFormatter {
 
 	param0 := json.RawMessage(`{"fakeFlavour01":"x","fakeFlavour02":"y"}`)
 	param1 := json.RawMessage(`{"fakeFlavour11":"a","fakeFlavour12":"b"}`)
 
-	dummyApps := []DummyStructTestFormatter{
+	return []*DummyStructTestFormatter{
 		{
 			ID:               "fakeID0",
 			RemainingSeconds: 100360012,
@@ -32,6 +32,4 @@ func GetDummyData() *[]DummyStructTestFormatter {
 			JSONRawPtr:       nil,
 		},
 	}
-
-	return &dummyApps
 }

@@ -48,8 +48,17 @@ func AppDeploy(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	appSvc, formatter := WireUpApp(c)
 
-	checkRequiredFlags(c, []string{"id", "location_id", "cloud_account_id", "hostname"}, formatter)
-	app, err := appSvc.DeployApp(utils.FlagConvertParams(c), c.String("id"))
+	checkRequiredFlags(c, []string{"id", "location-id", "cloud-account-id", "server-plan-id", "hostname"}, formatter)
+
+	appIn := map[string]interface{}{
+		"id":               c.String("id"),
+		"location_id":      c.String("location-id"),
+		"cloud_account_id": c.String("cloud-account-id"),
+		"server_plan_id":   c.String("server-plan-id"),
+		"hostname":         c.String("hostname"),
+	}
+
+	app, err := appSvc.DeployApp(&appIn, c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't deploy app", err)
 	}

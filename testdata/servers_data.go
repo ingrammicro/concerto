@@ -6,9 +6,9 @@ import (
 )
 
 // GetServerData loads test data
-func GetServerData() *[]types.Server {
+func GetServerData() []*types.Server {
 
-	testServers := []types.Server{
+	return []*types.Server{
 		{
 			ID:                "fakeID0",
 			Name:              "fakeName0",
@@ -32,17 +32,15 @@ func GetServerData() *[]types.Server {
 			FirewallProfileID: "fakeFirewallProfileID1",
 		},
 	}
-
-	return &testServers
 }
 
 // GetScriptCharData loads test data
-func GetScriptCharData() *[]types.ScriptChar {
+func GetScriptCharData() []*types.ScriptChar {
 
 	param0 := json.RawMessage(`{"fakeConf01":"x","fakeConf02":"y"}`)
 	param1 := json.RawMessage(`{"fakeConf11":"x","fakeConf12":"y"}`)
 
-	testScriptChars := []types.ScriptChar{
+	return []*types.ScriptChar{
 		{
 			ID:              "fakeID0",
 			Type:            "fakeType0",
@@ -62,6 +60,4 @@ func GetScriptCharData() *[]types.ScriptChar {
 			ResourceType:    "fakeResourceType1",
 		},
 	}
-
-	return &testScriptChars
 }

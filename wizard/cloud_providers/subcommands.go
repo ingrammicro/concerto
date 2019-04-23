@@ -5,6 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands returns cloud providers commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
@@ -13,11 +14,11 @@ func SubCommands() []cli.Command {
 			Action: cmd.WizCloudProviderList,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "app_id",
+					Name:  "app-id",
 					Usage: "Identifier of the App",
 				},
 				cli.StringFlag{
-					Name:  "location_id",
+					Name:  "location-id",
 					Usage: "Identifier of the Location",
 				},
 			},

@@ -3,9 +3,9 @@ package testdata
 import "github.com/ingrammicro/concerto/api/types"
 
 // GetSaasProviderData loads test data
-func GetSaasProviderData() *[]types.SaasProvider {
+func GetSaasProviderData() []*types.SaasProvider {
 
-	testSaasProviders := []types.SaasProvider{
+	return []*types.SaasProvider{
 		{
 			ID:                  "fakeID0",
 			Name:                "fakeName0",
@@ -17,6 +17,4 @@ func GetSaasProviderData() *[]types.SaasProvider {
 			RequiredAccountData: []string{"accData1", "accData2", "accData3"},
 		},
 	}
-
-	return &testSaasProviders
 }

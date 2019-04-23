@@ -7,12 +7,12 @@ import (
 )
 
 // GetAppData loads test data
-func GetAppData() *[]types.WizardApp {
+func GetAppData() []*types.WizardApp {
 
 	param0 := json.RawMessage(`{"fakeFlavour01":"x","fakeFlavour02":"y"}`)
 	param1 := json.RawMessage(`{"fakeFlavour11":"a","fakeFlavour12":"b"}`)
 
-	testApps := []types.WizardApp{
+	return []*types.WizardApp{
 		{
 			ID:                  "fakeID0",
 			Name:                "fakeName0",
@@ -26,6 +26,4 @@ func GetAppData() *[]types.WizardApp {
 			GenericImageID:      "fakeGenericImageID1",
 		},
 	}
-
-	return &testApps
 }

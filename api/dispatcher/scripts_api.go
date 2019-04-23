@@ -24,8 +24,8 @@ func NewDispatcherService(concertoService utils.ConcertoService) (*DispatcherSer
 	}, nil
 }
 
-// GetDispatcherScriptCharacterizationsByType
-func (ds *DispatcherService) GetDispatcherScriptCharacterizationsByType(phase string) (scriptCharacterizations *[]types.ScriptCharacterization, err error) {
+// GetDispatcherScriptCharacterizationsByType returns script characterizations list for a given phase
+func (ds *DispatcherService) GetDispatcherScriptCharacterizationsByType(phase string) (scriptCharacterizations []*types.ScriptCharacterization, err error) {
 	log.Debug("GetDispatcherScriptCharacterizationsByType")
 
 	data, status, err := ds.concertoService.Get(fmt.Sprintf("/blueprint/script_characterizations?type=%s", phase))
@@ -44,8 +44,8 @@ func (ds *DispatcherService) GetDispatcherScriptCharacterizationsByType(phase st
 	return scriptCharacterizations, nil
 }
 
-// GetDispatcherScriptCharacterizationsByUUID
-func (ds *DispatcherService) GetDispatcherScriptCharacterizationsByUUID(scriptCharacterizationUUID string) (scriptCharacterizations *[]types.ScriptCharacterization, err error) {
+// GetDispatcherScriptCharacterizationsByUUID returns script characterizations list for a given UUID
+func (ds *DispatcherService) GetDispatcherScriptCharacterizationsByUUID(scriptCharacterizationUUID string) (scriptCharacterizations []*types.ScriptCharacterization, err error) {
 	log.Debug("GetDispatcherScriptCharacterizationsByUUID")
 
 	data, status, err := ds.concertoService.Get(fmt.Sprintf("/blueprint/script_characterizations/%s", scriptCharacterizationUUID))

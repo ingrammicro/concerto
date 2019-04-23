@@ -1,54 +1,39 @@
 package main
 
 import (
-	//"context"
 	"fmt"
+	"github.com/ingrammicro/concerto/blueprint"
+	"github.com/ingrammicro/concerto/bootstrapping"
+	"github.com/ingrammicro/concerto/brownfield"
+	"github.com/ingrammicro/concerto/cloud"
+	"github.com/ingrammicro/concerto/cmdpolling"
+	"github.com/ingrammicro/concerto/converge"
+	"github.com/ingrammicro/concerto/labels"
+	"github.com/ingrammicro/concerto/network"
+	"github.com/ingrammicro/concerto/settings"
+	"github.com/ingrammicro/concerto/wizard"
 	"os"
 	"sort"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/audit"
-	"github.com/ingrammicro/concerto/blueprint/cookbook_versions"
-	"github.com/ingrammicro/concerto/blueprint/scripts"
-	"github.com/ingrammicro/concerto/blueprint/templates"
-	"github.com/ingrammicro/concerto/bootstrapping"
-	"github.com/ingrammicro/concerto/brownfield"
-	cl_prov "github.com/ingrammicro/concerto/cloud/cloud_providers"
-	"github.com/ingrammicro/concerto/cloud/generic_images"
-	"github.com/ingrammicro/concerto/cloud/saas_providers"
-	"github.com/ingrammicro/concerto/cloud/server_plan"
-	"github.com/ingrammicro/concerto/cloud/servers"
-	"github.com/ingrammicro/concerto/cloud/ssh_profiles"
-	"github.com/ingrammicro/concerto/cmdpolling"
-	"github.com/ingrammicro/concerto/converge"
 	"github.com/ingrammicro/concerto/dispatcher"
 	"github.com/ingrammicro/concerto/firewall"
-	"github.com/ingrammicro/concerto/labels"
-	"github.com/ingrammicro/concerto/network/firewall_profiles"
-	"github.com/ingrammicro/concerto/settings/cloud_accounts"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
-	"github.com/ingrammicro/concerto/wizard/apps"
-	"github.com/ingrammicro/concerto/wizard/cloud_providers"
-	"github.com/ingrammicro/concerto/wizard/locations"
-	"github.com/ingrammicro/concerto/wizard/server_plans"
 )
 
-var ServerCommands = []cli.Command{
+var serverCommands = []cli.Command{
 	{
-		Name:  "firewall",
-		Usage: "Manages Firewall Policies within a Host",
-		Subcommands: append(
-			firewall.SubCommands(),
-		),
+		Name:        "bootstrap",
+		Usage:       "Manages bootstrapping commands",
+		Subcommands: append(bootstrapping.SubCommands()),
 	},
 	{
-		Name:  "scripts",
-		Usage: "Manages Execution Scripts within a Host",
-		Subcommands: append(
-			dispatcher.SubCommands(),
-		),
+		Name:        "brownfield",
+		Usage:       "Manages registration and configuration within an imported brownfield Host",
+		Subcommands: append(brownfield.SubCommands()),
 	},
 	{
 		Name:   "converge",
@@ -56,205 +41,64 @@ var ServerCommands = []cli.Command{
 		Action: converge.CmbConverge,
 	},
 	{
-		Name:  "brownfield",
-		Usage: "Manages registration and configuration within an imported brownfield Host",
-		Subcommands: append(
-			brownfield.SubCommands(),
-		),
+		Name:        "firewall",
+		Usage:       "Manages Firewall Policies within a Host",
+		Subcommands: append(firewall.SubCommands()),
 	},
 	{
-		Name:  "polling",
-		Usage: "Manages polling commands",
-		Subcommands: append(
-			cmdpolling.SubCommands(),
-		),
+		Name:        "polling",
+		Usage:       "Manages polling commands",
+		Subcommands: append(cmdpolling.SubCommands()),
 	},
 	{
-		Name:  "bootstrap",
-		Usage: "Manages bootstrapping commands",
-		Subcommands: append(
-			bootstrapping.SubCommands(),
-		),
+		Name:        "scripts",
+		Usage:       "Manages Execution Scripts within a Host",
+		Subcommands: append(dispatcher.SubCommands()),
 	},
 }
 
-var BlueprintCommands = []cli.Command{
+var clientCommands = []cli.Command{
 	{
-		Name:  "scripts",
-		Usage: "Allow the user to manage the scripts they want to run on the servers",
-		Subcommands: append(
-			scripts.SubCommands(),
-		),
+		Name:        "blueprint",
+		ShortName:   "bl",
+		Usage:       "Manages blueprint commands for scripts, services and templates",
+		Subcommands: append(blueprint.SubCommands()),
 	},
 	{
-		Name:  "cookbook_versions",
-		Usage: "Provides information on chef cookbook versions",
-		Subcommands: append(
-			cookbook_versions.SubCommands(),
-		),
+		Name:        "cloud",
+		ShortName:   "clo",
+		Usage:       "Manages cloud related commands for servers, generic images, ssh profiles, cloud providers, server plans and Saas providers",
+		Subcommands: append(cloud.SubCommands()),
 	},
 	{
-		Name:  "templates",
-		Usage: "Provides information on templates",
-		Subcommands: append(
-			templates.SubCommands(),
-		),
-	},
-}
-
-var CloudCommands = []cli.Command{
-	{
-		Name:  "servers",
-		Usage: "Provides information on servers",
-		Subcommands: append(
-			servers.SubCommands(),
-		),
+		Name:        "events",
+		ShortName:   "ev",
+		Usage:       "Events allow the user to track their actions and the state of their servers",
+		Subcommands: append(audit.SubCommands()),
 	},
 	{
-		Name:  "generic_images",
-		Usage: "Provides information on generic images",
-		Subcommands: append(
-			generic_images.SubCommands(),
-		),
+		Name:        "labels",
+		ShortName:   "lbl",
+		Usage:       "Provides information about labels",
+		Subcommands: append(labels.SubCommands()),
 	},
 	{
-		Name:  "ssh_profiles",
-		Usage: "Provides information on SSH profiles",
-		Subcommands: append(
-			ssh_profiles.SubCommands(),
-		),
+		Name:        "network",
+		ShortName:   "net",
+		Usage:       "Manages network related commands for firewall profiles",
+		Subcommands: append(network.SubCommands()),
 	},
 	{
-		Name:  "cloud_providers",
-		Usage: "Provides information on cloud providers",
-		Subcommands: append(
-			cl_prov.SubCommands(),
-		),
+		Name:        "settings",
+		ShortName:   "set",
+		Usage:       "Provides settings for cloud accounts",
+		Subcommands: append(settings.SubCommands()),
 	},
 	{
-		Name:  "server_plans",
-		Usage: "Provides information on server plans",
-		Subcommands: append(
-			server_plan.SubCommands(),
-		),
-	},
-	{
-		Name:  "saas_providers",
-		Usage: "Provides information about SAAS providers",
-		Subcommands: append(
-			saas_providers.SubCommands(),
-		),
-	},
-}
-
-var NetCommands = []cli.Command{
-	{
-		Name:  "firewall_profiles",
-		Usage: "Provides information about firewall profiles",
-		Subcommands: append(
-			firewall_profiles.SubCommands(),
-		),
-	},
-}
-
-var SettingsCommands = []cli.Command{
-	{
-		Name:  "cloud_accounts",
-		Usage: "Provides information about cloud accounts",
-		Subcommands: append(
-			cloud_accounts.SubCommands(),
-		),
-	},
-}
-
-var WizardCommands = []cli.Command{
-	{
-		Name:  "apps",
-		Usage: "Provides information about apps",
-		Subcommands: append(
-			apps.SubCommands(),
-		),
-	},
-	{
-		Name:  "cloud_providers",
-		Usage: "Provides information about cloud providers",
-		Subcommands: append(
-			cloud_providers.SubCommands(),
-		),
-	},
-	{
-		Name:  "locations",
-		Usage: "Provides information about locations",
-		Subcommands: append(
-			locations.SubCommands(),
-		),
-	},
-	{
-		Name:  "server_plans",
-		Usage: "Provides information about server plans",
-		Subcommands: append(
-			server_plans.SubCommands(),
-		),
-	},
-}
-
-var ClientCommands = []cli.Command{
-	{
-		Name:      "events",
-		ShortName: "ev",
-		Usage:     "Events allow the user to track their actions and the state of their servers",
-		Subcommands: append(
-			audit.SubCommands(),
-		),
-	},
-
-	{
-		Name:      "blueprint",
-		ShortName: "bl",
-		Usage:     "Manages blueprint commands for scripts, services and templates",
-		Subcommands: append(
-			BlueprintCommands,
-		),
-	},
-	{
-		Name:      "cloud",
-		ShortName: "clo",
-		Usage:     "Manages cloud related commands for servers, generic images, ssh profiles, cloud providers, server plans and Saas providers",
-		Subcommands: append(
-			CloudCommands,
-		),
-	},
-	{
-		Name:      "network",
-		ShortName: "net",
-		Usage:     "Manages network related commands for firewall profiles",
-		Subcommands: append(
-			NetCommands,
-		),
-	},
-	{
-		Name:      "settings",
-		ShortName: "set",
-		Usage:     "Provides settings for cloud accounts",
-		Subcommands: append(
-			SettingsCommands,
-		),
-	},
-	{
-		Name:      "wizard",
-		ShortName: "wiz",
-		Usage:     "Manages wizard related commands for apps, locations, cloud providers, server plans",
-		Subcommands: append(
-			WizardCommands,
-		),
-	},
-	{
-		Name:      "labels",
-		ShortName: "lbl",
-		Usage:     "Provides information about labels",
-		Subcommands: append(
-			labels.SubCommands(),
-		),
+		Name:        "wizard",
+		ShortName:   "wiz",
+		Usage:       "Manages wizard related commands for apps, locations, cloud providers, server plans",
+		Subcommands: append(wizard.SubCommands()),
 	},
 }
 
@@ -343,9 +187,11 @@ func cmdNotFound(c *cli.Context, command string) {
 }
 
 func prepareFlags(c *cli.Context) error {
-
 	if c.Bool("debug") {
-		os.Setenv("DEBUG", "1")
+		if err := os.Setenv("DEBUG", "1"); err != nil {
+			log.Errorf("Couldn't set environment debug mode: %s", err)
+			return err
+		}
 		log.SetOutput(os.Stderr)
 		log.SetLevel(log.DebugLevel)
 	}
@@ -360,16 +206,16 @@ func prepareFlags(c *cli.Context) error {
 	// validate formatter
 	if c.String("formatter") != "text" && c.String("formatter") != "json" {
 		log.Errorf("Unrecognized formatter %s. Please, use one of [ text | json ]", c.String("formatter"))
-		return fmt.Errorf("Unrecognized formatter %s. Please, use one of [ text | json ]", c.String("formatter"))
+		return fmt.Errorf("unrecognized formatter %s. Please, use one of [ text | json ]", c.String("formatter"))
 	}
 	format.InitializeFormatter(c.String("formatter"), os.Stdout)
 
 	if config.IsAgentMode() {
 		log.Debug("Setting server commands to concerto")
-		c.App.Commands = ServerCommands
+		c.App.Commands = serverCommands
 	} else {
 		log.Debug("Setting client commands to concerto")
-		c.App.Commands = ClientCommands
+		c.App.Commands = clientCommands
 
 		// Excluding Server/Agent contextual flags
 		c.App.Flags = excludeFlags(c.App.VisibleFlags(), []string{"concerto-brownfield-token", "concerto-command-polling-token", "concerto-server-id"})
@@ -392,7 +238,6 @@ func prepareFlags(c *cli.Context) error {
 }
 
 func main() {
-
 	app := cli.NewApp()
 	app.Name = "concerto"
 	app.Author = "Concerto Contributors"
@@ -403,7 +248,7 @@ func main() {
 	app.Version = utils.VERSION
 
 	// set client commands by default to populate categories
-	app.Commands = ClientCommands
+	app.Commands = clientCommands
 
 	app.Flags = appFlags
 
