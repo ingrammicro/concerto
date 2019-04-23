@@ -77,38 +77,37 @@ func InitializeConcertoConfig(c *cli.Context) (*Config, error) {
 
 	cachedConfig = &Config{}
 
-	err := cachedConfig.readBrownfieldToken(c)
-	if err != nil {
+	if err := cachedConfig.readBrownfieldToken(c); err != nil {
 		return nil, err
 	}
 
-	err = cachedConfig.readCommandPollingConfig(c)
-	if err != nil {
+	if err := cachedConfig.readCommandPollingConfig(c); err != nil {
 		return nil, err
 	}
 
 	// where config file must me
-	err = cachedConfig.evaluateConcertoConfigFile(c)
-	if err != nil {
+	if err := cachedConfig.evaluateConcertoConfigFile(c); err != nil {
 		return nil, err
 	}
 
 	// read config contents
 	log.Debugf("Reading configuration from %s", cachedConfig.ConfFile)
-	err = cachedConfig.readConcertoConfig(c)
-	if err != nil {
+	if err := cachedConfig.readConcertoConfig(c); err != nil {
 		return nil, err
 	}
 
 	// add login URL. Needed for setup
-	err = cachedConfig.readConcertoURL()
-	if err != nil {
+	if err := cachedConfig.readConcertoURL(); err != nil {
 		return nil, err
 	}
 
-	// check if isHost. Needed to show appropiate options
-	err = cachedConfig.evaluateCertificate()
-	if err != nil {
+	// check if isHost. Needed to show appropriate options
+	if err := cachedConfig.evaluateCertificate(); err != nil {
+		return nil, err
+	}
+
+	// evaluates API endpoint url
+	if err := cachedConfig.evaluateAPIEndpointURL(); err != nil {
 		return nil, err
 	}
 
@@ -248,9 +247,6 @@ func (config *Config) readConcertoConfig(c *cli.Context) error {
 	if config.APIEndpoint == "" {
 		config.APIEndpoint = defaultConcertoEndpoint
 	}
-
-	// remove slash if exist
-	config.APIEndpoint = strings.TrimRight(config.APIEndpoint, "/")
 
 	return nil
 }
@@ -459,6 +455,30 @@ func (config *Config) evaluateCertificate() error {
 		}
 	}
 	config.IsHost = false
+	return nil
+}
+
+// evaluateAPIEndpointURL evaluates if API endpoint url is valid, advising if invalid version defined, and adapting if required
+func (config *Config) evaluateAPIEndpointURL() error {
+	log.Debug("evaluateAPIEndpointURL")
+
+	// remove ending slash if exist
+	config.APIEndpoint = strings.TrimRight(config.APIEndpoint, "/")
+
+	// In User mode, endpoint url should include API version
+	if !config.IsAgentMode() {
+		cURL, err := url.Parse(config.APIEndpoint)
+		if err != nil {
+			return err
+		}
+		if cURL.Path == "" {
+			config.APIEndpoint = strings.Join([]string{config.APIEndpoint, VERSION_API_USER_MODE}, "/")
+			log.Warnf("Defined API server endpoint url does not include API version. Normalized to latest version (%s): %s", VERSION_API_USER_MODE, config.APIEndpoint)
+		} else if cURL.Path != strings.Join([]string{"/", VERSION_API_USER_MODE}, "") {
+			log.Warnf("Defined API server endpoint url does not match the latest API version (%s). Received %s", VERSION_API_USER_MODE, cURL.Path)
+		}
+	}
+
 	return nil
 }
 
