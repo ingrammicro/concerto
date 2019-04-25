@@ -50,13 +50,13 @@ func TemplateList(c *cli.Context) error {
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 
 	templates = make([]*types.Template, len(filteredLabelables))
-	for _, labelable := range filteredLabelables {
+	for i, labelable := range filteredLabelables {
 		tpl, ok := labelable.(*types.Template)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.Template, got a %T", labelable))
 		}
-		templates = append(templates, tpl)
+		templates[i] = tpl
 	}
 
 	if err = formatter.PrintList(templates); err != nil {

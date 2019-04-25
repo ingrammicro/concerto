@@ -49,13 +49,13 @@ func SSHProfileList(c *cli.Context) error {
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 	sshProfiles = make([]*types.SSHProfile, len(filteredLabelables))
-	for _, labelable := range filteredLabelables {
+	for i, labelable := range filteredLabelables {
 		sshP, ok := labelable.(*types.SSHProfile)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.SSHProfile, got a %T", labelable))
 		}
-		sshProfiles = append(sshProfiles, sshP)
+		sshProfiles[i] = sshP
 	}
 
 	if err = formatter.PrintList(sshProfiles); err != nil {

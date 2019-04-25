@@ -49,13 +49,13 @@ func ServerList(c *cli.Context) error {
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 
 	servers = make([]*types.Server, len(filteredLabelables))
-	for _, labelable := range filteredLabelables {
+	for i, labelable := range filteredLabelables {
 		s, ok := labelable.(*types.Server)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.Server, got a %T", labelable))
 		}
-		servers = append(servers, s)
+		servers[i] = s
 	}
 	if err = formatter.PrintList(servers); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)

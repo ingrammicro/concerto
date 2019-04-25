@@ -52,13 +52,13 @@ func ScriptsList(c *cli.Context) error {
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 
 	scripts = make([]*types.Script, len(filteredLabelables))
-	for _, labelable := range filteredLabelables {
+	for i, labelable := range filteredLabelables {
 		s, ok := labelable.(*types.Script)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.Script, got a %T", labelable))
 		}
-		scripts = append(scripts, s)
+		scripts[i] = s
 	}
 
 	if err = formatter.PrintList(scripts); err != nil {

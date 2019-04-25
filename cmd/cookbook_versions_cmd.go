@@ -48,13 +48,13 @@ func CookbookVersionList(c *cli.Context) error {
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 	cookbookVersions = make([]*types.CookbookVersion, len(filteredLabelables))
-	for _, labelable := range filteredLabelables {
-		s, ok := labelable.(*types.CookbookVersion)
+	for i, labelable := range filteredLabelables {
+		cb, ok := labelable.(*types.CookbookVersion)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.CookbookVersion, got a %T", labelable))
 		}
-		cookbookVersions = append(cookbookVersions, s)
+		cookbookVersions[i] = cb
 	}
 
 	if err = formatter.PrintList(cookbookVersions); err != nil {
