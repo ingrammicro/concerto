@@ -475,7 +475,7 @@ func (config *Config) evaluateAPIEndpointURL() error {
 			config.APIEndpoint = strings.Join([]string{config.APIEndpoint, VERSION_API_USER_MODE}, "/")
 			log.Warnf("Defined API server endpoint url does not include API version. Normalized to latest version (%s): %s", VERSION_API_USER_MODE, config.APIEndpoint)
 		} else if cURL.Path != strings.Join([]string{"/", VERSION_API_USER_MODE}, "") {
-			log.Warnf("Defined API server endpoint url does not match the latest API version (%s). Received %s", VERSION_API_USER_MODE, cURL.Path)
+			log.Warnf("Defined API server endpoint url does not match the latest supported API version (%s). Found %s", VERSION_API_USER_MODE, cURL.Path)
 		}
 	}
 
