@@ -114,7 +114,7 @@ func GetAppListFailJSONMocked(t *testing.T, appsIn []*types.WizardApp) []*types.
 }
 
 // DeployAppMocked test mocked function
-func DeployAppMocked(t *testing.T, appIn *types.WizardApp) *types.WizardApp {
+func DeployAppMocked(t *testing.T, appIn *types.WizardApp) *types.Server {
 
 	assert := assert.New(t)
 
@@ -134,15 +134,14 @@ func DeployAppMocked(t *testing.T, appIn *types.WizardApp) *types.WizardApp {
 
 	// call service
 	cs.On("Post", fmt.Sprintf("/wizard/apps/%s/deploy", appIn.ID), mapIn).Return(dOut, 200, nil)
-	appOut, err := ds.DeployApp(mapIn, appIn.ID)
-	assert.Nil(err, "Error creating app list")
-	assert.Equal(appIn, appOut, "DeployApp returned different apps")
+	serverOut, err := ds.DeployApp(mapIn, appIn.ID)
+	assert.Nil(err, "Error deploying app")
 
-	return appOut
+	return serverOut
 }
 
 // DeployAppFailErrMocked test mocked function
-func DeployAppFailErrMocked(t *testing.T, appIn *types.WizardApp) *types.WizardApp {
+func DeployAppFailErrMocked(t *testing.T, appIn *types.WizardApp) *types.Server {
 
 	assert := assert.New(t)
 
@@ -162,17 +161,17 @@ func DeployAppFailErrMocked(t *testing.T, appIn *types.WizardApp) *types.WizardA
 
 	// call service
 	cs.On("Post", fmt.Sprintf("/wizard/apps/%s/deploy", appIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("mocked error"))
-	appOut, err := ds.DeployApp(mapIn, appIn.ID)
+	serverOut, err := ds.DeployApp(mapIn, appIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
-	assert.Nil(appOut, "Expecting nil output")
+	assert.Nil(serverOut, "Expecting nil output")
 	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
-	return appOut
+	return serverOut
 }
 
 // DeployAppFailStatusMocked test mocked function
-func DeployAppFailStatusMocked(t *testing.T, appIn *types.WizardApp) *types.WizardApp {
+func DeployAppFailStatusMocked(t *testing.T, appIn *types.WizardApp) *types.Server {
 
 	assert := assert.New(t)
 
@@ -192,17 +191,17 @@ func DeployAppFailStatusMocked(t *testing.T, appIn *types.WizardApp) *types.Wiza
 
 	// call service
 	cs.On("Post", fmt.Sprintf("/wizard/apps/%s/deploy", appIn.ID), mapIn).Return(dOut, 499, nil)
-	appOut, err := ds.DeployApp(mapIn, appIn.ID)
+	serverOut, err := ds.DeployApp(mapIn, appIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
-	assert.Nil(appOut, "Expecting nil output")
+	assert.Nil(serverOut, "Expecting nil output")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 
-	return appOut
+	return serverOut
 }
 
 // DeployAppFailJSONMocked test mocked function
-func DeployAppFailJSONMocked(t *testing.T, appIn *types.WizardApp) *types.WizardApp {
+func DeployAppFailJSONMocked(t *testing.T, appIn *types.WizardApp) *types.Server {
 
 	assert := assert.New(t)
 
@@ -221,11 +220,11 @@ func DeployAppFailJSONMocked(t *testing.T, appIn *types.WizardApp) *types.Wizard
 
 	// call service
 	cs.On("Post", fmt.Sprintf("/wizard/apps/%s/deploy", appIn.ID), mapIn).Return(dIn, 200, nil)
-	appOut, err := ds.DeployApp(mapIn, appIn.ID)
+	serverOut, err := ds.DeployApp(mapIn, appIn.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
-	assert.Nil(appOut, "Expecting nil output")
+	assert.Nil(serverOut, "Expecting nil output")
 	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
 
-	return appOut
+	return serverOut
 }
