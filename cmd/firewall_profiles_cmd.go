@@ -42,20 +42,21 @@ func FirewallProfileList(c *cli.Context) error {
 	}
 
 	labelables := make([]types.Labelable, len(firewallProfiles))
-	for i:=0; i< len(firewallProfiles); i++ {
-		labelables[i] = types.Labelable(&firewallProfiles[i])
+	for i := 0; i < len(firewallProfiles); i++ {
+		labelables[i] = types.Labelable(firewallProfiles[i])
 	}
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
-	firewallProfiles = make([]types.FirewallProfile, len(filteredLabelables))
+
+	firewallProfiles = make([]*types.FirewallProfile, len(filteredLabelables))
 	for i, labelable := range filteredLabelables {
 		fw, ok := labelable.(*types.FirewallProfile)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.FirewallProfile, got a %T", labelable))
 		}
-		firewallProfiles[i] = *fw
+		firewallProfiles[i] = fw
 	}
 	if err = formatter.PrintList(firewallProfiles); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)

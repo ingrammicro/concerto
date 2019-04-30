@@ -43,8 +43,8 @@ func CloudProviderList(c *cli.Context) error {
 	return nil
 }
 
-// LoadcloudProvidersMapping retrieves Cloud Providers and create a map between ID and Name
-func LoadcloudProvidersMapping(c *cli.Context) map[string]string {
+// LoadCloudProvidersMapping retrieves Cloud Providers and create a map between ID and Name
+func LoadCloudProvidersMapping(c *cli.Context) map[string]string {
 	debugCmdFuncInfo(c)
 
 	cloudProvidersSvc, formatter := WireUpCloudProvider(c)

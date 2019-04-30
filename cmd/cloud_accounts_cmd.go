@@ -38,7 +38,7 @@ func CloudAccountList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive cloudAccount data", err)
 	}
 
-	cloudProvidersMap := LoadcloudProvidersMapping(c)
+	cloudProvidersMap := LoadCloudProvidersMapping(c)
 
 	for id, ca := range cloudAccounts {
 		cloudAccounts[id].CloudProviderName = cloudProvidersMap[ca.CloudProviderID]

@@ -37,7 +37,6 @@ func TestUpdateCommand(t *testing.T) {
 	UpdateCommandFailJSONMocked(t, commandIn)
 }
 
-
 func TestReportBootstrapLog(t *testing.T) {
 	commandIn := testdata.GetPollingContinuousReportData()
 	ReportBootstrapLogMocked(t, commandIn)

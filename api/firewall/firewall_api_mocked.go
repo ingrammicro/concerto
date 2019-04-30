@@ -50,11 +50,11 @@ func GetPolicyFailErrMocked(t *testing.T, policyIn *types.Policy) *types.Policy 
 	assert.Nil(err, "Firewall test data corrupted")
 
 	// call service
-	cs.On("Get", "/cloud/firewall_profile").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/cloud/firewall_profile").Return(dIn, 200, fmt.Errorf("mocked error"))
 	policyOut, err := ds.GetPolicy()
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(policyOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return policyOut
 }
@@ -156,12 +156,12 @@ func AddPolicyRuleFailErrMocked(t *testing.T, policyRuleIn *types.PolicyRule) *t
 	assert.Nil(err, "Firewall test data corrupted")
 
 	// call service
-	cs.On("Post", "/cloud/firewall_profile/rules", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Post", "/cloud/firewall_profile/rules", mapIn).Return(dOut, 200, fmt.Errorf("mocked error"))
 	policyRuleOut, err := ds.AddPolicyRule(mapIn)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(policyRuleOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return policyRuleOut
 }
@@ -273,12 +273,12 @@ func UpdatePolicyFailErrMocked(t *testing.T, policyIn *types.Policy) *types.Poli
 	assert.Nil(err, "Firewall test data corrupted")
 
 	// call service
-	cs.On("Put", "/cloud/firewall_profile", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Put", "/cloud/firewall_profile", mapIn).Return(dOut, 200, fmt.Errorf("mocked error"))
 	policyOut, err := ds.UpdatePolicy(mapIn)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(policyOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return policyOut
 }

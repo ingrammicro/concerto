@@ -3,9 +3,9 @@ package testdata
 import "github.com/ingrammicro/concerto/api/types"
 
 // GetScriptData loads test data
-func GetScriptData() *[]types.Script {
+func GetScriptData() []*types.Script {
 
-	testScripts := []types.Script{
+	return []*types.Script{
 		{
 			ID:          "fakeID0",
 			Name:        "fakeName0",
@@ -36,6 +36,4 @@ fi`,
 			Parameters: []string{"PARAM0"},
 		},
 	}
-
-	return &testScripts
 }

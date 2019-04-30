@@ -3,9 +3,9 @@ package testdata
 import "github.com/ingrammicro/concerto/api/types"
 
 // GetFirewallProfileData loads test data
-func GetFirewallProfileData() *[]types.FirewallProfile {
+func GetFirewallProfileData() []*types.FirewallProfile {
 
-	testFirewallProfiles := []types.FirewallProfile{
+	return []*types.FirewallProfile{
 		{
 			ID:          "fakeId0",
 			Name:        "fakeName0",
@@ -41,6 +41,4 @@ func GetFirewallProfileData() *[]types.FirewallProfile {
 			},
 		},
 	}
-
-	return &testFirewallProfiles
 }

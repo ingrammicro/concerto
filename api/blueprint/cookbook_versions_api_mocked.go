@@ -12,7 +12,7 @@ import (
 // TODO exclude from release compile
 
 // GetCookbookVersionListMocked test mocked function
-func GetCookbookVersionListMocked(t *testing.T, cbsIn *[]types.CookbookVersion) *[]types.CookbookVersion {
+func GetCookbookVersionListMocked(t *testing.T, cbsIn []*types.CookbookVersion) []*types.CookbookVersion {
 
 	assert := assert.New(t)
 
@@ -27,16 +27,16 @@ func GetCookbookVersionListMocked(t *testing.T, cbsIn *[]types.CookbookVersion) 
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/blueprint/cookbook_versions").Return(dIn, 200, nil)
+	cs.On("Get", "/blueprint/cookbook_versions").Return(dIn, 200, nil)
 	cbsOut, err := ds.GetCookbookVersionList()
 	assert.Nil(err, "Error getting cookbook version list")
-	assert.Equal(*cbsIn, cbsOut, "GetCookbookVersionList returned different services")
+	assert.Equal(cbsIn, cbsOut, "GetCookbookVersionList returned different services")
 
-	return &cbsOut
+	return cbsOut
 }
 
 // GetCookbookVersionListFailErrMocked test mocked function
-func GetCookbookVersionListFailErrMocked(t *testing.T, cbsIn *[]types.CookbookVersion) *[]types.CookbookVersion {
+func GetCookbookVersionListFailErrMocked(t *testing.T, cbsIn []*types.CookbookVersion) []*types.CookbookVersion {
 
 	assert := assert.New(t)
 
@@ -51,18 +51,18 @@ func GetCookbookVersionListFailErrMocked(t *testing.T, cbsIn *[]types.CookbookVe
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/blueprint/cookbook_versions").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/blueprint/cookbook_versions").Return(dIn, 200, fmt.Errorf("mocked error"))
 	cbsOut, err := ds.GetCookbookVersionList()
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(cbsOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
-	return &cbsOut
+	return cbsOut
 }
 
 // GetCookbookVersionListFailStatusMocked test mocked function
-func GetCookbookVersionListFailStatusMocked(t *testing.T, cbsIn *[]types.CookbookVersion) *[]types.CookbookVersion {
+func GetCookbookVersionListFailStatusMocked(t *testing.T, cbsIn []*types.CookbookVersion) []*types.CookbookVersion {
 
 	assert := assert.New(t)
 
@@ -77,18 +77,18 @@ func GetCookbookVersionListFailStatusMocked(t *testing.T, cbsIn *[]types.Cookboo
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/blueprint/cookbook_versions").Return(dIn, 499, nil)
+	cs.On("Get", "/blueprint/cookbook_versions").Return(dIn, 499, nil)
 	cbsOut, err := ds.GetCookbookVersionList()
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(cbsOut, "Expecting nil output")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 
-	return &cbsOut
+	return cbsOut
 }
 
 // GetCookbookVersionListFailJSONMocked test mocked function
-func GetCookbookVersionListFailJSONMocked(t *testing.T, cbsIn *[]types.CookbookVersion) *[]types.CookbookVersion {
+func GetCookbookVersionListFailJSONMocked(t *testing.T, cbsIn []*types.CookbookVersion) []*types.CookbookVersion {
 
 	assert := assert.New(t)
 
@@ -102,14 +102,14 @@ func GetCookbookVersionListFailJSONMocked(t *testing.T, cbsIn *[]types.CookbookV
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v2/blueprint/cookbook_versions").Return(dIn, 200, nil)
+	cs.On("Get", "/blueprint/cookbook_versions").Return(dIn, 200, nil)
 	cbsOut, err := ds.GetCookbookVersionList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(cbsOut, "Expecting nil output")
 	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
 
-	return &cbsOut
+	return cbsOut
 }
 
 // GetCookbookVersionMocked test mocked function
@@ -128,7 +128,7 @@ func GetCookbookVersionMocked(t *testing.T, cbIn *types.CookbookVersion) *types.
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 200, nil)
 	cbOut, err := ds.GetCookbookVersion(cbIn.ID)
 	assert.Nil(err, "Error getting cookbook version")
 	assert.Equal(*cbIn, *cbOut, "GetCookbookVersion returned different services")
@@ -152,12 +152,12 @@ func GetCookbookVersionFailErrMocked(t *testing.T, cbIn *types.CookbookVersion) 
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 200, fmt.Errorf("mocked error"))
 	cbOut, err := ds.GetCookbookVersion(cbIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(cbOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return cbOut
 }
@@ -178,7 +178,7 @@ func GetCookbookVersionFailStatusMocked(t *testing.T, cbIn *types.CookbookVersio
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 499, nil)
 	cbOut, err := ds.GetCookbookVersion(cbIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -203,7 +203,7 @@ func GetCookbookVersionFailJSONMocked(t *testing.T, cbIn *types.CookbookVersion)
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 200, nil)
 	cbOut, err := ds.GetCookbookVersion(cbIn.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -233,10 +233,10 @@ func CreateCookbookVersionMocked(t *testing.T, cbIn *types.CookbookVersion) *typ
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Post", "/v2/blueprint/cookbook_versions", mapIn).Return(dOut, 201, nil)
+	cs.On("Post", "/blueprint/cookbook_versions", mapIn).Return(dOut, 201, nil)
 	cbOut, err := ds.CreateCookbookVersion(mapIn)
 	assert.Nil(err, "Error creating cookbook version")
-	assert.Equal(cbIn, cbOut, "CreateCookbookVersion returned different cookbook version")
+	assert.Equal(*cbIn, *cbOut, "CreateCookbookVersion returned different cookbook version")
 
 	return cbOut
 }
@@ -261,12 +261,12 @@ func CreateCookbookVersionFailErrMocked(t *testing.T, cbIn *types.CookbookVersio
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Post", "/v2/blueprint/cookbook_versions", mapIn).Return(dOut, 201, fmt.Errorf("Mocked error"))
+	cs.On("Post", "/blueprint/cookbook_versions", mapIn).Return(dOut, 201, fmt.Errorf("mocked error"))
 	cbOut, err := ds.CreateCookbookVersion(mapIn)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(cbOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return cbOut
 }
@@ -291,7 +291,7 @@ func CreateCookbookVersionFailStatusMocked(t *testing.T, cbIn *types.CookbookVer
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Post", "/v2/blueprint/cookbook_versions", mapIn).Return(dOut, 499, nil)
+	cs.On("Post", "/blueprint/cookbook_versions", mapIn).Return(dOut, 499, nil)
 	cbOut, err := ds.CreateCookbookVersion(mapIn)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -320,7 +320,7 @@ func CreateCookbookVersionFailJSONMocked(t *testing.T, cbIn *types.CookbookVersi
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Post", "/v2/blueprint/cookbook_versions", mapIn).Return(dIn, 201, nil)
+	cs.On("Post", "/blueprint/cookbook_versions", mapIn).Return(dIn, 201, nil)
 	cbOut, err := ds.CreateCookbookVersion(mapIn)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -385,10 +385,10 @@ func UploadCookbookVersionFailErrMocked(t *testing.T, cbIn *types.CookbookVersio
 
 	// call service
 	var noBytes []uint8
-	cs.On("PutFile", sourceFilePath, targetURL).Return(noBytes, 403, fmt.Errorf("Mocked error"))
+	cs.On("PutFile", sourceFilePath, targetURL).Return(noBytes, 403, fmt.Errorf("mocked error"))
 	err = ds.UploadCookbookVersion(sourceFilePath, targetURL)
 	assert.NotNil(err, "We are expecting an error")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 }
 
 // ProcessCookbookVersionMocked test mocked function
@@ -411,10 +411,10 @@ func ProcessCookbookVersionMocked(t *testing.T, cbIn *types.CookbookVersion) *ty
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Post", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s/process", cbIn.ID), mapIn).Return(dOut, 200, nil)
+	cs.On("Post", fmt.Sprintf("/blueprint/cookbook_versions/%s/process", cbIn.ID), mapIn).Return(dOut, 200, nil)
 	cbOut, err := ds.ProcessCookbookVersion(mapIn, cbIn.ID)
 	assert.Nil(err, "Error processing cookbook version")
-	assert.Equal(cbIn, cbOut, "ProcessCookbookVersion returned different cookbook version")
+	assert.Equal(*cbIn, *cbOut, "ProcessCookbookVersion returned different cookbook version")
 
 	return cbOut
 }
@@ -439,11 +439,11 @@ func ProcessCookbookVersionFailErrMocked(t *testing.T, cbIn *types.CookbookVersi
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Post", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s/process", cbIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Post", fmt.Sprintf("/blueprint/cookbook_versions/%s/process", cbIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("mocked error"))
 	cbOut, err := ds.ProcessCookbookVersion(mapIn, cbIn.ID)
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(cbOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return cbOut
 }
@@ -468,7 +468,7 @@ func ProcessCookbookVersionFailStatusMocked(t *testing.T, cbIn *types.CookbookVe
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Post", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s/process", cbIn.ID), mapIn).Return(dOut, 499, nil)
+	cs.On("Post", fmt.Sprintf("/blueprint/cookbook_versions/%s/process", cbIn.ID), mapIn).Return(dOut, 499, nil)
 	cbOut, err := ds.ProcessCookbookVersion(mapIn, cbIn.ID)
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(cbOut, "Expecting nil output")
@@ -496,7 +496,7 @@ func ProcessCookbookVersionFailJSONMocked(t *testing.T, cbIn *types.CookbookVers
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Post", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s/process", cbIn.ID), mapIn).Return(dIn, 201, nil)
+	cs.On("Post", fmt.Sprintf("/blueprint/cookbook_versions/%s/process", cbIn.ID), mapIn).Return(dIn, 201, nil)
 	cbOut, err := ds.ProcessCookbookVersion(mapIn, cbIn.ID)
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(cbOut, "Expecting nil output")
@@ -521,7 +521,7 @@ func DeleteCookbookVersionMocked(t *testing.T, cbIn *types.CookbookVersion) {
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 200, nil)
+	cs.On("Delete", fmt.Sprintf("/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 200, nil)
 	err = ds.DeleteCookbookVersion(cbIn.ID)
 	assert.Nil(err, "Error deleting cookbook version")
 
@@ -543,10 +543,10 @@ func DeleteCookbookVersionFailErrMocked(t *testing.T, cbIn *types.CookbookVersio
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Delete", fmt.Sprintf("/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 200, fmt.Errorf("mocked error"))
 	err = ds.DeleteCookbookVersion(cbIn.ID)
 	assert.NotNil(err, "We are expecting an error")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 }
 
@@ -566,7 +566,7 @@ func DeleteCookbookVersionFailStatusMocked(t *testing.T, cbIn *types.CookbookVer
 	assert.Nil(err, "CookbookVersion test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v2/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 499, nil)
+	cs.On("Delete", fmt.Sprintf("/blueprint/cookbook_versions/%s", cbIn.ID)).Return(dIn, 499, nil)
 	err = ds.DeleteCookbookVersion(cbIn.ID)
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")

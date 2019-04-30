@@ -13,7 +13,7 @@ import (
 // TODO exclude from release compile
 
 // GetSSHProfileListMocked test mocked function
-func GetSSHProfileListMocked(t *testing.T, sshProfilesIn *[]types.SSHProfile) *[]types.SSHProfile {
+func GetSSHProfileListMocked(t *testing.T, sshProfilesIn []*types.SSHProfile) []*types.SSHProfile {
 
 	assert := assert.New(t)
 
@@ -28,16 +28,16 @@ func GetSSHProfileListMocked(t *testing.T, sshProfilesIn *[]types.SSHProfile) *[
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/cloud/ssh_profiles").Return(dIn, 200, nil)
+	cs.On("Get", "/cloud/ssh_profiles").Return(dIn, 200, nil)
 	sshProfilesOut, err := ds.GetSSHProfileList()
 	assert.Nil(err, "Error getting sshProfile list")
-	assert.Equal(*sshProfilesIn, sshProfilesOut, "GetSSHProfileList returned different sshProfiles")
+	assert.Equal(sshProfilesIn, sshProfilesOut, "GetSSHProfileList returned different sshProfiles")
 
-	return &sshProfilesOut
+	return sshProfilesOut
 }
 
 // GetSSHProfileListFailErrMocked test mocked function
-func GetSSHProfileListFailErrMocked(t *testing.T, sshProfilesIn *[]types.SSHProfile) *[]types.SSHProfile {
+func GetSSHProfileListFailErrMocked(t *testing.T, sshProfilesIn []*types.SSHProfile) []*types.SSHProfile {
 
 	assert := assert.New(t)
 
@@ -52,18 +52,18 @@ func GetSSHProfileListFailErrMocked(t *testing.T, sshProfilesIn *[]types.SSHProf
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/cloud/ssh_profiles").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/cloud/ssh_profiles").Return(dIn, 200, fmt.Errorf("mocked error"))
 	sshProfilesOut, err := ds.GetSSHProfileList()
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(sshProfilesOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
-	return &sshProfilesOut
+	return sshProfilesOut
 }
 
 // GetSSHProfileListFailStatusMocked test mocked function
-func GetSSHProfileListFailStatusMocked(t *testing.T, sshProfilesIn *[]types.SSHProfile) *[]types.SSHProfile {
+func GetSSHProfileListFailStatusMocked(t *testing.T, sshProfilesIn []*types.SSHProfile) []*types.SSHProfile {
 
 	assert := assert.New(t)
 
@@ -78,18 +78,18 @@ func GetSSHProfileListFailStatusMocked(t *testing.T, sshProfilesIn *[]types.SSHP
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/cloud/ssh_profiles").Return(dIn, 499, nil)
+	cs.On("Get", "/cloud/ssh_profiles").Return(dIn, 499, nil)
 	sshProfilesOut, err := ds.GetSSHProfileList()
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(sshProfilesOut, "Expecting nil output")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 
-	return &sshProfilesOut
+	return sshProfilesOut
 }
 
 // GetSSHProfileListFailJSONMocked test mocked function
-func GetSSHProfileListFailJSONMocked(t *testing.T, sshProfilesIn *[]types.SSHProfile) *[]types.SSHProfile {
+func GetSSHProfileListFailJSONMocked(t *testing.T, sshProfilesIn []*types.SSHProfile) []*types.SSHProfile {
 
 	assert := assert.New(t)
 
@@ -103,14 +103,14 @@ func GetSSHProfileListFailJSONMocked(t *testing.T, sshProfilesIn *[]types.SSHPro
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v2/cloud/ssh_profiles").Return(dIn, 200, nil)
+	cs.On("Get", "/cloud/ssh_profiles").Return(dIn, 200, nil)
 	sshProfilesOut, err := ds.GetSSHProfileList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(sshProfilesOut, "Expecting nil output")
 	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
 
-	return &sshProfilesOut
+	return sshProfilesOut
 }
 
 // GetSSHProfileMocked test mocked function
@@ -129,7 +129,7 @@ func GetSSHProfileMocked(t *testing.T, sshProfile *types.SSHProfile) *types.SSHP
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfile.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfile.ID)).Return(dIn, 200, nil)
 	sshProfileOut, err := ds.GetSSHProfile(sshProfile.ID)
 	assert.Nil(err, "Error getting sshProfile")
 	assert.Equal(*sshProfile, *sshProfileOut, "GetSSHProfile returned different sshProfiles")
@@ -153,12 +153,12 @@ func GetSSHProfileFailErrMocked(t *testing.T, sshProfile *types.SSHProfile) *typ
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfile.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfile.ID)).Return(dIn, 200, fmt.Errorf("mocked error"))
 	sshProfileOut, err := ds.GetSSHProfile(sshProfile.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(sshProfileOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return sshProfileOut
 }
@@ -179,7 +179,7 @@ func GetSSHProfileFailStatusMocked(t *testing.T, sshProfile *types.SSHProfile) *
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfile.ID)).Return(dIn, 499, nil)
+	cs.On("Get", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfile.ID)).Return(dIn, 499, nil)
 	sshProfileOut, err := ds.GetSSHProfile(sshProfile.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -204,7 +204,7 @@ func GetSSHProfileFailJSONMocked(t *testing.T, sshProfile *types.SSHProfile) *ty
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfile.ID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfile.ID)).Return(dIn, 200, nil)
 	sshProfileOut, err := ds.GetSSHProfile(sshProfile.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -234,7 +234,7 @@ func CreateSSHProfileMocked(t *testing.T, sshProfileIn *types.SSHProfile) *types
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Post", "/v2/cloud/ssh_profiles/", mapIn).Return(dOut, 200, nil)
+	cs.On("Post", "/cloud/ssh_profiles/", mapIn).Return(dOut, 200, nil)
 	sshProfileOut, err := ds.CreateSSHProfile(mapIn)
 	assert.Nil(err, "Error creating sshProfile list")
 	assert.Equal(sshProfileIn, sshProfileOut, "CreateSSHProfile returned different sshProfiles")
@@ -262,12 +262,12 @@ func CreateSSHProfileFailErrMocked(t *testing.T, sshProfileIn *types.SSHProfile)
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Post", "/v2/cloud/ssh_profiles/", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Post", "/cloud/ssh_profiles/", mapIn).Return(dOut, 200, fmt.Errorf("mocked error"))
 	sshProfileOut, err := ds.CreateSSHProfile(mapIn)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(sshProfileOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return sshProfileOut
 }
@@ -292,7 +292,7 @@ func CreateSSHProfileFailStatusMocked(t *testing.T, sshProfileIn *types.SSHProfi
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Post", "/v2/cloud/ssh_profiles/", mapIn).Return(dOut, 499, nil)
+	cs.On("Post", "/cloud/ssh_profiles/", mapIn).Return(dOut, 499, nil)
 	sshProfileOut, err := ds.CreateSSHProfile(mapIn)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -321,7 +321,7 @@ func CreateSSHProfileFailJSONMocked(t *testing.T, sshProfileIn *types.SSHProfile
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Post", "/v2/cloud/ssh_profiles/", mapIn).Return(dIn, 200, nil)
+	cs.On("Post", "/cloud/ssh_profiles/", mapIn).Return(dIn, 200, nil)
 	sshProfileOut, err := ds.CreateSSHProfile(mapIn)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -351,7 +351,7 @@ func UpdateSSHProfileMocked(t *testing.T, sshProfileIn *types.SSHProfile) *types
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfileIn.ID), mapIn).Return(dOut, 200, nil)
+	cs.On("Put", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfileIn.ID), mapIn).Return(dOut, 200, nil)
 	sshProfileOut, err := ds.UpdateSSHProfile(mapIn, sshProfileIn.ID)
 	assert.Nil(err, "Error updating sshProfile list")
 	assert.Equal(sshProfileIn, sshProfileOut, "UpdateSSHProfile returned different sshProfiles")
@@ -379,12 +379,12 @@ func UpdateSSHProfileFailErrMocked(t *testing.T, sshProfileIn *types.SSHProfile)
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfileIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Put", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfileIn.ID), mapIn).Return(dOut, 200, fmt.Errorf("mocked error"))
 	sshProfileOut, err := ds.UpdateSSHProfile(mapIn, sshProfileIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(sshProfileOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return sshProfileOut
 }
@@ -409,7 +409,7 @@ func UpdateSSHProfileFailStatusMocked(t *testing.T, sshProfileIn *types.SSHProfi
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfileIn.ID), mapIn).Return(dOut, 499, nil)
+	cs.On("Put", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfileIn.ID), mapIn).Return(dOut, 499, nil)
 	sshProfileOut, err := ds.UpdateSSHProfile(mapIn, sshProfileIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")
@@ -437,7 +437,7 @@ func UpdateSSHProfileFailJSONMocked(t *testing.T, sshProfileIn *types.SSHProfile
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Put", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfileIn.ID), mapIn).Return(dIn, 200, nil)
+	cs.On("Put", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfileIn.ID), mapIn).Return(dIn, 200, nil)
 	sshProfileOut, err := ds.UpdateSSHProfile(mapIn, sshProfileIn.ID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
@@ -463,7 +463,7 @@ func DeleteSSHProfileMocked(t *testing.T, sshProfileIn *types.SSHProfile) {
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfileIn.ID)).Return(dIn, 200, nil)
+	cs.On("Delete", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfileIn.ID)).Return(dIn, 200, nil)
 	err = ds.DeleteSSHProfile(sshProfileIn.ID)
 	assert.Nil(err, "Error deleting sshProfile")
 
@@ -485,11 +485,11 @@ func DeleteSSHProfileFailErrMocked(t *testing.T, sshProfileIn *types.SSHProfile)
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfileIn.ID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Delete", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfileIn.ID)).Return(dIn, 200, fmt.Errorf("mocked error"))
 	err = ds.DeleteSSHProfile(sshProfileIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 }
 
 // DeleteSSHProfileFailStatusMocked test mocked function
@@ -508,7 +508,7 @@ func DeleteSSHProfileFailStatusMocked(t *testing.T, sshProfileIn *types.SSHProfi
 	assert.Nil(err, "SSHProfile test data corrupted")
 
 	// call service
-	cs.On("Delete", fmt.Sprintf("/v2/cloud/ssh_profiles/%s", sshProfileIn.ID)).Return(dIn, 499, nil)
+	cs.On("Delete", fmt.Sprintf("/cloud/ssh_profiles/%s", sshProfileIn.ID)).Return(dIn, 499, nil)
 	err = ds.DeleteSSHProfile(sshProfileIn.ID)
 
 	assert.NotNil(err, "We are expecting an status code error")

@@ -23,39 +23,39 @@ func TestGetScriptList(t *testing.T) {
 
 func TestGetScript(t *testing.T) {
 	scriptsIn := testdata.GetScriptData()
-	for _, scriptIn := range *scriptsIn {
-		GetScriptMocked(t, &scriptIn)
-		GetScriptFailErrMocked(t, &scriptIn)
-		GetScriptFailStatusMocked(t, &scriptIn)
-		GetScriptFailJSONMocked(t, &scriptIn)
+	for _, scriptIn := range scriptsIn {
+		GetScriptMocked(t, scriptIn)
+		GetScriptFailErrMocked(t, scriptIn)
+		GetScriptFailStatusMocked(t, scriptIn)
+		GetScriptFailJSONMocked(t, scriptIn)
 	}
 }
 
 func TestCreateScript(t *testing.T) {
 	scriptsIn := testdata.GetScriptData()
-	for _, scriptIn := range *scriptsIn {
-		CreateScriptMocked(t, &scriptIn)
-		CreateScriptFailErrMocked(t, &scriptIn)
-		CreateScriptFailStatusMocked(t, &scriptIn)
-		CreateScriptFailJSONMocked(t, &scriptIn)
+	for _, scriptIn := range scriptsIn {
+		CreateScriptMocked(t, scriptIn)
+		CreateScriptFailErrMocked(t, scriptIn)
+		CreateScriptFailStatusMocked(t, scriptIn)
+		CreateScriptFailJSONMocked(t, scriptIn)
 	}
 }
 
 func TestUpdateScript(t *testing.T) {
 	scriptsIn := testdata.GetScriptData()
-	for _, scriptIn := range *scriptsIn {
-		UpdateScriptMocked(t, &scriptIn)
-		UpdateScriptFailErrMocked(t, &scriptIn)
-		UpdateScriptFailStatusMocked(t, &scriptIn)
-		UpdateScriptFailJSONMocked(t, &scriptIn)
+	for _, scriptIn := range scriptsIn {
+		UpdateScriptMocked(t, scriptIn)
+		UpdateScriptFailErrMocked(t, scriptIn)
+		UpdateScriptFailStatusMocked(t, scriptIn)
+		UpdateScriptFailJSONMocked(t, scriptIn)
 	}
 }
 
 func TestDeleteScript(t *testing.T) {
 	scriptsIn := testdata.GetScriptData()
-	for _, scriptIn := range *scriptsIn {
-		DeleteScriptMocked(t, &scriptIn)
-		DeleteScriptFailErrMocked(t, &scriptIn)
-		DeleteScriptFailStatusMocked(t, &scriptIn)
+	for _, scriptIn := range scriptsIn {
+		DeleteScriptMocked(t, scriptIn)
+		DeleteScriptFailErrMocked(t, scriptIn)
+		DeleteScriptFailStatusMocked(t, scriptIn)
 	}
 }

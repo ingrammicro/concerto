@@ -5,8 +5,9 @@ import (
 )
 
 // GetCookbookVersionData loads test data
-func GetCookbookVersionData() *[]types.CookbookVersion {
-	testCookbookVersions := []types.CookbookVersion{
+func GetCookbookVersionData() []*types.CookbookVersion {
+
+	return []*types.CookbookVersion{
 		{
 			ID:                "fakeID0",
 			Name:              "fakeName0",
@@ -36,6 +37,4 @@ func GetCookbookVersionData() *[]types.CookbookVersion {
 			ErrorMessage:      "",
 		},
 	}
-
-	return &testCookbookVersions
 }

@@ -22,7 +22,7 @@ func WireUpServerPlan(c *cli.Context) (ds *cloud.ServerPlanService, f format.For
 	}
 	ds, err = cloud.NewServerPlanService(hcs)
 	if err != nil {
-		f.PrintFatal("Couldn't wire up serverPlan service", err)
+		f.PrintFatal("Couldn't wire up server plan service", err)
 	}
 
 	return ds, f
@@ -33,13 +33,13 @@ func ServerPlanList(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	serverPlanSvc, formatter := WireUpServerPlan(c)
 
-	checkRequiredFlags(c, []string{"cloud_provider_id"}, formatter)
-	serverPlans, err := serverPlanSvc.GetServerPlanList(c.String("cloud_provider_id"))
+	checkRequiredFlags(c, []string{"cloud-provider-id"}, formatter)
+	serverPlans, err := serverPlanSvc.GetServerPlanList(c.String("cloud-provider-id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive serverPlan data", err)
 	}
 
-	cloudProvidersMap := LoadcloudProvidersMapping(c)
+	cloudProvidersMap := LoadCloudProvidersMapping(c)
 	locationsMap := LoadLocationsMapping(c)
 
 	for id, sp := range serverPlans {
@@ -64,7 +64,7 @@ func ServerPlanShow(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive serverPlan data", err)
 	}
 
-	cloudProvidersMap := LoadcloudProvidersMapping(c)
+	cloudProvidersMap := LoadCloudProvidersMapping(c)
 	locationsMap := LoadLocationsMapping(c)
 
 	serverPlan.CloudProviderName = cloudProvidersMap[serverPlan.CloudProviderID]

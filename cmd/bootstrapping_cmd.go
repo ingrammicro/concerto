@@ -22,7 +22,7 @@ func WireUpBootstrapping(c *cli.Context) (ds *blueprint.BootstrappingService, f 
 	}
 	ds, err = blueprint.NewBootstrappingService(hcs)
 	if err != nil {
-		f.PrintFatal("Couldn't wire up serverPlan service", err)
+		f.PrintFatal("Couldn't wire up bootstrapping service", err)
 	}
 
 	return ds, f

@@ -16,7 +16,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	singleinstance "github.com/allan-simon/go-singleinstance"
+	"github.com/allan-simon/go-singleinstance"
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/blueprint"
 	"github.com/ingrammicro/concerto/api/types"

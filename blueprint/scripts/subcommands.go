@@ -5,6 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands returns scripts commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
@@ -108,7 +109,7 @@ func SubCommands() []cli.Command {
 					Usage: "Label name",
 				},
 				cli.StringFlag{
-					Name:   "resource_type",
+					Name:   "resource-type",
 					Usage:  "Resource Type",
 					Value:  "script",
 					Hidden: true,
@@ -129,7 +130,7 @@ func SubCommands() []cli.Command {
 					Usage: "Label name",
 				},
 				cli.StringFlag{
-					Name:   "resource_type",
+					Name:   "resource-type",
 					Usage:  "Resource Type",
 					Value:  "script",
 					Hidden: true,

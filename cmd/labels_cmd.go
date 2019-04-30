@@ -54,7 +54,7 @@ func LabelCreate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 
 	labelsSvc, formatter := WireUpLabel(c)
-	checkRequiredFlags(c, []string{"name", "resource_type"}, formatter)
+	checkRequiredFlags(c, []string{"name", "resource-type"}, formatter)
 	label, err := labelsSvc.CreateLabel(utils.FlagConvertParams(c))
 	if err != nil {
 		formatter.PrintFatal("Couldn't create label", err)
@@ -126,7 +126,7 @@ func LabelsUnifyInputNames(labelsNames string, formatter format.Formatter) []str
 	for _, c := range labelNamesIn {
 		matched := regexp.MustCompile(`^[A-Za-z0-9 .\s_-]+$`).MatchString(c)
 		if !matched {
-			formatter.PrintFatal("Invalid label name ", fmt.Errorf("Invalid label format: %v (Labels would be indicated with their name, which must satisfy to be composed of spaces, underscores, dots, dashes and/or lower/upper -case alphanumeric characters-)", c))
+			formatter.PrintFatal("Invalid label name ", fmt.Errorf("invalid label format: %v (Labels would be indicated with their name, which must satisfy to be composed of spaces, underscores, dots, dashes and/or lower/upper -case alphanumeric characters-)", c))
 		}
 	}
 	return labelNamesIn
@@ -178,13 +178,13 @@ func LabelAdd(c *cli.Context) error {
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	labelsIdsArr := LabelResolution(c, c.String("label"), &labelNamesByID, &labelIDsByName)
 	if len(labelsIdsArr) > 1 {
-		formatter.PrintFatal("Too many label names. Please, Use only one label name", fmt.Errorf("Invalid parameter: %v - %v", c.String("label"), labelsIdsArr))
+		formatter.PrintFatal("Too many label names. Please, Use only one label name", fmt.Errorf("invalid parameter: %v - %v", c.String("label"), labelsIdsArr))
 	}
 	labelID := labelsIdsArr[0]
 
 	resData := make(map[string]string)
 	resData["id"] = c.String("id")
-	resData["resource_type"] = c.String("resource_type")
+	resData["resource_type"] = c.String("resource-type")
 	resourcesData := make([]interface{}, 0, 1)
 	resourcesData = append(resourcesData, resData)
 
@@ -212,7 +212,7 @@ func LabelRemove(c *cli.Context) error {
 	labelsMapNameToID, _ := LabelLoadsMapping(c)
 	labelID := labelsMapNameToID[c.String("label")]
 
-	err := labelsSvc.RemoveLabel(labelID, c.String("resource_type"), c.String("id"))
+	err := labelsSvc.RemoveLabel(labelID, c.String("resource-type"), c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't remove label", err)
 	}

@@ -5,6 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands returns generic images commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{

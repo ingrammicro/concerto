@@ -24,10 +24,10 @@ func TestGetAppList(t *testing.T) {
 
 func TestDeployApp(t *testing.T) {
 	appsIn := testdata.GetAppData()
-	for _, appIn := range *appsIn {
-		DeployAppMocked(t, &appIn)
-		DeployAppFailErrMocked(t, &appIn)
-		DeployAppFailStatusMocked(t, &appIn)
-		DeployAppFailJSONMocked(t, &appIn)
+	for _, appIn := range appsIn {
+		DeployAppMocked(t, appIn)
+		DeployAppFailErrMocked(t, appIn)
+		DeployAppFailStatusMocked(t, appIn)
+		DeployAppFailJSONMocked(t, appIn)
 	}
 }

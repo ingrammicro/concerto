@@ -5,9 +5,9 @@ import (
 )
 
 // GetLocationData loads test data
-func GetLocationData() *[]types.Location {
+func GetLocationData() []*types.Location {
 
-	testLocations := []types.Location{
+	return []*types.Location{
 		{
 			ID:   "fakeID0",
 			Name: "fakeName0",
@@ -17,6 +17,4 @@ func GetLocationData() *[]types.Location {
 			Name: "fakeName1",
 		},
 	}
-
-	return &testLocations
 }

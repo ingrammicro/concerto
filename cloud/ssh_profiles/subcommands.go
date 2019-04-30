@@ -5,6 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands returns ssh profiles commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
@@ -39,11 +40,11 @@ func SubCommands() []cli.Command {
 					Usage: "Name of the SSH profile",
 				},
 				cli.StringFlag{
-					Name:  "public_key",
+					Name:  "public-key",
 					Usage: "Public key of the SSH profile",
 				},
 				cli.StringFlag{
-					Name:  "private_key",
+					Name:  "private-key",
 					Usage: "Private key of the SSH profile",
 				},
 				cli.StringFlag{
@@ -66,11 +67,11 @@ func SubCommands() []cli.Command {
 					Usage: "Name of the SSH profile",
 				},
 				cli.StringFlag{
-					Name:  "public_key",
+					Name:  "public-key",
 					Usage: "Public key of the SSH profile",
 				},
 				cli.StringFlag{
-					Name:  "private_key",
+					Name:  "private-key",
 					Usage: "Private key of the SSH profile",
 				},
 			},
@@ -100,7 +101,7 @@ func SubCommands() []cli.Command {
 					Usage: "Label name",
 				},
 				cli.StringFlag{
-					Name:   "resource_type",
+					Name:   "resource-type",
 					Usage:  "Resource Type",
 					Value:  "ssh_profile",
 					Hidden: true,
@@ -121,7 +122,7 @@ func SubCommands() []cli.Command {
 					Usage: "Label name",
 				},
 				cli.StringFlag{
-					Name:   "resource_type",
+					Name:   "resource-type",
 					Usage:  "Resource Type",
 					Value:  "ssh_profile",
 					Hidden: true,

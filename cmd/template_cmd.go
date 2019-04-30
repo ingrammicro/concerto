@@ -43,20 +43,20 @@ func TemplateList(c *cli.Context) error {
 
 	labelables := make([]types.Labelable, len(templates))
 	for i := 0; i < len(templates); i++ {
-		labelables[i] = types.Labelable(&templates[i])
+		labelables[i] = types.Labelable(templates[i])
 	}
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
 	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
 
-	templates = make([]types.Template, len(filteredLabelables))
+	templates = make([]*types.Template, len(filteredLabelables))
 	for i, labelable := range filteredLabelables {
 		tpl, ok := labelable.(*types.Template)
 		if !ok {
 			formatter.PrintFatal("Label filtering returned unexpected result",
 				fmt.Errorf("expected labelable to be a *types.Template, got a %T", labelable))
 		}
-		templates[i] = *tpl
+		templates[i] = tpl
 	}
 
 	if err = formatter.PrintList(templates); err != nil {
@@ -89,26 +89,26 @@ func TemplateCreate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	templateSvc, formatter := WireUpTemplate(c)
 
-	checkRequiredFlags(c, []string{"name", "generic_image_id"}, formatter)
+	checkRequiredFlags(c, []string{"name", "generic-image-id"}, formatter)
 	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"cookbook_versions", "configuration_attributes"})
+	params, err := utils.FlagConvertParamsJSON(c, []string{"cookbook-versions", "configuration-attributes"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
 
 	templateIn := map[string]interface{}{
-		"name":                     c.String("name"),
-		"generic_image_id":         c.String("generic_image_id"),
+		"name":             c.String("name"),
+		"generic_image_id": c.String("generic-image-id"),
 	}
 
-	if c.IsSet("run_list") {
-		templateIn["run_list"] = utils.RemoveDuplicates(strings.Split(c.String("run_list"), ","))
+	if c.IsSet("run-list") {
+		templateIn["run_list"] = utils.RemoveDuplicates(strings.Split(c.String("run-list"), ","))
 	}
-	if c.IsSet("cookbook_versions") {
-		templateIn["cookbook_versions"] = (*params)["cookbook_versions"]
+	if c.IsSet("cookbook-versions") {
+		templateIn["cookbook_versions"] = (*params)["cookbook-versions"]
 	}
-	if c.IsSet("configuration_attributes") {
-		templateIn["configuration_attributes"] = (*params)["configuration_attributes"]
+	if c.IsSet("configuration-attributes") {
+		templateIn["configuration_attributes"] = (*params)["configuration-attributes"]
 	}
 
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
@@ -138,7 +138,7 @@ func TemplateUpdate(c *cli.Context) error {
 	checkRequiredFlags(c, []string{"id"}, formatter)
 
 	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"cookbook_versions", "configuration_attributes"})
+	params, err := utils.FlagConvertParamsJSON(c, []string{"cookbook-versions", "configuration-attributes"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
@@ -147,14 +147,14 @@ func TemplateUpdate(c *cli.Context) error {
 	if c.IsSet("name") {
 		templateIn["name"] = c.String("name")
 	}
-	if c.IsSet("run_list") {
-		templateIn["run_list"] = utils.RemoveDuplicates(strings.Split(c.String("run_list"), ","))
+	if c.IsSet("run-list") {
+		templateIn["run_list"] = utils.RemoveDuplicates(strings.Split(c.String("run-list"), ","))
 	}
-	if c.IsSet("cookbook_versions") {
-		templateIn["cookbook_versions"] = (*params)["cookbook_versions"]
+	if c.IsSet("cookbook-versions") {
+		templateIn["cookbook_versions"] = (*params)["cookbook-versions"]
 	}
-	if c.IsSet("configuration_attributes") {
-		templateIn["configuration_attributes"] = (*params)["configuration_attributes"]
+	if c.IsSet("configuration-attributes") {
+		templateIn["configuration_attributes"] = (*params)["configuration-attributes"]
 	}
 
 	template, err := templateSvc.UpdateTemplate(&templateIn, c.String("id"))
@@ -209,12 +209,12 @@ func TemplateScriptList(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	templateScriptSvc, formatter := WireUpTemplate(c)
 
-	checkRequiredFlags(c, []string{"template_id", "type"}, formatter)
-	templateScripts, err := templateScriptSvc.GetTemplateScriptList(c.String("template_id"), c.String("type"))
+	checkRequiredFlags(c, []string{"template-id", "type"}, formatter)
+	templateScripts, err := templateScriptSvc.GetTemplateScriptList(c.String("template-id"), c.String("type"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive templateScript data", err)
 	}
-	if err = formatter.PrintList(*templateScripts); err != nil {
+	if err = formatter.PrintList(templateScripts); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
 	return nil
@@ -225,8 +225,8 @@ func TemplateScriptShow(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	templateScriptSvc, formatter := WireUpTemplate(c)
 
-	checkRequiredFlags(c, []string{"id", "template_id"}, formatter)
-	templateScript, err := templateScriptSvc.GetTemplateScript(c.String("template_id"), c.String("id"))
+	checkRequiredFlags(c, []string{"id", "template-id"}, formatter)
+	templateScript, err := templateScriptSvc.GetTemplateScript(c.String("template-id"), c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive templateScript data", err)
 	}
@@ -241,15 +241,24 @@ func TemplateScriptCreate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	templateScriptSvc, formatter := WireUpTemplate(c)
 
-	checkRequiredFlags(c, []string{"template_id", "type", "script_id"}, formatter)
+	checkRequiredFlags(c, []string{"template-id", "type", "script-id"}, formatter)
 
 	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"parameter_values"})
+	params, err := utils.FlagConvertParamsJSON(c, []string{"parameter-values"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
 
-	templateScript, err := templateScriptSvc.CreateTemplateScript(params, c.String("template_id"))
+	templateScriptIn := map[string]interface{}{
+		"template_id": c.String("template-id"),
+		"type":        c.String("type"),
+		"script_id":   c.String("script-id"),
+	}
+	if c.IsSet("parameter-values") {
+		templateScriptIn["parameter_values"] = (*params)["parameter-values"]
+	}
+
+	templateScript, err := templateScriptSvc.CreateTemplateScript(&templateScriptIn, c.String("template-id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't create templateScript", err)
 	}
@@ -265,15 +274,15 @@ func TemplateScriptUpdate(c *cli.Context) error {
 	templateScriptSvc, formatter := WireUpTemplate(c)
 
 	// TODO si necessary: type script_id parameter_values ?
-	checkRequiredFlags(c, []string{"id", "template_id"}, formatter)
+	checkRequiredFlags(c, []string{"id", "template-id"}, formatter)
 
 	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"parameter_values"})
+	params, err := utils.FlagConvertParamsJSON(c, []string{"parameter-values"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
 
-	templateScript, err := templateScriptSvc.UpdateTemplateScript(params, c.String("template_id"), c.String("id"))
+	templateScript, err := templateScriptSvc.UpdateTemplateScript(params, c.String("template-id"), c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't update templateScript", err)
 	}
@@ -288,8 +297,8 @@ func TemplateScriptDelete(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	templateScriptSvc, formatter := WireUpTemplate(c)
 
-	checkRequiredFlags(c, []string{"id", "template_id"}, formatter)
-	err := templateScriptSvc.DeleteTemplateScript(c.String("template_id"), c.String("id"))
+	checkRequiredFlags(c, []string{"id", "template-id"}, formatter)
+	err := templateScriptSvc.DeleteTemplateScript(c.String("template-id"), c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't delete templateScript", err)
 	}
@@ -301,17 +310,17 @@ func TemplateScriptReorder(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	templateScriptSvc, formatter := WireUpTemplate(c)
 
-	checkRequiredFlags(c, []string{"template_id", "type", "script_ids"}, formatter)
-	params, err := utils.FlagConvertParamsJSON(c, []string{"script_ids"})
+	checkRequiredFlags(c, []string{"template-id", "type", "script-ids"}, formatter)
+	params, err := utils.FlagConvertParamsJSON(c, []string{"script-ids"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
 
-	templateScript, err := templateScriptSvc.ReorderTemplateScript(params, c.String("template_id"))
+	templateScript, err := templateScriptSvc.ReorderTemplateScript(params, c.String("template-id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't reorder templateScript", err)
 	}
-	if err = formatter.PrintList(*templateScript); err != nil {
+	if err = formatter.PrintList(templateScript); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
 	return nil
@@ -324,12 +333,12 @@ func TemplateServersList(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	templateSvc, formatter := WireUpTemplate(c)
 
-	checkRequiredFlags(c, []string{"template_id"}, formatter)
-	templateServers, err := templateSvc.GetTemplateServerList(c.String("template_id"))
+	checkRequiredFlags(c, []string{"template-id"}, formatter)
+	templateServers, err := templateSvc.GetTemplateServerList(c.String("template-id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive template servers data", err)
 	}
-	if err = formatter.PrintList(*templateServers); err != nil {
+	if err = formatter.PrintList(templateServers); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
 	return nil

@@ -10,7 +10,7 @@ import (
 )
 
 // GetDispatcherScriptCharacterizationsByTypeMocked test mocked function
-func GetDispatcherScriptCharacterizationsByTypeMocked(t *testing.T, phase string, scIn *[]types.ScriptCharacterization) *[]types.ScriptCharacterization {
+func GetDispatcherScriptCharacterizationsByTypeMocked(t *testing.T, phase string, scIn []*types.ScriptCharacterization) []*types.ScriptCharacterization {
 
 	assert := assert.New(t)
 
@@ -28,13 +28,13 @@ func GetDispatcherScriptCharacterizationsByTypeMocked(t *testing.T, phase string
 	cs.On("Get", fmt.Sprintf("/blueprint/script_characterizations?type=%s", phase)).Return(dIn, 200, nil)
 	scOut, err := ds.GetDispatcherScriptCharacterizationsByType(phase)
 	assert.Nil(err, "Error getting dispatcher")
-	assert.Equal(*scIn, *scOut, "GetDispatcherScriptCharacterizationsByType returned different services")
+	assert.Equal(scIn, scOut, "GetDispatcherScriptCharacterizationsByType returned different services")
 
 	return scOut
 }
 
 // GetDispatcherScriptCharacterizationsByTypeFailErrMocked test mocked function
-func GetDispatcherScriptCharacterizationsByTypeFailErrMocked(t *testing.T, phase string, scIn *[]types.ScriptCharacterization) *[]types.ScriptCharacterization {
+func GetDispatcherScriptCharacterizationsByTypeFailErrMocked(t *testing.T, phase string, scIn []*types.ScriptCharacterization) []*types.ScriptCharacterization {
 
 	assert := assert.New(t)
 
@@ -49,18 +49,18 @@ func GetDispatcherScriptCharacterizationsByTypeFailErrMocked(t *testing.T, phase
 	assert.Nil(err, "Dispatcher test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/blueprint/script_characterizations?type=%s", phase)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/blueprint/script_characterizations?type=%s", phase)).Return(dIn, 200, fmt.Errorf("mocked error"))
 	scOut, err := ds.GetDispatcherScriptCharacterizationsByType(phase)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(scOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return scOut
 }
 
 // GetDispatcherScriptCharacterizationsByTypeFailStatusMocked test mocked function
-func GetDispatcherScriptCharacterizationsByTypeFailStatusMocked(t *testing.T, phase string, scIn *[]types.ScriptCharacterization) *[]types.ScriptCharacterization {
+func GetDispatcherScriptCharacterizationsByTypeFailStatusMocked(t *testing.T, phase string, scIn []*types.ScriptCharacterization) []*types.ScriptCharacterization {
 
 	assert := assert.New(t)
 
@@ -86,7 +86,7 @@ func GetDispatcherScriptCharacterizationsByTypeFailStatusMocked(t *testing.T, ph
 }
 
 // GetDispatcherScriptCharacterizationsByTypeFailJSONMocked test mocked function
-func GetDispatcherScriptCharacterizationsByTypeFailJSONMocked(t *testing.T, phase string, scIn *[]types.ScriptCharacterization) *[]types.ScriptCharacterization {
+func GetDispatcherScriptCharacterizationsByTypeFailJSONMocked(t *testing.T, phase string, scIn []*types.ScriptCharacterization) []*types.ScriptCharacterization {
 
 	assert := assert.New(t)
 
@@ -111,7 +111,7 @@ func GetDispatcherScriptCharacterizationsByTypeFailJSONMocked(t *testing.T, phas
 }
 
 // GetDispatcherScriptCharacterizationsByUUIDMocked test mocked function
-func GetDispatcherScriptCharacterizationsByUUIDMocked(t *testing.T, scriptCharacterizationUUID string, scIn *[]types.ScriptCharacterization) *[]types.ScriptCharacterization {
+func GetDispatcherScriptCharacterizationsByUUIDMocked(t *testing.T, scriptCharacterizationUUID string, scIn []*types.ScriptCharacterization) []*types.ScriptCharacterization {
 
 	assert := assert.New(t)
 
@@ -129,13 +129,13 @@ func GetDispatcherScriptCharacterizationsByUUIDMocked(t *testing.T, scriptCharac
 	cs.On("Get", fmt.Sprintf("/blueprint/script_characterizations/%s", scriptCharacterizationUUID)).Return(dIn, 200, nil)
 	scOut, err := ds.GetDispatcherScriptCharacterizationsByUUID(scriptCharacterizationUUID)
 	assert.Nil(err, "Error getting dispatcher")
-	assert.Equal(*scIn, *scOut, "GetDispatcherScriptCharacterizationsByUUID returned different services")
+	assert.Equal(scIn, scOut, "GetDispatcherScriptCharacterizationsByUUID returned different services")
 
 	return scOut
 }
 
 // GetDispatcherScriptCharacterizationsByUUIDFailErrMocked test mocked function
-func GetDispatcherScriptCharacterizationsByUUIDFailErrMocked(t *testing.T, scriptCharacterizationUUID string, scIn *[]types.ScriptCharacterization) *[]types.ScriptCharacterization {
+func GetDispatcherScriptCharacterizationsByUUIDFailErrMocked(t *testing.T, scriptCharacterizationUUID string, scIn []*types.ScriptCharacterization) []*types.ScriptCharacterization {
 
 	assert := assert.New(t)
 
@@ -150,18 +150,18 @@ func GetDispatcherScriptCharacterizationsByUUIDFailErrMocked(t *testing.T, scrip
 	assert.Nil(err, "Dispatcher test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/blueprint/script_characterizations/%s", scriptCharacterizationUUID)).Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", fmt.Sprintf("/blueprint/script_characterizations/%s", scriptCharacterizationUUID)).Return(dIn, 200, fmt.Errorf("mocked error"))
 	scOut, err := ds.GetDispatcherScriptCharacterizationsByUUID(scriptCharacterizationUUID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(scOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return scOut
 }
 
 // GetDispatcherScriptCharacterizationsByUUIDFailStatusMocked test mocked function
-func GetDispatcherScriptCharacterizationsByUUIDFailStatusMocked(t *testing.T, scriptCharacterizationUUID string, scIn *[]types.ScriptCharacterization) *[]types.ScriptCharacterization {
+func GetDispatcherScriptCharacterizationsByUUIDFailStatusMocked(t *testing.T, scriptCharacterizationUUID string, scIn []*types.ScriptCharacterization) []*types.ScriptCharacterization {
 
 	assert := assert.New(t)
 
@@ -187,7 +187,7 @@ func GetDispatcherScriptCharacterizationsByUUIDFailStatusMocked(t *testing.T, sc
 }
 
 // GetDispatcherScriptCharacterizationsByUUIDFailJSONMocked test mocked function
-func GetDispatcherScriptCharacterizationsByUUIDFailJSONMocked(t *testing.T, scriptCharacterizationUUID string, scIn *[]types.ScriptCharacterization) *[]types.ScriptCharacterization {
+func GetDispatcherScriptCharacterizationsByUUIDFailJSONMocked(t *testing.T, scriptCharacterizationUUID string, scIn []*types.ScriptCharacterization) []*types.ScriptCharacterization {
 
 	assert := assert.New(t)
 
@@ -259,11 +259,11 @@ func ReportScriptConclusionsFailErrMocked(t *testing.T, cbIn *types.ScriptConclu
 	assert.Nil(err, "Dispatcher test data corrupted")
 
 	// call service
-	cs.On("Post", "/blueprint/script_conclusions", mapIn).Return(dOut, 200, fmt.Errorf("Mocked error"))
+	cs.On("Post", "/blueprint/script_conclusions", mapIn).Return(dOut, 200, fmt.Errorf("mocked error"))
 	scOut, _, err := ds.ReportScriptConclusions(mapIn)
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(scOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return scOut
 }
@@ -362,9 +362,9 @@ func DownloadAttachmentFailErrMocked(t *testing.T, dataIn map[string]string) {
 	pathFile := dataIn["fakeAttachmentDir"]
 
 	// call service
-	cs.On("GetFile", urlSource, pathFile).Return("", 499, fmt.Errorf("Mocked error"))
+	cs.On("GetFile", urlSource, pathFile).Return("", 499, fmt.Errorf("mocked error"))
 	_, status, err := ds.DownloadAttachment(urlSource, pathFile)
 	assert.NotNil(err, "We are expecting an error")
 	assert.Equal(status, 499, "DownloadAttachment returned an unexpected status code")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 }

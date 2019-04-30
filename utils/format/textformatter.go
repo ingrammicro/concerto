@@ -2,13 +2,12 @@ package format
 
 import (
 	"fmt"
+	log "github.com/Sirupsen/logrus"
 	"github.com/ingrammicro/concerto/utils"
 	"io"
 	"reflect"
 	"strings"
 	"text/tabwriter"
-
-	log "github.com/Sirupsen/logrus"
 )
 
 // TextFormatter prints items and lists
@@ -36,7 +35,11 @@ func (f *TextFormatter) printItemAux(w *tabwriter.Writer, item interface{}) erro
 			case "json.RawMessage":
 				fmt.Fprintln(w, fmt.Sprintf("%s:\t%s", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
 			case "*json.RawMessage":
-				fmt.Fprintln(w, fmt.Sprintf("%s:\t%s", it.Type().Field(i).Tag.Get("header"), it.Field(i).Elem()))
+				if it.Field(i).IsNil() {
+					fmt.Fprintln(w, fmt.Sprintf("%s:\t", it.Type().Field(i).Tag.Get("header")))
+				} else {
+					fmt.Fprintln(w, fmt.Sprintf("%s:\t%s", it.Type().Field(i).Tag.Get("header"), it.Field(i).Elem()))
+				}
 			default:
 				if it.Field(i).Kind() == reflect.Struct {
 					f.printItemAux(w, it.Field(i).Interface())
@@ -61,41 +64,67 @@ func (f *TextFormatter) PrintItem(item interface{}) error {
 }
 
 func (f *TextFormatter) printListHeadersAux(w *tabwriter.Writer, t reflect.Type) {
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-
+	n := 0
+	if t.Kind() != reflect.Struct {
+		n = t.Elem().NumField()
+	} else {
+		n = t.NumField()
+	}
+	var field reflect.StructField
+	for i := 0; i < n; i++ {
+		if t.Kind() != reflect.Struct {
+			field = t.Elem().Field(i)
+		} else {
+			field = t.Field(i)
+		}
 		if field.Type.Kind() == reflect.Struct {
 			f.printListHeadersAux(w, field.Type)
 		}
-
 		showTags := strings.Split(field.Tag.Get("show"), ",")
-		if !utils.Contains(showTags, "nolist") {
+		if !utils.Contains(showTags, "nolist") && field.Tag.Get("header") != "" {
 			fmt.Fprint(w, fmt.Sprintf("%+v\t", field.Tag.Get("header")))
 		}
 	}
 }
 
-func (f *TextFormatter) printListBodyAux(w *tabwriter.Writer, t reflect.Value) {
-	for i := 0; i < t.NumField(); i++ {
-		showTags := strings.Split(t.Type().Field(i).Tag.Get("show"), ",")
-		if !utils.Contains(showTags, "nolist") {
-			field := t.Field(i)
-			switch field.Type().String() {
-			case "time.Time":
-				fmt.Fprint(w, fmt.Sprintf("%+v\t", field.Interface()))
-			case "json.RawMessage":
-				fmt.Fprint(w, fmt.Sprintf("%s\t", field.Interface()))
-			case "*json.RawMessage":
-				if field.IsNil() {
-					fmt.Fprint(w, fmt.Sprintf(" \t"))
-				} else {
-					fmt.Fprint(w, fmt.Sprintf("%s\t", field.Elem()))
+func (f *TextFormatter) printListBodyAux(w *tabwriter.Writer, rv reflect.Value, depth int) {
+	switch rv.Kind() {
+	//case reflect.Array, reflect.Chan, reflect.Map, reflect.Ptr, reflect.Slice:
+	case reflect.Slice:
+		for i := 0; i < rv.Len(); i++ {
+			if rv.Index(i).Kind() == reflect.Ptr {
+				if !rv.Index(i).IsNil() {
+					f.printListBodyAux(w, rv.Index(i).Elem(), depth+1)
+					fmt.Fprintln(w)
 				}
-			default:
-				if field.Kind() == reflect.Struct {
-					f.printListBodyAux(w, field)
-				} else {
+			} else {
+				///usr/local/go/bin/go run main.go firewall list
+				f.printListBodyAux(w, rv.Index(i), depth+1)
+				fmt.Fprintln(w)
+			}
+		}
+	case reflect.Struct:
+		for i := 0; i < rv.NumField(); i++ {
+			showTags := strings.Split(rv.Type().Field(i).Tag.Get("show"), ",")
+			if !utils.Contains(showTags, "nolist") {
+				field := rv.Field(i)
+				switch field.Type().String() {
+				case "time.Time":
 					fmt.Fprint(w, fmt.Sprintf("%+v\t", field.Interface()))
+				case "json.RawMessage":
+					fmt.Fprint(w, fmt.Sprintf("%s\t", field.Interface()))
+				case "*json.RawMessage":
+					if field.IsNil() {
+						fmt.Fprint(w, fmt.Sprintf(" \t"))
+					} else {
+						fmt.Fprint(w, fmt.Sprintf("%s\t", field.Elem()))
+					}
+				default:
+					if field.Kind() == reflect.Struct {
+						f.printListBodyAux(w, field, depth+1)
+					} else {
+						fmt.Fprint(w, fmt.Sprintf("%+v\t", field))
+					}
 				}
 			}
 		}
@@ -114,16 +143,11 @@ func (f *TextFormatter) PrintList(items interface{}) error {
 	}
 
 	w := tabwriter.NewWriter(f.output, 15, 1, 3, ' ', 0)
-
-	// Headers
 	f.printListHeadersAux(w, reflect.TypeOf(items).Elem())
 	fmt.Fprintln(w)
 
-	// Body
-	for pos := 0; pos < its.Len(); pos++ {
-		f.printListBodyAux(w, its.Index(pos))
-		fmt.Fprintln(w)
-	}
+	f.printListBodyAux(w, reflect.ValueOf(items), 0)
+	fmt.Fprintln(w)
 
 	w.Flush()
 

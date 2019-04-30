@@ -17,7 +17,7 @@ type WizCloudProvidersService struct {
 // NewWizCloudProvidersService returns a Concerto wizCloudProviders service
 func NewWizCloudProvidersService(concertoService utils.ConcertoService) (*WizCloudProvidersService, error) {
 	if concertoService == nil {
-		return nil, fmt.Errorf("Must initialize ConcertoService before using it")
+		return nil, fmt.Errorf("must initialize ConcertoService before using it")
 	}
 
 	return &WizCloudProvidersService{
@@ -25,11 +25,11 @@ func NewWizCloudProvidersService(concertoService utils.ConcertoService) (*WizClo
 	}, nil
 }
 
-// GetWizCloudProvidersList returns the list of wizCloudProviderss as an array of CloudProvider
-func (dm *WizCloudProvidersService) GetWizCloudProviderList(AppID string, LocID string) (wizCloudProviderss []types.CloudProvider, err error) {
-	log.Debug("GetWizCloudProvidersList")
+// GetWizCloudProviderList returns the list of wizCloudProviders as an array of CloudProvider
+func (dm *WizCloudProvidersService) GetWizCloudProviderList(AppID string, LocID string) (wizCloudProviders []*types.CloudProvider, err error) {
+	log.Debug("GetWizCloudProviderList")
 
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID))
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/wizard/cloud_providers?app_id=%s&location_id=%s", AppID, LocID))
 	if err != nil {
 		return nil, err
 	}
@@ -38,9 +38,9 @@ func (dm *WizCloudProvidersService) GetWizCloudProviderList(AppID string, LocID 
 		return nil, err
 	}
 
-	if err = json.Unmarshal(data, &wizCloudProviderss); err != nil {
+	if err = json.Unmarshal(data, &wizCloudProviders); err != nil {
 		return nil, err
 	}
 
-	return wizCloudProviderss, nil
+	return wizCloudProviders, nil
 }

@@ -23,39 +23,39 @@ func TestGetSSHProfileList(t *testing.T) {
 
 func TestGetSSHProfile(t *testing.T) {
 	sshProfilesIn := testdata.GetSSHProfileData()
-	for _, sshProfileIn := range *sshProfilesIn {
-		GetSSHProfileMocked(t, &sshProfileIn)
-		GetSSHProfileFailErrMocked(t, &sshProfileIn)
-		GetSSHProfileFailStatusMocked(t, &sshProfileIn)
-		GetSSHProfileFailJSONMocked(t, &sshProfileIn)
+	for _, sshProfileIn := range sshProfilesIn {
+		GetSSHProfileMocked(t, sshProfileIn)
+		GetSSHProfileFailErrMocked(t, sshProfileIn)
+		GetSSHProfileFailStatusMocked(t, sshProfileIn)
+		GetSSHProfileFailJSONMocked(t, sshProfileIn)
 	}
 }
 
 func TestCreateSSHProfile(t *testing.T) {
 	sshProfilesIn := testdata.GetSSHProfileData()
-	for _, sshProfileIn := range *sshProfilesIn {
-		CreateSSHProfileMocked(t, &sshProfileIn)
-		CreateSSHProfileFailErrMocked(t, &sshProfileIn)
-		CreateSSHProfileFailStatusMocked(t, &sshProfileIn)
-		CreateSSHProfileFailJSONMocked(t, &sshProfileIn)
+	for _, sshProfileIn := range sshProfilesIn {
+		CreateSSHProfileMocked(t, sshProfileIn)
+		CreateSSHProfileFailErrMocked(t, sshProfileIn)
+		CreateSSHProfileFailStatusMocked(t, sshProfileIn)
+		CreateSSHProfileFailJSONMocked(t, sshProfileIn)
 	}
 }
 
 func TestUpdateSSHProfile(t *testing.T) {
 	sshProfilesIn := testdata.GetSSHProfileData()
-	for _, sshProfileIn := range *sshProfilesIn {
-		UpdateSSHProfileMocked(t, &sshProfileIn)
-		UpdateSSHProfileFailErrMocked(t, &sshProfileIn)
-		UpdateSSHProfileFailStatusMocked(t, &sshProfileIn)
-		UpdateSSHProfileFailJSONMocked(t, &sshProfileIn)
+	for _, sshProfileIn := range sshProfilesIn {
+		UpdateSSHProfileMocked(t, sshProfileIn)
+		UpdateSSHProfileFailErrMocked(t, sshProfileIn)
+		UpdateSSHProfileFailStatusMocked(t, sshProfileIn)
+		UpdateSSHProfileFailJSONMocked(t, sshProfileIn)
 	}
 }
 
 func TestDeleteSSHProfile(t *testing.T) {
 	sshProfilesIn := testdata.GetSSHProfileData()
-	for _, sshProfileIn := range *sshProfilesIn {
-		DeleteSSHProfileMocked(t, &sshProfileIn)
-		DeleteSSHProfileFailErrMocked(t, &sshProfileIn)
-		DeleteSSHProfileFailStatusMocked(t, &sshProfileIn)
+	for _, sshProfileIn := range sshProfilesIn {
+		DeleteSSHProfileMocked(t, sshProfileIn)
+		DeleteSSHProfileFailErrMocked(t, sshProfileIn)
+		DeleteSSHProfileFailStatusMocked(t, sshProfileIn)
 	}
 }

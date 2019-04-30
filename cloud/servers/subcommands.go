@@ -5,6 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands returns servers commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
@@ -39,23 +40,23 @@ func SubCommands() []cli.Command {
 					Usage: "Name of the server",
 				},
 				cli.StringFlag{
-					Name:  "ssh_profile_id",
+					Name:  "ssh-profile-id",
 					Usage: "Identifier of the ssh profile which the server shall use",
 				},
 				cli.StringFlag{
-					Name:  "firewall_profile_id",
+					Name:  "firewall-profile-id",
 					Usage: "Identifier of the firewall profile to which the server shall use",
 				},
 				cli.StringFlag{
-					Name:  "template_id",
+					Name:  "template-id",
 					Usage: "Identifier of the template the server shall use",
 				},
 				cli.StringFlag{
-					Name:  "server_plan_id",
+					Name:  "server-plan-id",
 					Usage: "Identifier of the server plan in which the server shall be deployed",
 				},
 				cli.StringFlag{
-					Name:  "cloud_account_id",
+					Name:  "cloud-account-id",
 					Usage: "Identifier of the cloud account in which the server shall be registered",
 				},
 				cli.StringFlag{
@@ -113,7 +114,7 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "override_server",
+			Name:   "override-server",
 			Usage:  "This action takes the server with the given id from a stalled state to the operational state, at the user's own risk.",
 			Action: cmd.ServerOverride,
 			Flags: []cli.Flag{
@@ -135,7 +136,7 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "list_events",
+			Name:   "list-events",
 			Usage:  "This action returns information about the events related to the server with the given id.",
 			Action: cmd.EventsList,
 			Flags: []cli.Flag{
@@ -146,7 +147,7 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "list_operational_scripts",
+			Name:   "list-operational-scripts",
 			Usage:  "This action returns information about the operational scripts characterisations related to the server with the given id.",
 			Action: cmd.OperationalScriptsList,
 			Flags: []cli.Flag{
@@ -157,16 +158,16 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:  "execute_script",
-			Usage: "This action initiates the execution of the script characterisation with the given id on the server with the given id.",
+			Name:   "execute-script",
+			Usage:  "This action initiates the execution of the script characterisation with the given id on the server with the given id.",
 			Action: cmd.OperationalScriptExecute,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "server_id",
+					Name:  "server-id",
 					Usage: "Server Id",
 				},
 				cli.StringFlag{
-					Name:  "script_id",
+					Name:  "script-id",
 					Usage: "Script Id",
 				},
 			},
@@ -185,7 +186,7 @@ func SubCommands() []cli.Command {
 					Usage: "Label name",
 				},
 				cli.StringFlag{
-					Name:   "resource_type",
+					Name:   "resource-type",
 					Usage:  "Resource Type",
 					Value:  "server",
 					Hidden: true,
@@ -206,7 +207,7 @@ func SubCommands() []cli.Command {
 					Usage: "Label name",
 				},
 				cli.StringFlag{
-					Name:   "resource_type",
+					Name:   "resource-type",
 					Usage:  "Resource Type",
 					Value:  "server",
 					Hidden: true,

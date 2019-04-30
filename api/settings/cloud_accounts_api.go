@@ -17,7 +17,7 @@ type CloudAccountService struct {
 // NewCloudAccountService returns a Concerto cloudAccount service
 func NewCloudAccountService(concertoService utils.ConcertoService) (*CloudAccountService, error) {
 	if concertoService == nil {
-		return nil, fmt.Errorf("Must initialize ConcertoService before using it")
+		return nil, fmt.Errorf("must initialize ConcertoService before using it")
 	}
 
 	return &CloudAccountService{
@@ -26,10 +26,10 @@ func NewCloudAccountService(concertoService utils.ConcertoService) (*CloudAccoun
 }
 
 // GetCloudAccountList returns the list of cloudAccounts as an array of CloudAccount
-func (ca *CloudAccountService) GetCloudAccountList() (cloudAccounts []types.CloudAccount, err error) {
+func (ca *CloudAccountService) GetCloudAccountList() (cloudAccounts []*types.CloudAccount, err error) {
 	log.Debug("GetCloudAccountList")
 
-	data, status, err := ca.concertoService.Get("/v2/settings/cloud_accounts")
+	data, status, err := ca.concertoService.Get("/settings/cloud_accounts")
 	if err != nil {
 		return nil, err
 	}

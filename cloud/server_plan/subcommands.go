@@ -5,6 +5,7 @@ import (
 	"github.com/ingrammicro/concerto/cmd"
 )
 
+// SubCommands returns server plan commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
@@ -13,7 +14,7 @@ func SubCommands() []cli.Command {
 			Action: cmd.ServerPlanList,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "cloud_provider_id",
+					Name:  "cloud-provider-id",
 					Usage: "Cloud provider id",
 				},
 			},

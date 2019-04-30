@@ -33,9 +33,9 @@ func WizCloudProviderList(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	cloudProviderSvc, formatter := WireUpWizCloudProvider(c)
 
-	checkRequiredFlags(c, []string{"app_id", "location_id"}, formatter)
+	checkRequiredFlags(c, []string{"app-id", "location-id"}, formatter)
 
-	cloudProviders, err := cloudProviderSvc.GetWizCloudProviderList(c.String("app_id"), c.String("location_id"))
+	cloudProviders, err := cloudProviderSvc.GetWizCloudProviderList(c.String("app-id"), c.String("location-id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive cloudProvider data", err)
 	}

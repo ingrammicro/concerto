@@ -17,7 +17,7 @@ type ServerService struct {
 // NewServerService returns a Concerto server service
 func NewServerService(concertoService utils.ConcertoService) (*ServerService, error) {
 	if concertoService == nil {
-		return nil, fmt.Errorf("Must initialize ConcertoService before using it")
+		return nil, fmt.Errorf("must initialize ConcertoService before using it")
 	}
 
 	return &ServerService{
@@ -26,10 +26,10 @@ func NewServerService(concertoService utils.ConcertoService) (*ServerService, er
 }
 
 // GetServerList returns the list of servers as an array of Server
-func (dm *ServerService) GetServerList() (servers []types.Server, err error) {
+func (dm *ServerService) GetServerList() (servers []*types.Server, err error) {
 	log.Debug("GetServerList")
 
-	data, status, err := dm.concertoService.Get("/v2/cloud/servers")
+	data, status, err := dm.concertoService.Get("/cloud/servers")
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (dm *ServerService) GetServerList() (servers []types.Server, err error) {
 func (dm *ServerService) GetServer(ID string) (server *types.Server, err error) {
 	log.Debug("GetServer")
 
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/cloud/servers/%s", ID))
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/cloud/servers/%s", ID))
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (dm *ServerService) GetServer(ID string) (server *types.Server, err error) 
 func (dm *ServerService) CreateServer(serverVector *map[string]interface{}) (server *types.Server, err error) {
 	log.Debug("CreateServer")
 
-	data, status, err := dm.concertoService.Post("/v2/cloud/servers/", serverVector)
+	data, status, err := dm.concertoService.Post("/cloud/servers/", serverVector)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func (dm *ServerService) CreateServer(serverVector *map[string]interface{}) (ser
 func (dm *ServerService) UpdateServer(serverVector *map[string]interface{}, ID string) (server *types.Server, err error) {
 	log.Debug("UpdateServer")
 
-	data, status, err := dm.concertoService.Put(fmt.Sprintf("/v2/cloud/servers/%s", ID), serverVector)
+	data, status, err := dm.concertoService.Put(fmt.Sprintf("/cloud/servers/%s", ID), serverVector)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func (dm *ServerService) UpdateServer(serverVector *map[string]interface{}, ID s
 func (dm *ServerService) BootServer(serverVector *map[string]interface{}, ID string) (server *types.Server, err error) {
 	log.Debug("BootServer")
 
-	data, status, err := dm.concertoService.Put(fmt.Sprintf("/v2/cloud/servers/%s/boot", ID), serverVector)
+	data, status, err := dm.concertoService.Put(fmt.Sprintf("/cloud/servers/%s/boot", ID), serverVector)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +129,7 @@ func (dm *ServerService) BootServer(serverVector *map[string]interface{}, ID str
 func (dm *ServerService) RebootServer(serverVector *map[string]interface{}, ID string) (server *types.Server, err error) {
 	log.Debug("RebootServer")
 
-	data, status, err := dm.concertoService.Put(fmt.Sprintf("/v2/cloud/servers/%s/reboot", ID), serverVector)
+	data, status, err := dm.concertoService.Put(fmt.Sprintf("/cloud/servers/%s/reboot", ID), serverVector)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +149,7 @@ func (dm *ServerService) RebootServer(serverVector *map[string]interface{}, ID s
 func (dm *ServerService) ShutdownServer(serverVector *map[string]interface{}, ID string) (server *types.Server, err error) {
 	log.Debug("ShutdownServer")
 
-	data, status, err := dm.concertoService.Put(fmt.Sprintf("/v2/cloud/servers/%s/shutdown", ID), serverVector)
+	data, status, err := dm.concertoService.Put(fmt.Sprintf("/cloud/servers/%s/shutdown", ID), serverVector)
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +169,7 @@ func (dm *ServerService) ShutdownServer(serverVector *map[string]interface{}, ID
 func (dm *ServerService) OverrideServer(serverVector *map[string]interface{}, ID string) (server *types.Server, err error) {
 	log.Debug("OverrideServer")
 
-	data, status, err := dm.concertoService.Put(fmt.Sprintf("/v2/cloud/servers/%s/override", ID), serverVector)
+	data, status, err := dm.concertoService.Put(fmt.Sprintf("/cloud/servers/%s/override", ID), serverVector)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ func (dm *ServerService) OverrideServer(serverVector *map[string]interface{}, ID
 func (dm *ServerService) DeleteServer(ID string) (err error) {
 	log.Debug("DeleteServer")
 
-	data, status, err := dm.concertoService.Delete(fmt.Sprintf("/v2/cloud/servers/%s", ID))
+	data, status, err := dm.concertoService.Delete(fmt.Sprintf("/cloud/servers/%s", ID))
 	if err != nil {
 		return err
 	}
@@ -202,11 +202,12 @@ func (dm *ServerService) DeleteServer(ID string) (err error) {
 }
 
 //======= Events ==========
-// GetEventsList returns a list of events by server ID
-func (dm *ServerService) GetEventsList(serverID string) (events []types.Event, err error) {
-	log.Debug("ListEvents")
 
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/cloud/servers/%s/events", serverID))
+// GetEventsList returns a list of events by server ID
+func (dm *ServerService) GetEventsList(serverID string) (events []*types.Event, err error) {
+	log.Debug("GetEventsList")
+
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/cloud/servers/%s/events", serverID))
 	if err != nil {
 		return nil, err
 	}
@@ -223,11 +224,12 @@ func (dm *ServerService) GetEventsList(serverID string) (events []types.Event, e
 }
 
 //======= Operational Scripts ==========
-// GetScriptsList returns a list of scripts by server ID
-func (dm *ServerService) GetOperationalScriptsList(serverID string) (scripts []types.ScriptChar, err error) {
-	log.Debug("ListScripts")
 
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/cloud/servers/%s/operational_scripts", serverID))
+// GetOperationalScriptsList returns a list of scripts by server ID
+func (dm *ServerService) GetOperationalScriptsList(serverID string) (scripts []*types.ScriptChar, err error) {
+	log.Debug("GetOperationalScriptsList")
+
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/cloud/servers/%s/operational_scripts", serverID))
 	if err != nil {
 		return nil, err
 	}
@@ -244,10 +246,10 @@ func (dm *ServerService) GetOperationalScriptsList(serverID string) (scripts []t
 }
 
 // ExecuteOperationalScript executes an operational script by its server ID and the script id
-func (dm *ServerService) ExecuteOperationalScript(serverVector *map[string]interface{}, ID string, scriptID string) (script *types.Event, err error) {
+func (dm *ServerService) ExecuteOperationalScript(serverVector *map[string]interface{}, serverID string, scriptID string) (script *types.Event, err error) {
 	log.Debug("ExecuteOperationalScript")
 
-	data, status, err := dm.concertoService.Put(fmt.Sprintf("/v2/cloud/servers/%s/operational_scripts/%s/execute", ID, scriptID), serverVector)
+	data, status, err := dm.concertoService.Put(fmt.Sprintf("/cloud/servers/%s/operational_scripts/%s/execute", serverID, scriptID), serverVector)
 	if err != nil {
 		return nil, err
 	}

@@ -16,9 +16,9 @@ func TestPrintItemJSON(t *testing.T) {
 
 	assert := assert.New(t)
 	serversIn := testdata.GetServerData()
-	for _, serverIn := range *serversIn {
+	for _, serverIn := range serversIn {
 
-		serverOut := cloud.GetServerMocked(t, &serverIn)
+		serverOut := cloud.GetServerMocked(t, serverIn)
 
 		var b bytes.Buffer
 		mockOut := bufio.NewWriter(&b)
@@ -39,9 +39,9 @@ func TestPrintItemTemplateJSON(t *testing.T) {
 
 	assert := assert.New(t)
 	templatesIn := testdata.GetTemplateData()
-	for _, templateIn := range *templatesIn {
+	for _, templateIn := range templatesIn {
 
-		templateOut := blueprint.GetTemplateMocked(t, &templateIn)
+		templateOut := blueprint.GetTemplateMocked(t, templateIn)
 
 		var b bytes.Buffer
 		mockOut := bufio.NewWriter(&b)
@@ -90,7 +90,7 @@ func TestPrintListTemplateJSON(t *testing.T) {
 	f := GetFormatter()
 	assert.NotNil(f, "Formatter")
 
-	err := f.PrintList(*templatesOut)
+	err := f.PrintList(templatesOut)
 	assert.Nil(err, "JSON formatter PrintList error")
 	mockOut.Flush()
 

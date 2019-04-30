@@ -17,7 +17,7 @@ type LabelService struct {
 // NewLabelService returns a Concerto labels service
 func NewLabelService(concertoService utils.ConcertoService) (*LabelService, error) {
 	if concertoService == nil {
-		return nil, fmt.Errorf("Must initialize ConcertoService before using it")
+		return nil, fmt.Errorf("must initialize ConcertoService before using it")
 	}
 
 	return &LabelService{
@@ -26,10 +26,10 @@ func NewLabelService(concertoService utils.ConcertoService) (*LabelService, erro
 }
 
 // GetLabelList returns the list of labels as an array of Label
-func (lbl *LabelService) GetLabelList() (labels []types.Label, err error) {
+func (lbl *LabelService) GetLabelList() (labels []*types.Label, err error) {
 	log.Debug("GetLabelList")
 
-	data, status, err := lbl.concertoService.Get("/v2/labels")
+	data, status, err := lbl.concertoService.Get("/labels")
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (lbl *LabelService) GetLabelList() (labels []types.Label, err error) {
 	}
 
 	// exclude internal labels (with a Namespace defined)
-	var filteredLabels []types.Label
+	var filteredLabels []*types.Label
 	for _, label := range labels {
 		if label.Namespace == "" {
 			filteredLabels = append(filteredLabels, label)
@@ -57,7 +57,7 @@ func (lbl *LabelService) GetLabelList() (labels []types.Label, err error) {
 func (lbl *LabelService) CreateLabel(labelVector *map[string]interface{}) (label *types.Label, err error) {
 	log.Debug("CreateLabel")
 
-	data, status, err := lbl.concertoService.Post("/v2/labels/", labelVector)
+	data, status, err := lbl.concertoService.Post("/labels/", labelVector)
 	if err != nil {
 		return nil, err
 	}
@@ -74,10 +74,10 @@ func (lbl *LabelService) CreateLabel(labelVector *map[string]interface{}) (label
 }
 
 // AddLabel assigns a single label from a single labelable resource
-func (lbl *LabelService) AddLabel(labelVector *map[string]interface{}, labelID string) (labeledResources []types.LabeledResource, err error) {
+func (lbl *LabelService) AddLabel(labelVector *map[string]interface{}, labelID string) (labeledResources []*types.LabeledResource, err error) {
 	log.Debug("AddLabel")
 
-	data, status, err := lbl.concertoService.Post(fmt.Sprintf("/v2/labels/%s/resources", labelID), labelVector)
+	data, status, err := lbl.concertoService.Post(fmt.Sprintf("/labels/%s/resources", labelID), labelVector)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (lbl *LabelService) AddLabel(labelVector *map[string]interface{}, labelID s
 func (lbl *LabelService) RemoveLabel(labelID string, resourceType string, resourceID string) error {
 	log.Debug("RemoveLabel")
 
-	data, status, err := lbl.concertoService.Delete(fmt.Sprintf("/v2/labels/%s/resources/%s/%s", labelID, resourceType, resourceID))
+	data, status, err := lbl.concertoService.Delete(fmt.Sprintf("/labels/%s/resources/%s/%s", labelID, resourceType, resourceID))
 	if err != nil {
 		return err
 	}

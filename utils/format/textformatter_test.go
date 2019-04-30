@@ -16,9 +16,9 @@ func TestPrintItemTXT(t *testing.T) {
 
 	assert := assert.New(t)
 	serversIn := testdata.GetServerData()
-	for _, serverIn := range *serversIn {
+	for _, serverIn := range serversIn {
 
-		serverOut := cloud.GetServerMocked(t, &serverIn)
+		serverOut := cloud.GetServerMocked(t, serverIn)
 
 		var b bytes.Buffer
 		mockOut := bufio.NewWriter(&b)
@@ -40,9 +40,9 @@ func TestPrintItemTemplateTXT(t *testing.T) {
 
 	assert := assert.New(t)
 	templatesIn := testdata.GetTemplateData()
-	for _, templateIn := range *templatesIn {
+	for _, templateIn := range templatesIn {
 
-		templateOut := blueprint.GetTemplateMocked(t, &templateIn)
+		templateOut := blueprint.GetTemplateMocked(t, templateIn)
 
 		var b bytes.Buffer
 		mockOut := bufio.NewWriter(&b)
@@ -72,12 +72,12 @@ func TestPrintListTXT(t *testing.T) {
 	f := GetFormatter()
 	assert.NotNil(f, "Formatter")
 
-	err := f.PrintList(*serversOut)
+	err := f.PrintList(serversOut)
 	assert.Nil(err, "Text formatter PrintList error")
 	mockOut.Flush()
 
 	// TODO add more accurate parsing
-	assert.Regexp(fmt.Sprintf("^ID.*\n%s.*\n.*", (*serversOut)[0].ID), b.String(), "Text output didn't match regular expression")
+	assert.Regexp(fmt.Sprintf("^ID.*\n%s.*\n.*", serversOut[0].ID), b.String(), "Text output didn't match regular expression")
 }
 
 func TestPrintListTemplateTXT(t *testing.T) {
@@ -92,12 +92,12 @@ func TestPrintListTemplateTXT(t *testing.T) {
 	f := GetFormatter()
 	assert.NotNil(f, "Formatter")
 
-	err := f.PrintList(*templatesOut)
+	err := f.PrintList(templatesOut)
 	assert.Nil(err, "Text formatter PrintList error")
 	mockOut.Flush()
 
 	// TODO add more accurate parsing
-	assert.Regexp(fmt.Sprintf("^ID.*\n%s.*\n.*", (*templatesOut)[0].ID), b.String(), "Text output didn't match regular expression")
+	assert.Regexp(fmt.Sprintf("^ID.*\n%s.*\n.*", templatesOut[0].ID), b.String(), "Text output didn't match regular expression")
 }
 
 func TestPrintListTemplateScriptsTXT(t *testing.T) {
@@ -105,7 +105,7 @@ func TestPrintListTemplateScriptsTXT(t *testing.T) {
 	assert := assert.New(t)
 	tScriptsIn := testdata.GetTemplateScriptData()
 
-	for _, tsIn := range *tScriptsIn {
+	for _, tsIn := range tScriptsIn {
 		tScriptsOut := blueprint.GetTemplateScriptListMocked(t, tScriptsIn, tsIn.ID, tsIn.Type)
 
 		var b bytes.Buffer
@@ -114,12 +114,12 @@ func TestPrintListTemplateScriptsTXT(t *testing.T) {
 		f := GetFormatter()
 		assert.NotNil(f, "Formatter")
 
-		err := f.PrintList(*tScriptsOut)
+		err := f.PrintList(tScriptsOut)
 		assert.Nil(err, "Text formatter PrintList error")
 		mockOut.Flush()
 
 		// TODO add more accurate parsing
-		assert.Regexp(fmt.Sprintf("^ID.*\n%s.*\n.*", (*tScriptsOut)[0].ID), b.String(), "Text output didn't match regular expression")
+		assert.Regexp(fmt.Sprintf("^ID.*\n%s.*\n.*", tScriptsOut[0].ID), b.String(), "Text output didn't match regular expression")
 
 	}
 }
@@ -135,7 +135,7 @@ func TestPrintListNonSliceErrorTXT(t *testing.T) {
 	assert.NotNil(f, "Formatter")
 
 	err := f.PrintList("string")
-	assert.Error(err, "A 'non slice' error should have arosen")
+	assert.Error(err, "A 'non slice' error should have arisen")
 	mockOut.Flush()
 
 }
@@ -168,7 +168,7 @@ func TestPrintListMinifySeconds(t *testing.T) {
 	f := GetFormatter()
 	assert.NotNil(f, "Formatter")
 
-	err := f.PrintList(*dummyData)
+	err := f.PrintList(dummyData)
 	assert.Nil(err, "Text formatter PrintList error")
 	mockOut.Flush()
 }
@@ -178,14 +178,14 @@ func TestPrintItemJSONRawMessage(t *testing.T) {
 	assert := assert.New(t)
 	dummyData := testdata.GetDummyData()
 
-	for _, dummy := range *dummyData {
+	for _, dummy := range dummyData {
 		var b bytes.Buffer
 		mockOut := bufio.NewWriter(&b)
 		InitializeFormatter("text", mockOut)
 		f := GetFormatter()
 		assert.NotNil(f, "Formatter")
 
-		err := f.PrintItem(dummy)
+		err := f.PrintItem(*dummy)
 		assert.Nil(err, "Text formatter PrintItem error")
 		mockOut.Flush()
 	}
@@ -202,7 +202,7 @@ func TestPrintListJSONRawMessage(t *testing.T) {
 	f := GetFormatter()
 	assert.NotNil(f, "Formatter")
 
-	err := f.PrintList(*dummyData)
+	err := f.PrintList(dummyData)
 	assert.Nil(err, "Text formatter PrintList error")
 	mockOut.Flush()
 }
@@ -218,7 +218,7 @@ func TestPrintListJSONRawMessageNil(t *testing.T) {
 	f := GetFormatter()
 	assert.NotNil(f, "Formatter")
 
-	err := f.PrintList(*dummyData)
+	err := f.PrintList(dummyData)
 	assert.Nil(err, "Text formatter PrintList error")
 	mockOut.Flush()
 }

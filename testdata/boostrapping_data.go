@@ -9,7 +9,7 @@ import (
 func GetBootstrappingConfigurationData() *types.BootstrappingConfiguration {
 
 	attrs := json.RawMessage(`{"fakeAttribute0":"val0","fakeAttribute1":"val1"}`)
-	test := types.BootstrappingConfiguration{
+	return &types.BootstrappingConfiguration{
 		Policyfiles: []types.BootstrappingPolicyfile{
 			{
 				ID:          "fakeProfileID0",
@@ -25,21 +25,17 @@ func GetBootstrappingConfigurationData() *types.BootstrappingConfiguration {
 		Attributes:          &attrs,
 		AttributeRevisionID: "fakeAttributeRevisionID",
 	}
-
-	return &test
 }
 
 // GetBootstrappingContinuousReportData loads test data
 func GetBootstrappingContinuousReportData() *types.BootstrappingContinuousReport {
 
-	testBootstrappingContinuousReport := types.BootstrappingContinuousReport{
+	return &types.BootstrappingContinuousReport{
 		Stdout: "Bootstrap log created",
 	}
-
-	return &testBootstrappingContinuousReport
 }
 
-//GetBootstrappingDownloadFileData
+//GetBootstrappingDownloadFileData loads test data
 func GetBootstrappingDownloadFileData() map[string]string {
 	return map[string]string{
 		"fakeURLToFile":        "http://fakeURLToFile.xxx/filename.tgz",

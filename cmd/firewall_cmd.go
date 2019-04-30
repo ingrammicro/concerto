@@ -61,14 +61,14 @@ func FirewallRuleCheck(c *cli.Context) (*types.Policy, *types.PolicyRule, bool) 
 	debugCmdFuncInfo(c)
 	_, formatter := WireUpFirewall(c)
 
-	checkRequiredFlags(c, []string{"cidr", "minPort", "maxPort", "ipProtocol"}, formatter)
+	checkRequiredFlags(c, []string{"cidr", "min-port", "max-port", "ip-protocol"}, formatter)
 
 	// API accepts only 1 rule
 	rule := &types.PolicyRule{
-		Protocol: c.String("ipProtocol"),
 		Cidr:     c.String("cidr"),
-		MinPort:  c.Int("minPort"),
-		MaxPort:  c.Int("maxPort"),
+		MinPort:  c.Int("min-port"),
+		MaxPort:  c.Int("max-port"),
+		Protocol: c.String("ip-protocol"),
 	}
 	policy := FirewallPolicyGet(c)
 	return policy, rule, policy.CheckPolicyRule(*rule)

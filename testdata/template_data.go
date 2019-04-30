@@ -7,10 +7,11 @@ import (
 )
 
 // GetTemplateData loads loads test data
-func GetTemplateData() *[]types.Template {
+func GetTemplateData() []*types.Template {
 	conf0 := json.RawMessage(`{"fakeConf01":"x","fakeConf02":"y"}`)
 	conf1 := json.RawMessage(`{"fakeConf11":"x","fakeConf12":"y"}`)
-	testTemplates := []types.Template{
+
+	return []*types.Template{
 		{
 			ID:                      "fakeID0",
 			Name:                    "fakeName0",
@@ -33,19 +34,17 @@ func GetTemplateData() *[]types.Template {
 			ConfigurationAttributes: nil,
 		},
 	}
-
-	return &testTemplates
 }
 
 // GetTemplateScriptData loads test data
-func GetTemplateScriptData() *[]types.TemplateScript {
+func GetTemplateScriptData() []*types.TemplateScript {
 
 	param0 := json.RawMessage(`{"fakeConf01":"x","fakeConf02":"y"}`)
 	param1 := json.RawMessage(`{"fakeConf11":"x","fakeConf12":"y"}`)
 	param2 := json.RawMessage(`{"fakeConf21":"x","fakeConf22":"y"}`)
 	param3 := json.RawMessage(`{"fakeConf31":"x","fakeConf32":"y"}`)
 
-	testTemplateScripts := []types.TemplateScript{
+	return []*types.TemplateScript{
 		{
 			ID:              "fakeID0",
 			Type:            "fakeType0",
@@ -79,14 +78,12 @@ func GetTemplateScriptData() *[]types.TemplateScript {
 			ParameterValues: &param3,
 		},
 	}
-
-	return &testTemplateScripts
 }
 
 // GetTemplateServerData loads loads test data
-func GetTemplateServerData() *[]types.TemplateServer {
+func GetTemplateServerData() []*types.TemplateServer {
 
-	testTemplateServers := []types.TemplateServer{
+	return []*types.TemplateServer{
 		{
 			ID:                "fakeID0",
 			Name:              "fakeName0",
@@ -110,6 +107,4 @@ func GetTemplateServerData() *[]types.TemplateServer {
 			FirewallProfileID: "fakeFirewallProfileID1",
 		},
 	}
-
-	return &testTemplateServers
 }

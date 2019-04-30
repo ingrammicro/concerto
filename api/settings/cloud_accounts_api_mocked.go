@@ -13,7 +13,7 @@ import (
 // TODO exclude from release compile
 
 // GetCloudAccountListMocked test mocked function
-func GetCloudAccountListMocked(t *testing.T, cloudAccountsIn *[]types.CloudAccount) *[]types.CloudAccount {
+func GetCloudAccountListMocked(t *testing.T, cloudAccountsIn []*types.CloudAccount) []*types.CloudAccount {
 
 	assert := assert.New(t)
 
@@ -28,16 +28,16 @@ func GetCloudAccountListMocked(t *testing.T, cloudAccountsIn *[]types.CloudAccou
 	assert.Nil(err, "CloudAccount test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/settings/cloud_accounts").Return(dIn, 200, nil)
+	cs.On("Get", "/settings/cloud_accounts").Return(dIn, 200, nil)
 	cloudAccountsOut, err := clAccService.GetCloudAccountList()
 	assert.Nil(err, "Error getting cloudAccount list")
-	assert.Equal(*cloudAccountsIn, cloudAccountsOut, "GetCloudAccountList returned different cloudAccounts")
+	assert.Equal(cloudAccountsIn, cloudAccountsOut, "GetCloudAccountList returned different cloudAccounts")
 
-	return &cloudAccountsOut
+	return cloudAccountsOut
 }
 
 // GetCloudAccountListFailErrMocked test mocked function
-func GetCloudAccountListFailErrMocked(t *testing.T, cloudAccountsIn *[]types.CloudAccount) *[]types.CloudAccount {
+func GetCloudAccountListFailErrMocked(t *testing.T, cloudAccountsIn []*types.CloudAccount) []*types.CloudAccount {
 
 	assert := assert.New(t)
 
@@ -52,18 +52,18 @@ func GetCloudAccountListFailErrMocked(t *testing.T, cloudAccountsIn *[]types.Clo
 	assert.Nil(err, "CloudAccount test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/settings/cloud_accounts").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/settings/cloud_accounts").Return(dIn, 200, fmt.Errorf("mocked error"))
 	cloudAccountsOut, err := clAccService.GetCloudAccountList()
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(cloudAccountsOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
-	return &cloudAccountsOut
+	return cloudAccountsOut
 }
 
 // GetCloudAccountListFailStatusMocked test mocked function
-func GetCloudAccountListFailStatusMocked(t *testing.T, cloudAccountsIn *[]types.CloudAccount) *[]types.CloudAccount {
+func GetCloudAccountListFailStatusMocked(t *testing.T, cloudAccountsIn []*types.CloudAccount) []*types.CloudAccount {
 
 	assert := assert.New(t)
 
@@ -78,18 +78,18 @@ func GetCloudAccountListFailStatusMocked(t *testing.T, cloudAccountsIn *[]types.
 	assert.Nil(err, "CloudAccount test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/settings/cloud_accounts").Return(dIn, 499, nil)
+	cs.On("Get", "/settings/cloud_accounts").Return(dIn, 499, nil)
 	cloudAccountsOut, err := clAccService.GetCloudAccountList()
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(cloudAccountsOut, "Expecting nil output")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 
-	return &cloudAccountsOut
+	return cloudAccountsOut
 }
 
 // GetCloudAccountListFailJSONMocked test mocked function
-func GetCloudAccountListFailJSONMocked(t *testing.T, cloudAccountsIn *[]types.CloudAccount) *[]types.CloudAccount {
+func GetCloudAccountListFailJSONMocked(t *testing.T, cloudAccountsIn []*types.CloudAccount) []*types.CloudAccount {
 
 	assert := assert.New(t)
 
@@ -103,12 +103,12 @@ func GetCloudAccountListFailJSONMocked(t *testing.T, cloudAccountsIn *[]types.Cl
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v2/settings/cloud_accounts").Return(dIn, 200, nil)
+	cs.On("Get", "/settings/cloud_accounts").Return(dIn, 200, nil)
 	cloudAccountsOut, err := clAccService.GetCloudAccountList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(cloudAccountsOut, "Expecting nil output")
 	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
 
-	return &cloudAccountsOut
+	return cloudAccountsOut
 }

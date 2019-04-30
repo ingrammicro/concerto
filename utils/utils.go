@@ -77,7 +77,7 @@ func Untar(ctx context.Context, source, target string) error {
 	if err := cmd.Run(); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 

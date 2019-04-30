@@ -54,7 +54,7 @@ func FlattenChain(chainName string, chains []*FirewallChain, affectingRule *Fire
 	}
 	if c.Policy == "ACCEPT" {
 		result.Rules = []*FirewallRule{
-			&FirewallRule{
+			{
 				Target:   "ACCEPT",
 				Protocol: affectingRule.Protocol,
 				Source:   affectingRule.Source,

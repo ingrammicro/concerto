@@ -3,9 +3,9 @@ package testdata
 import "github.com/ingrammicro/concerto/api/types"
 
 // GetServerPlanData loads test data
-func GetServerPlanData() *[]types.ServerPlan {
+func GetServerPlanData() []*types.ServerPlan {
 
-	testServerPlans := []types.ServerPlan{
+	return []*types.ServerPlan{
 		{
 			ID:                "fakeID0",
 			Name:              "fakeName0",
@@ -29,6 +29,4 @@ func GetServerPlanData() *[]types.ServerPlan {
 			CloudProviderName: "fakeCloudProviderName1",
 		},
 	}
-
-	return &testServerPlans
 }

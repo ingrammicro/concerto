@@ -6,8 +6,8 @@ go:
 notifications:
   email: false
 
-before_script:                                                                 
-  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  
+before_script:
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
   - dep ensure
 
 script:

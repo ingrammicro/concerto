@@ -6,7 +6,7 @@ import (
 
 // GetPolicyData loads test data
 func GetPolicyData() *types.Policy {
-	testPolicy := types.Policy{
+	return &types.Policy{
 		ActualRules: []types.PolicyRule{
 			{
 				Protocol: "fakeProtocol0",
@@ -24,6 +24,4 @@ func GetPolicyData() *types.Policy {
 			},
 		},
 	}
-
-	return &testPolicy
 }

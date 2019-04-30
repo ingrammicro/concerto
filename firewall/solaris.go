@@ -7,8 +7,8 @@ import (
 
 	"os"
 
-	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/api/types"
+	"github.com/ingrammicro/concerto/utils"
 )
 
 func driverName() string {

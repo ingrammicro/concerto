@@ -12,7 +12,7 @@ import (
 // TODO exclude from release compile
 
 // GetEventListMocked test mocked function
-func GetEventListMocked(t *testing.T, eventsIn *[]types.Event) *[]types.Event {
+func GetEventListMocked(t *testing.T, eventsIn []*types.Event) []*types.Event {
 
 	assert := assert.New(t)
 
@@ -27,16 +27,16 @@ func GetEventListMocked(t *testing.T, eventsIn *[]types.Event) *[]types.Event {
 	assert.Nil(err, "Event test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/audit/events").Return(dIn, 200, nil)
+	cs.On("Get", "/audit/events").Return(dIn, 200, nil)
 	eventsOut, err := ds.GetEventList()
 	assert.Nil(err, "Error getting event list")
-	assert.Equal(*eventsIn, eventsOut, "GetEventList returned different events")
+	assert.Equal(eventsIn, eventsOut, "GetEventList returned different events")
 
-	return &eventsOut
+	return eventsOut
 }
 
 // GetEventListFailErrMocked test mocked function
-func GetEventListFailErrMocked(t *testing.T, eventsIn *[]types.Event) *[]types.Event {
+func GetEventListFailErrMocked(t *testing.T, eventsIn []*types.Event) []*types.Event {
 
 	assert := assert.New(t)
 
@@ -51,18 +51,18 @@ func GetEventListFailErrMocked(t *testing.T, eventsIn *[]types.Event) *[]types.E
 	assert.Nil(err, "Event test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/audit/events").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/audit/events").Return(dIn, 200, fmt.Errorf("mocked error"))
 	eventsOut, err := ds.GetEventList()
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(eventsOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
-	return &eventsOut
+	return eventsOut
 }
 
 // GetEventListFailStatusMocked test mocked function
-func GetEventListFailStatusMocked(t *testing.T, eventsIn *[]types.Event) *[]types.Event {
+func GetEventListFailStatusMocked(t *testing.T, eventsIn []*types.Event) []*types.Event {
 
 	assert := assert.New(t)
 
@@ -77,18 +77,18 @@ func GetEventListFailStatusMocked(t *testing.T, eventsIn *[]types.Event) *[]type
 	assert.Nil(err, "Event test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/audit/events").Return(dIn, 499, nil)
+	cs.On("Get", "/audit/events").Return(dIn, 499, nil)
 	eventsOut, err := ds.GetEventList()
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(eventsOut, "Expecting nil output")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 
-	return &eventsOut
+	return eventsOut
 }
 
 // GetEventListFailJSONMocked test mocked function
-func GetEventListFailJSONMocked(t *testing.T, eventsIn *[]types.Event) *[]types.Event {
+func GetEventListFailJSONMocked(t *testing.T, eventsIn []*types.Event) []*types.Event {
 
 	assert := assert.New(t)
 
@@ -102,18 +102,18 @@ func GetEventListFailJSONMocked(t *testing.T, eventsIn *[]types.Event) *[]types.
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v2/audit/events").Return(dIn, 200, nil)
+	cs.On("Get", "/audit/events").Return(dIn, 200, nil)
 	eventsOut, err := ds.GetEventList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(eventsOut, "Expecting nil output")
 	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
 
-	return &eventsOut
+	return eventsOut
 }
 
 // GetSysEventListMocked test mocked function
-func GetSysEventListMocked(t *testing.T, eventsIn *[]types.Event) *[]types.Event {
+func GetSysEventListMocked(t *testing.T, eventsIn []*types.Event) []*types.Event {
 
 	assert := assert.New(t)
 
@@ -128,16 +128,16 @@ func GetSysEventListMocked(t *testing.T, eventsIn *[]types.Event) *[]types.Event
 	assert.Nil(err, "Event test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/audit/system_events").Return(dIn, 200, nil)
+	cs.On("Get", "/audit/system_events").Return(dIn, 200, nil)
 	eventsOut, err := ds.GetSysEventList()
 	assert.Nil(err, "Error getting event list")
-	assert.Equal(*eventsIn, eventsOut, "GetEventList returned different events")
+	assert.Equal(eventsIn, eventsOut, "GetSysEventList returned different events")
 
-	return &eventsOut
+	return eventsOut
 }
 
 // GetSysEventListFailErrMocked test mocked function
-func GetSysEventListFailErrMocked(t *testing.T, eventsIn *[]types.Event) *[]types.Event {
+func GetSysEventListFailErrMocked(t *testing.T, eventsIn []*types.Event) []*types.Event {
 
 	assert := assert.New(t)
 
@@ -145,25 +145,25 @@ func GetSysEventListFailErrMocked(t *testing.T, eventsIn *[]types.Event) *[]type
 	cs := &utils.MockConcertoService{}
 	ds, err := NewEventService(cs)
 	assert.Nil(err, "Couldn't load event service")
-	assert.NotNil(ds, "SysEvent service not instanced")
+	assert.NotNil(ds, "Event service not instanced")
 
 	// to json
 	dIn, err := json.Marshal(eventsIn)
-	assert.Nil(err, "SysEvent test data corrupted")
+	assert.Nil(err, "Event test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/audit/system_events").Return(dIn, 200, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/audit/system_events").Return(dIn, 200, fmt.Errorf("mocked error"))
 	eventsOut, err := ds.GetSysEventList()
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(eventsOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
-	return &eventsOut
+	return eventsOut
 }
 
 // GetSysEventListFailStatusMocked test mocked function
-func GetSysEventListFailStatusMocked(t *testing.T, eventsIn *[]types.Event) *[]types.Event {
+func GetSysEventListFailStatusMocked(t *testing.T, eventsIn []*types.Event) []*types.Event {
 
 	assert := assert.New(t)
 
@@ -171,25 +171,25 @@ func GetSysEventListFailStatusMocked(t *testing.T, eventsIn *[]types.Event) *[]t
 	cs := &utils.MockConcertoService{}
 	ds, err := NewEventService(cs)
 	assert.Nil(err, "Couldn't load event service")
-	assert.NotNil(ds, "SysEvent service not instanced")
+	assert.NotNil(ds, "Event service not instanced")
 
 	// to json
 	dIn, err := json.Marshal(eventsIn)
-	assert.Nil(err, "SysEvent test data corrupted")
+	assert.Nil(err, "Event test data corrupted")
 
 	// call service
-	cs.On("Get", "/v2/audit/system_events").Return(dIn, 499, nil)
+	cs.On("Get", "/audit/system_events").Return(dIn, 499, nil)
 	eventsOut, err := ds.GetSysEventList()
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(eventsOut, "Expecting nil output")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 
-	return &eventsOut
+	return eventsOut
 }
 
 // GetSysEventListFailJSONMocked test mocked function
-func GetSysEventListFailJSONMocked(t *testing.T, eventsIn *[]types.Event) *[]types.Event {
+func GetSysEventListFailJSONMocked(t *testing.T, eventsIn []*types.Event) []*types.Event {
 
 	assert := assert.New(t)
 
@@ -197,18 +197,18 @@ func GetSysEventListFailJSONMocked(t *testing.T, eventsIn *[]types.Event) *[]typ
 	cs := &utils.MockConcertoService{}
 	ds, err := NewEventService(cs)
 	assert.Nil(err, "Couldn't load event service")
-	assert.NotNil(ds, "SysEvent service not instanced")
+	assert.NotNil(ds, "Event service not instanced")
 
 	// wrong json
 	dIn := []byte{10, 20, 30}
 
 	// call service
-	cs.On("Get", "/v2/audit/system_events").Return(dIn, 200, nil)
+	cs.On("Get", "/audit/system_events").Return(dIn, 200, nil)
 	eventsOut, err := ds.GetSysEventList()
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(eventsOut, "Expecting nil output")
 	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
 
-	return &eventsOut
+	return eventsOut
 }

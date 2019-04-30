@@ -57,12 +57,12 @@ func PingFailErrMocked(t *testing.T, pingIn *types.PollingPing) *types.PollingPi
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Post", "/command_polling/pings", &payload).Return(dIn, 404, fmt.Errorf("Mocked error"))
+	cs.On("Post", "/command_polling/pings", &payload).Return(dIn, 404, fmt.Errorf("mocked error"))
 	pingOut, _, err := ds.Ping()
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(pingOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return pingOut
 }
@@ -86,7 +86,7 @@ func PingFailStatusMocked(t *testing.T, pingIn *types.PollingPing) *types.Pollin
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Post", "/command_polling/pings", &payload).Return(dIn, 499, fmt.Errorf("Error 499 Mocked error"))
+	cs.On("Post", "/command_polling/pings", &payload).Return(dIn, 499, fmt.Errorf("error 499 Mocked error"))
 	pingOut, status, err := ds.Ping()
 
 	assert.Equal(status, 499, "Ping returned an unexpected status code")
@@ -166,12 +166,12 @@ func GetNextCommandFailErrMocked(t *testing.T, commandIn *types.PollingCommand) 
 	dIn = nil
 
 	// call service
-	cs.On("Get", "/command_polling/command").Return(dIn, 404, fmt.Errorf("Mocked error"))
+	cs.On("Get", "/command_polling/command").Return(dIn, 404, fmt.Errorf("mocked error"))
 	commandOut, _, err := ds.GetNextCommand()
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(commandOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return commandOut
 }
@@ -194,7 +194,7 @@ func GetNextCommandFailStatusMocked(t *testing.T, commandIn *types.PollingComman
 	dIn = nil
 
 	// call service
-	cs.On("Get", "/command_polling/command").Return(dIn, 499, fmt.Errorf("Error 499 Mocked error"))
+	cs.On("Get", "/command_polling/command").Return(dIn, 499, fmt.Errorf("error 499 Mocked error"))
 	commandOut, status, err := ds.GetNextCommand()
 
 	assert.Equal(status, 499, "GetNextCommand returned an unexpected status code")
@@ -275,12 +275,12 @@ func UpdateCommandFailErrMocked(t *testing.T, commandIn *types.PollingCommand) *
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Put", fmt.Sprintf("/command_polling/commands/%s", commandIn.ID), &payload).Return(dIn, 400, fmt.Errorf("Mocked error"))
+	cs.On("Put", fmt.Sprintf("/command_polling/commands/%s", commandIn.ID), &payload).Return(dIn, 400, fmt.Errorf("mocked error"))
 	commandOut, _, err := ds.UpdateCommand(&payload, commandIn.ID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(commandOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return commandOut
 }
@@ -304,7 +304,7 @@ func UpdateCommandFailStatusMocked(t *testing.T, commandIn *types.PollingCommand
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Put", fmt.Sprintf("/command_polling/commands/%s", commandIn.ID), &payload).Return(dIn, 499, fmt.Errorf("Error 499 Mocked error"))
+	cs.On("Put", fmt.Sprintf("/command_polling/commands/%s", commandIn.ID), &payload).Return(dIn, 499, fmt.Errorf("error 499 Mocked error"))
 	commandOut, status, err := ds.UpdateCommand(&payload, commandIn.ID)
 
 	assert.Equal(status, 499, "UpdateCommand returned an unexpected status code")
@@ -387,12 +387,12 @@ func ReportBootstrapLogFailErrMocked(t *testing.T, commandIn *types.PollingConti
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Post", fmt.Sprintf("/command_polling/bootstrap_logs"), &payload).Return(dIn, 400, fmt.Errorf("Mocked error"))
+	cs.On("Post", fmt.Sprintf("/command_polling/bootstrap_logs"), &payload).Return(dIn, 400, fmt.Errorf("mocked error"))
 	commandOut, _, err := ds.ReportBootstrapLog(&payload)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(commandOut, "Expecting nil output")
-	assert.Equal(err.Error(), "Mocked error", "Error should be 'Mocked error'")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
 
 	return commandOut
 }
@@ -416,7 +416,7 @@ func ReportBootstrapLogFailStatusMocked(t *testing.T, commandIn *types.PollingCo
 
 	// call service
 	payload := make(map[string]interface{})
-	cs.On("Post", fmt.Sprintf("/command_polling/bootstrap_logs"), &payload).Return(dIn, 499, fmt.Errorf("Error 499 Mocked error"))
+	cs.On("Post", fmt.Sprintf("/command_polling/bootstrap_logs"), &payload).Return(dIn, 499, fmt.Errorf("error 499 Mocked error"))
 	commandOut, status, err := ds.ReportBootstrapLog(&payload)
 
 	assert.Equal(status, 499, "ReportBootstrapLog returned an unexpected status code")

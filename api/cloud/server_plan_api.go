@@ -16,7 +16,7 @@ type ServerPlanService struct {
 // NewServerPlanService returns a Concerto serverPlan service
 func NewServerPlanService(concertoService utils.ConcertoService) (*ServerPlanService, error) {
 	if concertoService == nil {
-		return nil, fmt.Errorf("Must initialize ConcertoService before using it")
+		return nil, fmt.Errorf("must initialize ConcertoService before using it")
 	}
 
 	return &ServerPlanService{
@@ -25,10 +25,10 @@ func NewServerPlanService(concertoService utils.ConcertoService) (*ServerPlanSer
 }
 
 // GetServerPlanList returns the list of serverPlans as an array of ServerPlan
-func (dm *ServerPlanService) GetServerPlanList(ProviderID string) (serverPlans []types.ServerPlan, err error) {
+func (dm *ServerPlanService) GetServerPlanList(ProviderID string) (serverPlans []*types.ServerPlan, err error) {
 	log.Debug("GetServerPlanList")
 
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/cloud/cloud_providers/%s/server_plans", ProviderID))
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/cloud/cloud_providers/%s/server_plans", ProviderID))
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (dm *ServerPlanService) GetServerPlanList(ProviderID string) (serverPlans [
 func (dm *ServerPlanService) GetServerPlan(ID string) (serverPlan *types.ServerPlan, err error) {
 	log.Debug("GetServerPlan")
 
-	data, status, err := dm.concertoService.Get(fmt.Sprintf("/v2/cloud/server_plans/%s", ID))
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/cloud/server_plans/%s", ID))
 	if err != nil {
 		return nil, err
 	}

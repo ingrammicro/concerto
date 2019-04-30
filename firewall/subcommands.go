@@ -4,6 +4,7 @@ import (
 	"github.com/codegangsta/cli"
 )
 
+// SubCommands returns firewall commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
 		{
@@ -16,15 +17,15 @@ func SubCommands() []cli.Command {
 					Usage: "CIDR",
 				},
 				cli.IntFlag{
-					Name:  "minPort",
+					Name:  "min-port",
 					Usage: "Minimum Port",
 				},
 				cli.IntFlag{
-					Name:  "maxPort",
+					Name:  "max-port",
 					Usage: "Maximum Port",
 				},
 				cli.StringFlag{
-					Name:  "ipProtocol",
+					Name:  "ip-protocol",
 					Usage: "Ip protocol udp or tcp",
 				},
 			},
@@ -44,15 +45,15 @@ func SubCommands() []cli.Command {
 					Usage: "CIDR",
 				},
 				cli.IntFlag{
-					Name:  "minPort",
+					Name:  "min-port",
 					Usage: "Minimum Port",
 				},
 				cli.IntFlag{
-					Name:  "maxPort",
+					Name:  "max-port",
 					Usage: "Maximum Port",
 				},
 				cli.StringFlag{
-					Name:  "ipProtocol",
+					Name:  "ip-protocol",
 					Usage: "Ip protocol udp or tcp",
 				},
 			},
@@ -77,15 +78,15 @@ func SubCommands() []cli.Command {
 					Usage: "CIDR",
 				},
 				cli.IntFlag{
-					Name:  "minPort",
+					Name:  "min-port",
 					Usage: "Minimum Port",
 				},
 				cli.IntFlag{
-					Name:  "maxPort",
+					Name:  "max-port",
 					Usage: "Maximum Port",
 				},
 				cli.StringFlag{
-					Name:  "ipProtocol",
+					Name:  "ip-protocol",
 					Usage: "Ip protocol udp or tcp",
 				},
 			},
