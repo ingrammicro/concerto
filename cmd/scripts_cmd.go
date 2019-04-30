@@ -128,13 +128,13 @@ func ScriptUpdate(c *cli.Context) error {
 	checkRequiredFlags(c, []string{"id"}, formatter)
 	scriptIn := map[string]interface{}{}
 	if c.String("name") != "" {
-		scriptIn["name"] = strings.Split(c.String("name"), ",")
+		scriptIn["name"] = c.String("name")
 	}
 	if c.String("description") != "" {
-		scriptIn["description"] = strings.Split(c.String("description"), ",")
+		scriptIn["description"] = c.String("description")
 	}
 	if c.String("code") != "" {
-		scriptIn["code"] = strings.Split(c.String("code"), ",")
+		scriptIn["code"] = c.String("code")
 	}
 	if c.String("parameters") != "" {
 		scriptIn["parameters"] = strings.Split(c.String("parameters"), ",")
