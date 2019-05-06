@@ -27,7 +27,7 @@ func CurrentFirewallRules() ([]*FirewallChain, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("DEBUG: discovered following enabled profiles\n", profiles)
+	fmt.Printf("DEBUG: discovered following enabled profiles %v\n", profiles)
 	cmd := exec.Command("netsh", "advfirewall", "firewall", "show", "rule", "name=all", "dir=in")
 	out := &bytes.Buffer{}
 	cmd.Stdout = out

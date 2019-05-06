@@ -1,30 +1,26 @@
 package types
 
-import (
-	"encoding/json"
-)
-
 // Template stores blueprint templates
 type Template struct {
-	ID                      string           `json:"id,omitempty" header:"ID"`
-	Name                    string           `json:"name,omitempty" header:"NAME"`
-	GenericImageID          string           `json:"generic_image_id,omitempty" header:"GENERIC_IMAGE_ID"`
-	RunList                 []string         `json:"run_list,omitempty" header:"RUN_LIST" show:"nolist"`
-	ConfigurationAttributes *json.RawMessage `json:"configuration_attributes,omitempty" header:"CONFIGURATION_ATTRIBUTES" show:"nolist"`
-	ResourceType            string           `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
-	CookbookVersions        *json.RawMessage `json:"cookbook_versions,omitempty" header:"COOKBOOK_VERSIONS" show:"nolist"`
-	State                   string           `json:"state" header:"STATE" show:"nolist"`
+	ID                      string                 `json:"id,omitempty" header:"ID"`
+	Name                    string                 `json:"name,omitempty" header:"NAME"`
+	GenericImageID          string                 `json:"generic_image_id,omitempty" header:"GENERIC_IMAGE_ID"`
+	RunList                 []string               `json:"run_list,omitempty" header:"RUN_LIST" show:"nolist"`
+	ConfigurationAttributes map[string]interface{} `json:"configuration_attributes,omitempty" header:"CONFIGURATION_ATTRIBUTES" show:"nolist"`
+	ResourceType            string                 `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
+	CookbookVersions        map[string]interface{} `json:"cookbook_versions,omitempty" header:"COOKBOOK_VERSIONS" show:"nolist"`
+	State                   string                 `json:"state" header:"STATE" show:"nolist"`
 	LabelableFields
 }
 
 // TemplateScript stores a templates' script info
 type TemplateScript struct {
-	ID              string           `json:"id" header:"ID"`
-	Type            string           `json:"type" header:"TYPE"`
-	ExecutionOrder  int              `json:"execution_order" header:"EXECUTION_ORDER"`
-	TemplateID      string           `json:"template_id" header:"TEMPLATE_ID"`
-	ScriptID        string           `json:"script_id" header:"SCRIPT_ID"`
-	ParameterValues *json.RawMessage `json:"parameter_values" header:"PARAMETER_VALUES"`
+	ID              string                 `json:"id" header:"ID"`
+	Type            string                 `json:"type" header:"TYPE"`
+	ExecutionOrder  int                    `json:"execution_order" header:"EXECUTION_ORDER"`
+	TemplateID      string                 `json:"template_id" header:"TEMPLATE_ID"`
+	ScriptID        string                 `json:"script_id" header:"SCRIPT_ID"`
+	ParameterValues map[string]interface{} `json:"parameter_values" header:"PARAMETER_VALUES"`
 }
 
 // TemplateServer stores servers associated with the template

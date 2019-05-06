@@ -3,6 +3,7 @@ package format
 import (
 	"fmt"
 	log "github.com/Sirupsen/logrus"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"io"
 	"reflect"
@@ -32,17 +33,23 @@ func (f *TextFormatter) printItemAux(w *tabwriter.Writer, item interface{}) erro
 			switch it.Field(i).Type().String() {
 			case "time.Time":
 				fmt.Fprintln(w, fmt.Sprintf("%s:\t%+v", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
-			case "json.RawMessage":
-				fmt.Fprintln(w, fmt.Sprintf("%s:\t%s", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
-			case "*json.RawMessage":
-				if it.Field(i).IsNil() {
-					fmt.Fprintln(w, fmt.Sprintf("%s:\t", it.Type().Field(i).Tag.Get("header")))
-				} else {
-					fmt.Fprintln(w, fmt.Sprintf("%s:\t%s", it.Type().Field(i).Tag.Get("header"), it.Field(i).Elem()))
+			case "[]types.Rule": // TBD
+				rules := it.Field(i).Interface().([]types.Rule)
+				fmt.Fprintf(w, "%s:\tPROTOCOL/MIN_PORT-MAX_PORT:SOURCE\n", it.Type().Field(i).Tag.Get("header"))
+				for _, rule := range rules {
+					fmt.Fprintf(w, "\t%+v/%+v-%+v:%+v\n", strings.ToUpper(rule.Protocol), rule.MinPort, rule.MaxPort, rule.CidrIP)
+				}
+			case "map[string]interface {}": // TBD
+				cbs := it.Field(i).Interface()
+				fmt.Fprintf(w, "%s:", it.Type().Field(i).Tag.Get("header"))
+				for r, v := range cbs.(map[string]interface{}) {
+					fmt.Fprintf(w, "\t%s %s\n", r, strings.Replace(fmt.Sprintf("%+v\t", v), "map[", "[", -1))
 				}
 			default:
 				if it.Field(i).Kind() == reflect.Struct {
 					f.printItemAux(w, it.Field(i).Interface())
+				} else if it.Field(i).Kind() == reflect.Map {
+					fmt.Fprintln(w, fmt.Sprintf("%s:\t%+v", it.Type().Field(i).Tag.Get("header"), strings.Replace(fmt.Sprintf("%+v\t", it.Field(i).Interface()), "map[", "[", -1)))
 				} else {
 					fmt.Fprintln(w, fmt.Sprintf("%s:\t%+v", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
 				}
@@ -111,17 +118,11 @@ func (f *TextFormatter) printListBodyAux(w *tabwriter.Writer, rv reflect.Value, 
 				switch field.Type().String() {
 				case "time.Time":
 					fmt.Fprint(w, fmt.Sprintf("%+v\t", field.Interface()))
-				case "json.RawMessage":
-					fmt.Fprint(w, fmt.Sprintf("%s\t", field.Interface()))
-				case "*json.RawMessage":
-					if field.IsNil() {
-						fmt.Fprint(w, fmt.Sprintf(" \t"))
-					} else {
-						fmt.Fprint(w, fmt.Sprintf("%s\t", field.Elem()))
-					}
 				default:
 					if field.Kind() == reflect.Struct {
 						f.printListBodyAux(w, field, depth+1)
+					} else if field.Kind() == reflect.Map {
+						fmt.Fprint(w, strings.Replace(fmt.Sprintf("%+v\t", field), "map[", "[", -1))
 					} else {
 						fmt.Fprint(w, fmt.Sprintf("%+v\t", field))
 					}
@@ -129,6 +130,7 @@ func (f *TextFormatter) printListBodyAux(w *tabwriter.Writer, rv reflect.Value, 
 			}
 		}
 	}
+
 }
 
 // PrintList prints item list

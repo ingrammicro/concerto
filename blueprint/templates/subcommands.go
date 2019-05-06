@@ -45,15 +45,19 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "run-list",
-					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up",
+					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up, i.e: --run-list wordpress,nano,1password",
 				},
 				cli.StringFlag{
 					Name:  "cookbook-versions",
-					Usage: "The cookbook versions used to configure the service recipes in the run-list",
+					Usage: "The cookbook versions used to configure the service recipes in the run-list, i.e: --cookbook-versions \"wordpress:0.1.0,nano=2.0.1,1password~>1.3.0\" \n\tCookbook version format: [NAME<OPERATOR>VERSION] \n\tSupported Operators:\n\t\tChef supermarket cookbook '~>','=','>=','>','<','<='\n\t\tUploaded cookbook ':'",
 				},
 				cli.StringFlag{
 					Name:  "configuration-attributes",
-					Usage: "The attributes used to configure the service recipes in the run-list",
+					Usage: "The attributes used to configure the service recipes in the run-list, as a json formatted parameter",
+				},
+				cli.StringFlag{
+					Name:  "configuration-attributes-from-file",
+					Usage: "The attributes used to configure the service recipes in the run-list, from file or STDIN, as a json formatted parameter. \n\tFrom file: --configuration-attributes-from-file attrs.json \n\tFrom STDIN: --configuration-attributes-from-file -",
 				},
 				cli.StringFlag{
 					Name:  "labels",
@@ -76,15 +80,19 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "run-list",
-					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up",
+					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up, i.e: --run-list wordpress,nano,1password",
 				},
 				cli.StringFlag{
 					Name:  "cookbook-versions",
-					Usage: "The cookbook versions used to configure the service recipes in the run-list",
+					Usage: "The cookbook versions used to configure the service recipes in the run-list, i.e: --cookbook-versions \"wordpress:0.1.0,nano=2.0.1,1password~>1.3.0\" \n\tCookbook version format: [NAME<OPERATOR>VERSION] \n\tSupported Operators:\n\t\tChef supermarket cookbook '~>','=','>=','>','<','<='\n\t\tUploaded cookbook ':'",
 				},
 				cli.StringFlag{
 					Name:  "configuration-attributes",
-					Usage: "The attributes used to configure the service recipes in the run-list",
+					Usage: "The attributes used to configure the service recipes in the run-list, as a json formatted parameter",
+				},
+				cli.StringFlag{
+					Name:  "configuration-attributes-from-file",
+					Usage: "The attributes used to configure the service recipes in the run-list, from file or STDIN, as a json formatted parameter. \n\tFrom file: --configuration-attributes-from-file attrs.json \n\tFrom STDIN: --configuration-attributes-from-file -",
 				},
 			},
 		},
@@ -159,7 +167,7 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "parameter-values",
-					Usage: "A map that assigns a value to each script parameter. Example: '{\"param1\":\"val1\",\"param2\":\"val2\"}'",
+					Usage: "A list of comma separated script parameters paired by Id and Value, i.e: --parameter-values param1:val1,param2:val2",
 				},
 			},
 		},
@@ -182,7 +190,7 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "parameter-values",
-					Usage: "A map that assigns a value to each script parameter. Example: '{\"param1\":\"val1\",\"param2\":\"val2\"}'",
+					Usage: "A list of comma separated script parameters paired by Id and Value, i.e: --parameter-values param1:val1,param2:val2",
 				},
 			},
 		},
@@ -201,7 +209,7 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "script-ids",
-					Usage: "An array that must contain all the ids of scripts of the given template and type in the desired execution order",
+					Usage: "A list of comma separated scripts ids that must contain all the ids of scripts of the given template and type in the desired execution order",
 				},
 			},
 		},

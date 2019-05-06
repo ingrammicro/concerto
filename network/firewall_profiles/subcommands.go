@@ -45,7 +45,7 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "rules",
-					Usage: "Set of rules of the firewall profile",
+					Usage: "Set of rules of the firewall profile, i.e: --rules TCP/8080-8081:0.0.0.0/0,TCP/9090-9091:any,UDP/3456:1.2.3.4\n\tRule format: [PROTOCOL/MIN_PORT[-MAX_PORT]:CIDR_IP]",
 				},
 				cli.StringFlag{
 					Name:  "labels",
@@ -72,7 +72,7 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "rules",
-					Usage: "Set of rules of the firewall profile",
+					Usage: "Set of rules of the firewall profile, i.e: --rules TCP/8080-8081:0.0.0.0/0,TCP/9090-9091:any,UDP/3456:1.2.3.4\n\tRule format: [PROTOCOL/MIN_PORT[-MAX_PORT]:CIDR_IP]",
 				},
 			},
 		},

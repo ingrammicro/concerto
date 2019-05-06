@@ -1,14 +1,12 @@
 package testdata
 
 import (
-	"encoding/json"
 	"github.com/ingrammicro/concerto/api/types"
 )
 
 // GetBootstrappingConfigurationData loads test data
 func GetBootstrappingConfigurationData() *types.BootstrappingConfiguration {
 
-	attrs := json.RawMessage(`{"fakeAttribute0":"val0","fakeAttribute1":"val1"}`)
 	return &types.BootstrappingConfiguration{
 		Policyfiles: []types.BootstrappingPolicyfile{
 			{
@@ -22,7 +20,7 @@ func GetBootstrappingConfigurationData() *types.BootstrappingConfiguration {
 				DownloadURL: "fakeProfileDownloadURL1",
 			},
 		},
-		Attributes:          &attrs,
+		Attributes:          map[string]interface{}{"fakeAttribute0": "val0", "fakeAttribute1": "val1"},
 		AttributeRevisionID: "fakeAttributeRevisionID",
 	}
 }

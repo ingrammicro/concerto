@@ -391,7 +391,7 @@ func (config *Config) readConcertoURL() error {
 	return nil
 }
 
-// readConcertoURL reads URL from CONCERTO_URL envrionment or calculates using API URL
+// readConcertoURL reads URL from CONCERTO_URL environment or calculates using API URL
 func (config *Config) readBrownfieldToken(c *cli.Context) error {
 	if config.BrownfieldToken != "" {
 		return nil

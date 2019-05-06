@@ -1,7 +1,5 @@
 package types
 
-import "encoding/json"
-
 type Server struct {
 	ID                string `json:"id" header:"ID"`
 	Name              string `json:"name" header:"NAME"`
@@ -18,11 +16,11 @@ type Server struct {
 }
 
 type ScriptChar struct {
-	ResourceType    string           `json:"resource_type" header:"RESOURCE_TYPE" show:"noshow,nolist"`
-	ID              string           `json:"id" header:"ID"`
-	Type            string           `json:"type" header:"TYPE"`
-	ParameterValues *json.RawMessage `json:"parameter_values" header:"PARAMETER_VALUES"`
-	TemplateID      string           `json:"template_id" header:"TEMPLATE_ID"`
-	ScriptID        string           `json:"script_id" header:"SCRIPT_ID"`
-	ExecutionOrder  int              `json:"execution_order" header:"EXECUTION_ORDER" show:"noshow,nolist"`
+	ResourceType    string                 `json:"resource_type" header:"RESOURCE_TYPE" show:"noshow,nolist"`
+	ID              string                 `json:"id" header:"ID"`
+	Type            string                 `json:"type" header:"TYPE"`
+	ParameterValues map[string]interface{} `json:"parameter_values" header:"PARAMETER_VALUES"`
+	TemplateID      string                 `json:"template_id" header:"TEMPLATE_ID"`
+	ScriptID        string                 `json:"script_id" header:"SCRIPT_ID"`
+	ExecutionOrder  int                    `json:"execution_order" header:"EXECUTION_ORDER" show:"noshow,nolist"`
 }

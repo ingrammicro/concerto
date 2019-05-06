@@ -2,26 +2,25 @@ package main
 
 import (
 	"fmt"
+	log "github.com/Sirupsen/logrus"
+	"github.com/codegangsta/cli"
+	"github.com/ingrammicro/concerto/audit"
 	"github.com/ingrammicro/concerto/blueprint"
 	"github.com/ingrammicro/concerto/bootstrapping"
 	"github.com/ingrammicro/concerto/brownfield"
 	"github.com/ingrammicro/concerto/cloud"
 	"github.com/ingrammicro/concerto/cmdpolling"
 	"github.com/ingrammicro/concerto/converge"
+	"github.com/ingrammicro/concerto/dispatcher"
+	"github.com/ingrammicro/concerto/firewall"
 	"github.com/ingrammicro/concerto/labels"
 	"github.com/ingrammicro/concerto/network"
 	"github.com/ingrammicro/concerto/settings"
+	"github.com/ingrammicro/concerto/utils"
+	"github.com/ingrammicro/concerto/utils/format"
 	"github.com/ingrammicro/concerto/wizard"
 	"os"
 	"sort"
-
-	log "github.com/Sirupsen/logrus"
-	"github.com/codegangsta/cli"
-	"github.com/ingrammicro/concerto/audit"
-	"github.com/ingrammicro/concerto/dispatcher"
-	"github.com/ingrammicro/concerto/firewall"
-	"github.com/ingrammicro/concerto/utils"
-	"github.com/ingrammicro/concerto/utils/format"
 )
 
 var serverCommands = []cli.Command{

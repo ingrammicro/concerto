@@ -1,12 +1,18 @@
 package cmd
 
 import (
+	"bufio"
+	"encoding/json"
 	"fmt"
+	"github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/blueprint"
 	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
+	"io/ioutil"
+	"os"
+	"regexp"
 	"strings"
 )
 
@@ -91,7 +97,7 @@ func TemplateCreate(c *cli.Context) error {
 
 	checkRequiredFlags(c, []string{"name", "generic-image-id"}, formatter)
 	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"cookbook-versions", "configuration-attributes"})
+	params, err := utils.FlagConvertParamsJSON(c, []string{"configuration-attributes"})
 	if err != nil {
 		formatter.PrintFatal("Error parsing parameters", err)
 	}
@@ -105,7 +111,11 @@ func TemplateCreate(c *cli.Context) error {
 		templateIn["run_list"] = utils.RemoveDuplicates(strings.Split(c.String("run-list"), ","))
 	}
 	if c.IsSet("cookbook-versions") {
-		templateIn["cookbook_versions"] = (*params)["cookbook-versions"]
+		cbIn, err := convertFlagParamsToCookbookVersions(c, c.String("cookbook-versions"))
+		if err != nil {
+			formatter.PrintFatal("Cannot parse input cookbook-versions parameters", err)
+		}
+		templateIn["cookbook_versions"] = cbIn
 	}
 	if c.IsSet("configuration-attributes") {
 		templateIn["configuration_attributes"] = (*params)["configuration-attributes"]
@@ -137,24 +147,37 @@ func TemplateUpdate(c *cli.Context) error {
 
 	checkRequiredFlags(c, []string{"id"}, formatter)
 
-	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"cookbook-versions", "configuration-attributes"})
-	if err != nil {
-		formatter.PrintFatal("Error parsing parameters", err)
+	if c.IsSet("configuration-attributes") && c.IsSet("configuration-attributes-from-file") {
+		return fmt.Errorf("invalid parameters detected. Please provide only one: 'configuration-attributes' or 'configuration-attributes-from-file'")
 	}
 
 	templateIn := map[string]interface{}{}
 	if c.IsSet("name") {
 		templateIn["name"] = c.String("name")
 	}
+	if c.IsSet("configuration-attributes-from-file") {
+		caIn, err := convertFlagParamsToConfigurationAttributesFromFile(c, c.String("configuration-attributes-from-file"))
+		if err != nil {
+			formatter.PrintFatal("Cannot parse input configuration attributes", err)
+		}
+		templateIn["configuration_attributes"] = caIn
+	}
+	if c.IsSet("configuration-attributes") {
+		params, err := utils.FlagConvertParamsJSON(c, []string{"configuration-attributes"})
+		if err != nil {
+			formatter.PrintFatal("Cannot parse input configuration attributes", err)
+		}
+		templateIn["configuration_attributes"] = (*params)["configuration-attributes"]
+	}
 	if c.IsSet("run-list") {
 		templateIn["run_list"] = utils.RemoveDuplicates(strings.Split(c.String("run-list"), ","))
 	}
 	if c.IsSet("cookbook-versions") {
-		templateIn["cookbook_versions"] = (*params)["cookbook-versions"]
-	}
-	if c.IsSet("configuration-attributes") {
-		templateIn["configuration_attributes"] = (*params)["configuration-attributes"]
+		cbIn, err := convertFlagParamsToCookbookVersions(c, c.String("cookbook-versions"))
+		if err != nil {
+			formatter.PrintFatal("Cannot parse input cookbook versions", err)
+		}
+		templateIn["cookbook_versions"] = cbIn
 	}
 
 	template, err := templateSvc.UpdateTemplate(&templateIn, c.String("id"))
@@ -243,19 +266,16 @@ func TemplateScriptCreate(c *cli.Context) error {
 
 	checkRequiredFlags(c, []string{"template-id", "type", "script-id"}, formatter)
 
-	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"parameter-values"})
-	if err != nil {
-		formatter.PrintFatal("Error parsing parameters", err)
-	}
-
 	templateScriptIn := map[string]interface{}{
-		"template_id": c.String("template-id"),
-		"type":        c.String("type"),
-		"script_id":   c.String("script-id"),
+		"type":      c.String("type"),
+		"script_id": c.String("script-id"),
 	}
 	if c.IsSet("parameter-values") {
-		templateScriptIn["parameter_values"] = (*params)["parameter-values"]
+		tsIn, err := convertFlagParamsToParameterValues(c, c.String("parameter-values"))
+		if err != nil {
+			formatter.PrintFatal("Cannot parse input parameter values", err)
+		}
+		templateScriptIn["parameter_values"] = tsIn
 	}
 
 	templateScript, err := templateScriptSvc.CreateTemplateScript(&templateScriptIn, c.String("template-id"))
@@ -273,16 +293,20 @@ func TemplateScriptUpdate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	templateScriptSvc, formatter := WireUpTemplate(c)
 
-	// TODO si necessary: type script_id parameter_values ?
-	checkRequiredFlags(c, []string{"id", "template-id"}, formatter)
+	checkRequiredFlags(c, []string{"template-id", "script-id", "id"}, formatter)
 
-	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"parameter-values"})
-	if err != nil {
-		formatter.PrintFatal("Error parsing parameters", err)
+	templateScriptIn := map[string]interface{}{
+		"script_id": c.String("script-id"),
+	}
+	if c.IsSet("parameter-values") {
+		tsIn, err := convertFlagParamsToParameterValues(c, c.String("parameter-values"))
+		if err != nil {
+			formatter.PrintFatal("Cannot parse input parameter values", err)
+		}
+		templateScriptIn["parameter_values"] = tsIn
 	}
 
-	templateScript, err := templateScriptSvc.UpdateTemplateScript(params, c.String("template-id"), c.String("id"))
+	templateScript, err := templateScriptSvc.UpdateTemplateScript(&templateScriptIn, c.String("template-id"), c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't update templateScript", err)
 	}
@@ -311,12 +335,12 @@ func TemplateScriptReorder(c *cli.Context) error {
 	templateScriptSvc, formatter := WireUpTemplate(c)
 
 	checkRequiredFlags(c, []string{"template-id", "type", "script-ids"}, formatter)
-	params, err := utils.FlagConvertParamsJSON(c, []string{"script-ids"})
-	if err != nil {
-		formatter.PrintFatal("Error parsing parameters", err)
+	templateScriptIn := map[string]interface{}{
+		"type":       c.String("type"),
+		"script_ids": utils.RemoveDuplicates(strings.Split(c.String("script-ids"), ",")),
 	}
 
-	templateScript, err := templateScriptSvc.ReorderTemplateScript(params, c.String("template-id"))
+	templateScript, err := templateScriptSvc.ReorderTemplateScript(&templateScriptIn, c.String("template-id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't reorder templateScript", err)
 	}
@@ -342,4 +366,115 @@ func TemplateServersList(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
 	return nil
+}
+
+// =========== Template helpers =============
+
+// convertFlagParamsToCookbookVersions returns the json representation for the given friendly input format of cookbook versions assignation
+// i.e: "wordpress:0.1.0,nano=2.0.1,1password~>1.3.0"
+func convertFlagParamsToCookbookVersions(c *cli.Context, cbvsIn string) (map[string]interface{}, error) {
+	result := map[string]interface{}{}
+	cookbookVersions := make([]*types.CookbookVersion, 0)
+	for _, cbvIn := range strings.Split(cbvsIn, ",") {
+		values := regexp.MustCompile(`(.*?)(~>|=|>=|<=|>|<|:)(\w.*)`).FindStringSubmatch(cbvIn)
+		if len(values) == 0 {
+			return nil, fmt.Errorf("invalid input cookbook version format %s", cbvIn)
+		}
+		name, operator, version := values[1], values[2], values[3]
+		if _, found := result[name]; found {
+			return nil, fmt.Errorf("detected duplicated cookbook version name: %s", name)
+		}
+
+		// uploaded. It requires to map adequate version_id
+		if operator == ":" {
+			if len(cookbookVersions) == 0 {
+				// data is loaded only once
+				svc, formatter := WireUpCookbookVersion(c)
+				cbvs, err := svc.GetCookbookVersionList()
+				if err != nil {
+					formatter.PrintFatal("cannot receive uploaded cookbook versions data", err)
+				}
+				cookbookVersions = cbvs
+			}
+			for _, cbv := range cookbookVersions {
+				if name == cbv.Name && version == cbv.Version {
+					result[name] = map[string]interface{}{"version_id": cbv.ID}
+				}
+			}
+			// name does not match the available uploaded
+			if _, found := result[name]; !found {
+				return nil, fmt.Errorf("invalid uploaded cookbook version name: %s", name)
+			}
+		} else {
+			//supermarket
+			result[name] = map[string]interface{}{"version": operator + " " + version} // at any case, it should leave a space between operator and version
+		}
+	}
+	return result, nil
+}
+
+// convertFlagParamsToParameterValues returns the json representation for the given friendly input format of parameter-values assignation
+func convertFlagParamsToParameterValues(c *cli.Context, cbIn string) (map[string]string, error) {
+	result := map[string]string{}
+	for _, cb := range strings.Split(cbIn, ",") {
+		values := regexp.MustCompile(`(.*?)(:)(\w.*)`).FindStringSubmatch(cb)
+		if len(values) == 0 {
+			return nil, fmt.Errorf("invalid input parameter values format %s", cb)
+		}
+		name, _, value := values[1], values[2], values[3]
+		if _, found := result[name]; found {
+			return nil, fmt.Errorf("detected duplicated parameter name: %s", name)
+		}
+		result[name] = value
+	}
+	return result, nil
+}
+
+// convertFlagParamsToConfigurationAttributesFromFile returns the json representation of configuration attributes taken from the input file or STDIN
+func convertFlagParamsToConfigurationAttributesFromFile(c *cli.Context, casIn string) (map[string]interface{}, error) {
+	var content map[string]interface{}
+	if casIn == "-" {
+		// read from STDIN
+		logrus.Info("Please, write configuration parameters json formatted:")
+		buff := ""
+		scanner := bufio.NewScanner(os.Stdin)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if len(line) == 0 {
+				logrus.Info("Processing...")
+				break
+			}
+			buff += line
+		}
+		if err := scanner.Err(); err != nil {
+			return nil, fmt.Errorf("reading standard input: %s", err)
+		}
+
+		if err := json.Unmarshal([]byte(buff), &content); err != nil {
+			return nil, fmt.Errorf("invalid json formatted attributes")
+		}
+
+	} else {
+		// read from file
+		sourceFilePath := casIn
+		if !utils.FileExists(sourceFilePath) {
+			return nil, fmt.Errorf("invalid file path, no such file: %s", sourceFilePath)
+		}
+
+		attrsFile, err := os.Open(sourceFilePath)
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer attrsFile.Close()
+
+		byteValue, err := ioutil.ReadAll(attrsFile)
+		if err != nil {
+			return nil, fmt.Errorf("cannot read attributes json file %s", sourceFilePath)
+		}
+
+		if err = json.Unmarshal(byteValue, &content); err != nil {
+			return nil, fmt.Errorf("invalid json formatted attributes in file %s", sourceFilePath)
+		}
+	}
+	return content, nil
 }

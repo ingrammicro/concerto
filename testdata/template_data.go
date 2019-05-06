@@ -1,15 +1,11 @@
 package testdata
 
 import (
-	"encoding/json"
-
 	"github.com/ingrammicro/concerto/api/types"
 )
 
 // GetTemplateData loads loads test data
 func GetTemplateData() []*types.Template {
-	conf0 := json.RawMessage(`{"fakeConf01":"x","fakeConf02":"y"}`)
-	conf1 := json.RawMessage(`{"fakeConf11":"x","fakeConf12":"y"}`)
 
 	return []*types.Template{
 		{
@@ -17,14 +13,14 @@ func GetTemplateData() []*types.Template {
 			Name:                    "fakeName0",
 			GenericImageID:          "fakeGenericImageID0",
 			RunList:                 []string{"fakeRunList01", "fakeRunList02"},
-			ConfigurationAttributes: &conf0,
+			ConfigurationAttributes: map[string]interface{}{"fakeConf01": "x", "fakeConf02": "y"},
 		},
 		{
 			ID:                      "fakeID1",
 			Name:                    "fakeName1",
 			GenericImageID:          "fakeGenericImageID1",
 			RunList:                 []string{"fakeRunList11", "fakeRunList12", "fakeRunList13"},
-			ConfigurationAttributes: &conf1,
+			ConfigurationAttributes: map[string]interface{}{"fakeConf11": "x", "fakeConf12": "y"},
 		},
 		{
 			ID:                      "fakeID2",
@@ -39,11 +35,6 @@ func GetTemplateData() []*types.Template {
 // GetTemplateScriptData loads test data
 func GetTemplateScriptData() []*types.TemplateScript {
 
-	param0 := json.RawMessage(`{"fakeConf01":"x","fakeConf02":"y"}`)
-	param1 := json.RawMessage(`{"fakeConf11":"x","fakeConf12":"y"}`)
-	param2 := json.RawMessage(`{"fakeConf21":"x","fakeConf22":"y"}`)
-	param3 := json.RawMessage(`{"fakeConf31":"x","fakeConf32":"y"}`)
-
 	return []*types.TemplateScript{
 		{
 			ID:              "fakeID0",
@@ -51,7 +42,7 @@ func GetTemplateScriptData() []*types.TemplateScript {
 			ExecutionOrder:  1,
 			TemplateID:      "fakeTemplateID0",
 			ScriptID:        "fakeScriptID0",
-			ParameterValues: &param0,
+			ParameterValues: map[string]interface{}{"fakeConf01": "x", "fakeConf02": "y"},
 		},
 		{
 			ID:              "fakeID1",
@@ -59,7 +50,7 @@ func GetTemplateScriptData() []*types.TemplateScript {
 			ExecutionOrder:  4,
 			TemplateID:      "fakeTemplateID1",
 			ScriptID:        "fakeScriptID1",
-			ParameterValues: &param1,
+			ParameterValues: map[string]interface{}{"fakeConf11": "x", "fakeConf12": "y"},
 		},
 		{
 			ID:              "fakeID2",
@@ -67,7 +58,7 @@ func GetTemplateScriptData() []*types.TemplateScript {
 			ExecutionOrder:  2,
 			TemplateID:      "fakeTemplateID2",
 			ScriptID:        "fakeScriptID2",
-			ParameterValues: &param2,
+			ParameterValues: map[string]interface{}{"fakeConf21": "x", "fakeConf22": "y"},
 		},
 		{
 			ID:              "fakeID3",
@@ -75,7 +66,7 @@ func GetTemplateScriptData() []*types.TemplateScript {
 			ExecutionOrder:  3,
 			TemplateID:      "fakeTemplateID3",
 			ScriptID:        "fakeScriptID3",
-			ParameterValues: &param3,
+			ParameterValues: map[string]interface{}{"fakeConf31": "x", "fakeConf32": "y"},
 		},
 	}
 }
