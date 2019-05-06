@@ -128,10 +128,10 @@ func FirewallProfileUpdate(c *cli.Context) error {
 	checkRequiredFlags(c, []string{"id"}, formatter)
 
 	firewallProfileIn := map[string]interface{}{}
-	if c.String("rules") != "" {
+	if c.String("name") != "" {
 		firewallProfileIn["name"] = c.String("name")
 	}
-	if c.String("rules") != "" {
+	if c.String("description") != "" {
 		firewallProfileIn["description"] = c.String("description")
 	}
 	if c.String("rules") != "" {

@@ -181,10 +181,6 @@ func SubCommands() []cli.Command {
 					Usage: "Template Id",
 				},
 				cli.StringFlag{
-					Name:  "script-id",
-					Usage: "Identifier for the script that is parameterised by the script characterisation",
-				},
-				cli.StringFlag{
 					Name:  "id",
 					Usage: "Identifier for the template-script that is parameterised by the script characterisation",
 				},

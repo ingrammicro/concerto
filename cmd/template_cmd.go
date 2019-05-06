@@ -10,11 +10,12 @@ import (
 	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
 )
+
+var templateCookbookVersionValueRegexp = regexp.MustCompile(`^(.*?)(~>|=|>=|<=|>|<|:)(\d+(?:\.\d+)+)$`)
 
 // WireUpTemplate prepares common resources to send request to Concerto API
 func WireUpTemplate(c *cli.Context) (ts *blueprint.TemplateService, f format.Formatter) {
@@ -96,29 +97,38 @@ func TemplateCreate(c *cli.Context) error {
 	templateSvc, formatter := WireUpTemplate(c)
 
 	checkRequiredFlags(c, []string{"name", "generic-image-id"}, formatter)
-	// parse json parameter values
-	params, err := utils.FlagConvertParamsJSON(c, []string{"configuration-attributes"})
-	if err != nil {
-		formatter.PrintFatal("Error parsing parameters", err)
+
+	if c.IsSet("configuration-attributes") && c.IsSet("configuration-attributes-from-file") {
+		return fmt.Errorf("invalid parameters detected. Please provide only one: 'configuration-attributes' or 'configuration-attributes-from-file'")
 	}
 
 	templateIn := map[string]interface{}{
 		"name":             c.String("name"),
 		"generic_image_id": c.String("generic-image-id"),
 	}
-
+	if c.IsSet("configuration-attributes-from-file") {
+		caIn, err := convertFlagParamsToConfigurationAttributesFromFile(c, c.String("configuration-attributes-from-file"))
+		if err != nil {
+			formatter.PrintFatal("Cannot parse input configuration attributes", err)
+		}
+		templateIn["configuration_attributes"] = caIn
+	}
+	if c.IsSet("configuration-attributes") {
+		params, err := utils.FlagConvertParamsJSON(c, []string{"configuration-attributes"})
+		if err != nil {
+			formatter.PrintFatal("Cannot parse input configuration attributes", err)
+		}
+		templateIn["configuration_attributes"] = (*params)["configuration-attributes"]
+	}
 	if c.IsSet("run-list") {
 		templateIn["run_list"] = utils.RemoveDuplicates(strings.Split(c.String("run-list"), ","))
 	}
 	if c.IsSet("cookbook-versions") {
 		cbIn, err := convertFlagParamsToCookbookVersions(c, c.String("cookbook-versions"))
 		if err != nil {
-			formatter.PrintFatal("Cannot parse input cookbook-versions parameters", err)
+			formatter.PrintFatal("Cannot parse input cookbook versions", err)
 		}
 		templateIn["cookbook_versions"] = cbIn
-	}
-	if c.IsSet("configuration-attributes") {
-		templateIn["configuration_attributes"] = (*params)["configuration-attributes"]
 	}
 
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
@@ -293,11 +303,9 @@ func TemplateScriptUpdate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	templateScriptSvc, formatter := WireUpTemplate(c)
 
-	checkRequiredFlags(c, []string{"template-id", "script-id", "id"}, formatter)
+	checkRequiredFlags(c, []string{"template-id", "id"}, formatter)
 
-	templateScriptIn := map[string]interface{}{
-		"script_id": c.String("script-id"),
-	}
+	templateScriptIn := map[string]interface{}{}
 	if c.IsSet("parameter-values") {
 		tsIn, err := convertFlagParamsToParameterValues(c, c.String("parameter-values"))
 		if err != nil {
@@ -376,7 +384,7 @@ func convertFlagParamsToCookbookVersions(c *cli.Context, cbvsIn string) (map[str
 	result := map[string]interface{}{}
 	cookbookVersions := make([]*types.CookbookVersion, 0)
 	for _, cbvIn := range strings.Split(cbvsIn, ",") {
-		values := regexp.MustCompile(`(.*?)(~>|=|>=|<=|>|<|:)(\w.*)`).FindStringSubmatch(cbvIn)
+		values := templateCookbookVersionValueRegexp.FindStringSubmatch(cbvIn)
 		if len(values) == 0 {
 			return nil, fmt.Errorf("invalid input cookbook version format %s", cbvIn)
 		}
@@ -401,9 +409,9 @@ func convertFlagParamsToCookbookVersions(c *cli.Context, cbvsIn string) (map[str
 					result[name] = map[string]interface{}{"version_id": cbv.ID}
 				}
 			}
-			// name does not match the available uploaded
+			// provided cookbook version does not match the available uploaded
 			if _, found := result[name]; !found {
-				return nil, fmt.Errorf("invalid uploaded cookbook version name: %s", name)
+				return nil, fmt.Errorf("invalid cookbook version: %s does not match the available uploaded", cbvIn)
 			}
 		} else {
 			//supermarket
@@ -447,13 +455,12 @@ func convertFlagParamsToConfigurationAttributesFromFile(c *cli.Context, casIn st
 			buff += line
 		}
 		if err := scanner.Err(); err != nil {
-			return nil, fmt.Errorf("reading standard input: %s", err)
+			return nil, fmt.Errorf("cannot read from standard input: %v", err)
 		}
 
-		if err := json.Unmarshal([]byte(buff), &content); err != nil {
+		if err := json.NewDecoder(strings.NewReader(buff)).Decode(&content); err != nil {
 			return nil, fmt.Errorf("invalid json formatted attributes")
 		}
-
 	} else {
 		// read from file
 		sourceFilePath := casIn
@@ -463,16 +470,11 @@ func convertFlagParamsToConfigurationAttributesFromFile(c *cli.Context, casIn st
 
 		attrsFile, err := os.Open(sourceFilePath)
 		if err != nil {
-			fmt.Println(err)
+			return nil, fmt.Errorf("cannot open file: %s. %v", sourceFilePath, err)
 		}
 		defer attrsFile.Close()
 
-		byteValue, err := ioutil.ReadAll(attrsFile)
-		if err != nil {
-			return nil, fmt.Errorf("cannot read attributes json file %s", sourceFilePath)
-		}
-
-		if err = json.Unmarshal(byteValue, &content); err != nil {
+		if err = json.NewDecoder(attrsFile).Decode(&content); err != nil {
 			return nil, fmt.Errorf("invalid json formatted attributes in file %s", sourceFilePath)
 		}
 	}
