@@ -106,7 +106,7 @@ func TemplateCreate(c *cli.Context) error {
 		"generic_image_id": c.String("generic-image-id"),
 	}
 	if c.IsSet("configuration-attributes-from-file") {
-		caIn, err := convertFlagParamsToConfigurationAttributesFromFile(c, c.String("configuration-attributes-from-file"))
+		caIn, err := convertFlagParamsJsonFromFileOrStdin(c, c.String("configuration-attributes-from-file"))
 		if err != nil {
 			formatter.PrintFatal("Cannot parse input configuration attributes", err)
 		}
@@ -165,7 +165,7 @@ func TemplateUpdate(c *cli.Context) error {
 		templateIn["name"] = c.String("name")
 	}
 	if c.IsSet("configuration-attributes-from-file") {
-		caIn, err := convertFlagParamsToConfigurationAttributesFromFile(c, c.String("configuration-attributes-from-file"))
+		caIn, err := convertFlagParamsJsonFromFileOrStdin(c, c.String("configuration-attributes-from-file"))
 		if err != nil {
 			formatter.PrintFatal("Cannot parse input configuration attributes", err)
 		}
@@ -275,16 +275,27 @@ func TemplateScriptCreate(c *cli.Context) error {
 
 	checkRequiredFlags(c, []string{"template-id", "type", "script-id"}, formatter)
 
+	if c.IsSet("parameter-values") && c.IsSet("parameter-values-from-file") {
+		return fmt.Errorf("invalid parameters detected. Please provide only one: 'parameter-values' or 'parameter-values-from-file'")
+	}
+
 	templateScriptIn := map[string]interface{}{
 		"type":      c.String("type"),
 		"script_id": c.String("script-id"),
 	}
-	if c.IsSet("parameter-values") {
-		tsIn, err := convertFlagParamsToParameterValues(c, c.String("parameter-values"))
+	if c.IsSet("parameter-values-from-file") {
+		pvIn, err := convertFlagParamsJsonFromFileOrStdin(c, c.String("parameter-values-from-file"))
 		if err != nil {
 			formatter.PrintFatal("Cannot parse input parameter values", err)
 		}
-		templateScriptIn["parameter_values"] = tsIn
+		templateScriptIn["parameter_values"] = pvIn
+	}
+	if c.IsSet("parameter-values") {
+		params, err := utils.FlagConvertParamsJSON(c, []string{"parameter-values"})
+		if err != nil {
+			formatter.PrintFatal("Cannot parse input parameter values", err)
+		}
+		templateScriptIn["parameter_values"] = (*params)["parameter-values"]
 	}
 
 	templateScript, err := templateScriptSvc.CreateTemplateScript(&templateScriptIn, c.String("template-id"))
@@ -304,13 +315,25 @@ func TemplateScriptUpdate(c *cli.Context) error {
 
 	checkRequiredFlags(c, []string{"template-id", "id"}, formatter)
 
+	if c.IsSet("parameter-values") && c.IsSet("parameter-values-from-file") {
+		return fmt.Errorf("invalid parameters detected. Please provide only one: 'parameter-values' or 'parameter-values-from-file'")
+	}
+
 	templateScriptIn := map[string]interface{}{}
-	if c.IsSet("parameter-values") {
-		tsIn, err := convertFlagParamsToParameterValues(c, c.String("parameter-values"))
+
+	if c.IsSet("parameter-values-from-file") {
+		pvIn, err := convertFlagParamsJsonFromFileOrStdin(c, c.String("parameter-values-from-file"))
 		if err != nil {
 			formatter.PrintFatal("Cannot parse input parameter values", err)
 		}
-		templateScriptIn["parameter_values"] = tsIn
+		templateScriptIn["parameter_values"] = pvIn
+	}
+	if c.IsSet("parameter-values") {
+		params, err := utils.FlagConvertParamsJSON(c, []string{"parameter-values"})
+		if err != nil {
+			formatter.PrintFatal("Cannot parse input parameter values", err)
+		}
+		templateScriptIn["parameter_values"] = (*params)["parameter-values"]
 	}
 
 	templateScript, err := templateScriptSvc.UpdateTemplateScript(&templateScriptIn, c.String("template-id"), c.String("id"))
@@ -420,47 +443,30 @@ func convertFlagParamsToCookbookVersions(c *cli.Context, cbvsIn string) (map[str
 	return result, nil
 }
 
-// convertFlagParamsToParameterValues returns the json representation for the given friendly input format of parameter-values assignation
-func convertFlagParamsToParameterValues(c *cli.Context, cbIn string) (map[string]string, error) {
-	result := map[string]string{}
-	for _, cb := range strings.Split(cbIn, ",") {
-		values := regexp.MustCompile(`(.*?)(:)(\w.*)`).FindStringSubmatch(cb)
-		if len(values) == 0 {
-			return nil, fmt.Errorf("invalid input parameter values format %s", cb)
-		}
-		name, _, value := values[1], values[2], values[3]
-		if _, found := result[name]; found {
-			return nil, fmt.Errorf("detected duplicated parameter name: %s", name)
-		}
-		result[name] = value
-	}
-	return result, nil
-}
-
-// convertFlagParamsToConfigurationAttributesFromFile returns the json representation of configuration attributes taken from the input file or STDIN
-func convertFlagParamsToConfigurationAttributesFromFile(c *cli.Context, casIn string) (map[string]interface{}, error) {
+// convertFlagParamsJsonFromFileOrStdin returns the json representation of parameters taken from the input file or STDIN
+func convertFlagParamsJsonFromFileOrStdin(c *cli.Context, dataIn string) (map[string]interface{}, error) {
 	var content map[string]interface{}
-	if casIn == "-" {
+	if dataIn == "-" {
 		// read from STDIN
-		log.Info("Please, write configuration parameters json formatted:")
+		log.Info("Please, write parameters json formatted:")
 		if err := json.NewDecoder(os.Stdin).Decode(&content); err != nil {
-			return nil, fmt.Errorf("invalid json formatted attributes")
+			return nil, fmt.Errorf("invalid json formatted parameter")
 		}
 	} else {
 		// read from file
-		sourceFilePath := casIn
+		sourceFilePath := dataIn
 		if !utils.FileExists(sourceFilePath) {
 			return nil, fmt.Errorf("invalid file path, no such file: %s", sourceFilePath)
 		}
 
-		attrsFile, err := os.Open(sourceFilePath)
+		jsonFile, err := os.Open(sourceFilePath)
 		if err != nil {
 			return nil, fmt.Errorf("cannot open file %s: %v", sourceFilePath, err)
 		}
-		defer attrsFile.Close()
+		defer jsonFile.Close()
 
-		if err = json.NewDecoder(attrsFile).Decode(&content); err != nil {
-			return nil, fmt.Errorf("invalid json formatted attributes in file %s", sourceFilePath)
+		if err = json.NewDecoder(jsonFile).Decode(&content); err != nil {
+			return nil, fmt.Errorf("invalid json formatted parameters in file %s", sourceFilePath)
 		}
 	}
 	return content, nil

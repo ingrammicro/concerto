@@ -167,7 +167,11 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "parameter-values",
-					Usage: "A list of comma separated script parameters paired by Id and Value, i.e: --parameter-values param1:val1,param2:val2",
+					Usage: "A map that assigns a value to each script parameter, as a json formatted parameter; i.e: '{\"param1\":\"val1\",\"param2\":\"val2\"}'",
+				},
+				cli.StringFlag{
+					Name:  "parameter-values-from-file",
+					Usage: "A map that assigns a value to each script parameter, from file or STDIN, as a json formatted parameter. \n\tFrom file: --parameter-values-from-file params.json \n\tFrom STDIN: --parameter-values-from-file -",
 				},
 			},
 		},
@@ -186,7 +190,11 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "parameter-values",
-					Usage: "A list of comma separated script parameters paired by Id and Value, i.e: --parameter-values param1:val1,param2:val2",
+					Usage: "A map that assigns a value to each script parameter, as a json formatted parameter; i.e: '{\"param1\":\"val1\",\"param2\":\"val2\"}'",
+				},
+				cli.StringFlag{
+					Name:  "parameter-values-from-file",
+					Usage: "A map that assigns a value to each script parameter, from file or STDIN, as a json formatted parameter. \n\tFrom file: --parameter-values-from-file params.json \n\tFrom STDIN: --parameter-values-from-file -",
 				},
 			},
 		},
