@@ -1,10 +1,9 @@
 package cmd
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/Sirupsen/logrus"
+	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/blueprint"
 	"github.com/ingrammicro/concerto/api/types"
@@ -443,22 +442,8 @@ func convertFlagParamsToConfigurationAttributesFromFile(c *cli.Context, casIn st
 	var content map[string]interface{}
 	if casIn == "-" {
 		// read from STDIN
-		logrus.Info("Please, write configuration parameters json formatted:")
-		buff := ""
-		scanner := bufio.NewScanner(os.Stdin)
-		for scanner.Scan() {
-			line := scanner.Text()
-			if len(line) == 0 {
-				logrus.Info("Processing...")
-				break
-			}
-			buff += line
-		}
-		if err := scanner.Err(); err != nil {
-			return nil, fmt.Errorf("cannot read from standard input: %v", err)
-		}
-
-		if err := json.NewDecoder(strings.NewReader(buff)).Decode(&content); err != nil {
+		log.Info("Please, write configuration parameters json formatted:")
+		if err := json.NewDecoder(os.Stdin).Decode(&content); err != nil {
 			return nil, fmt.Errorf("invalid json formatted attributes")
 		}
 	} else {
