@@ -411,7 +411,7 @@ func convertFlagParamsToCookbookVersions(c *cli.Context, cbvsIn string) (map[str
 			}
 			// provided cookbook version does not match the available uploaded
 			if _, found := result[name]; !found {
-				return nil, fmt.Errorf("invalid cookbook version: %s does not match the available uploaded", cbvIn)
+				return nil, fmt.Errorf("invalid cookbook version: %s does not match any of the cookbook versions uploaded to the platform", cbvIn)
 			}
 		} else {
 			//supermarket
@@ -470,7 +470,7 @@ func convertFlagParamsToConfigurationAttributesFromFile(c *cli.Context, casIn st
 
 		attrsFile, err := os.Open(sourceFilePath)
 		if err != nil {
-			return nil, fmt.Errorf("cannot open file: %s. %v", sourceFilePath, err)
+			return nil, fmt.Errorf("cannot open file %s: %v", sourceFilePath, err)
 		}
 		defer attrsFile.Close()
 
