@@ -24,15 +24,16 @@ type Rule struct {
 	CidrIP   string `json:"source" header:"SOURCE"`
 }
 
+var firewallProfileRulesRegexp = regexp.MustCompile(`(?P<ip_protocol>\w{3})\/(?P<min_port>\d+)(?:-(?P<max_port>\d+)?)?:(?P<source>[a-zA-Z0-9.\/]+)`)
+
 // ConvertFlagParamsToRules converts received input rules parameters into a Firewall Profile rules array
 func (fp *FirewallProfile) ConvertFlagParamsToRules(rulesIn string) error {
-	compRegEx := regexp.MustCompile(`(?P<ip_protocol>\w{3})\/(?P<min_port>\d+)(?:-(?P<max_port>\d+)?)?:(?P<source>[a-zA-Z0-9.\/]+)`)
 	for _, r := range strings.Split(rulesIn, ",") {
-		values := compRegEx.FindStringSubmatch(r)
+		values := firewallProfileRulesRegexp.FindStringSubmatch(r)
 		if len(values) == 0 {
 			return fmt.Errorf("invalid input rule format %s", r)
 		}
-		names := compRegEx.SubexpNames()
+		names := firewallProfileRulesRegexp.SubexpNames()
 		mapValueByName := make(map[string]string)
 		for j := range values {
 			if names[j] != "" {
