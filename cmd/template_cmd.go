@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-var templateCookbookVersionValueRegexp = regexp.MustCompile(`^(.+?)(~>|=|>=|<=|>|<|:)(\d+(?:\.\d+){0,2})$`)
+var templateCookbookVersionValueRegexp = regexp.MustCompile(`^([a-zA-Z0-9_-]+)(~>|=|>=|<=|>|<|:)(\d+(?:\.\d+){0,2})$`)
 
 // WireUpTemplate prepares common resources to send request to Concerto API
 func WireUpTemplate(c *cli.Context) (ts *blueprint.TemplateService, f format.Formatter) {
