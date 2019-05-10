@@ -3,12 +3,12 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/blueprint"
 	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
+	"io"
 	"os"
 	"regexp"
 	"strings"
@@ -445,29 +445,21 @@ func convertFlagParamsToCookbookVersions(c *cli.Context, cbvsIn string) (map[str
 
 // convertFlagParamsJsonFromFileOrStdin returns the json representation of parameters taken from the input file or STDIN
 func convertFlagParamsJsonFromFileOrStdin(c *cli.Context, dataIn string) (map[string]interface{}, error) {
+	var reader io.Reader
 	var content map[string]interface{}
 	if dataIn == "-" {
-		// read from STDIN
-		log.Info("Please, write parameters json formatted:")
-		if err := json.NewDecoder(os.Stdin).Decode(&content); err != nil {
-			return nil, fmt.Errorf("invalid json formatted parameter")
-		}
+		reader = os.Stdin
+		dataIn = "STDIN"
 	} else {
-		// read from file
-		sourceFilePath := dataIn
-		if !utils.FileExists(sourceFilePath) {
-			return nil, fmt.Errorf("invalid file path, no such file: %s", sourceFilePath)
-		}
-
-		jsonFile, err := os.Open(sourceFilePath)
+		jsonFile, err := os.Open(dataIn)
 		if err != nil {
-			return nil, fmt.Errorf("cannot open file %s: %v", sourceFilePath, err)
+			return nil, fmt.Errorf("cannot open %s to read JSON params: %v", dataIn, err)
 		}
 		defer jsonFile.Close()
-
-		if err = json.NewDecoder(jsonFile).Decode(&content); err != nil {
-			return nil, fmt.Errorf("invalid json formatted parameters in file %s", sourceFilePath)
-		}
+		reader = jsonFile
+	}
+	if err := json.NewDecoder(reader).Decode(&content); err != nil {
+		return nil, fmt.Errorf("cannot read JSON params from %s: %v", dataIn, err)
 	}
 	return content, nil
 }
