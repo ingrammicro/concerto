@@ -8,7 +8,7 @@ type Template struct {
 	RunList                 []string               `json:"run_list,omitempty" header:"RUN_LIST" show:"nolist"`
 	ConfigurationAttributes map[string]interface{} `json:"configuration_attributes,omitempty" header:"CONFIGURATION_ATTRIBUTES" show:"nolist"`
 	ResourceType            string                 `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
-	CookbookVersions        map[string]interface{} `json:"cookbook_versions,omitempty" header:"COOKBOOK_VERSIONS" show:"nolist"`
+	CookbookVersions        cookbookVersionsMap    `json:"cookbook_versions,omitempty" header:"COOKBOOK_VERSIONS" show:"nolist"`
 	State                   string                 `json:"state" header:"STATE" show:"nolist"`
 	LabelableFields
 }
@@ -38,3 +38,25 @@ type TemplateServer struct {
 
 // TemplateScriptCredentials stores credentials to servers
 type TemplateScriptCredentials interface{}
+
+// cookbookVersionsMap stores template cookbook versions map
+type cookbookVersionsMap map[string]cookbookVersionsFields
+
+// cookbookVersionsFields stores cookbook versions fields: version/version_id
+type cookbookVersionsFields struct {
+	Version   string `json:"version,omitempty" header:"VERSION"`
+	VersionId string `json:"version_id,omitempty" header:"VERSION_ID" show:"nolist,noshow"`
+}
+
+// FillInCookbookVersion resolves adequate cookbook version from version_id
+func (cbf *Template) FillInCookbookVersion(VersionByVersionID map[string]string) {
+	for name, cb := range cbf.CookbookVersions {
+		if _, found := VersionByVersionID[cb.VersionId]; found {
+			cb.Version = VersionByVersionID[cb.VersionId]
+			t := new(cookbookVersionsFields)
+			t.Version = cb.Version
+			t.VersionId = cb.VersionId
+			cbf.CookbookVersions[name] = *t
+		}
+	}
+}

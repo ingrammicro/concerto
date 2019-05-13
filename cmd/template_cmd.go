@@ -82,6 +82,10 @@ func TemplateShow(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive template data", err)
 	}
 
+	if err = resolveCookbookVersion(c, template); err != nil {
+		formatter.PrintFatal("cannot resolve cookbook versions data", err)
+	}
+
 	_, labelNamesByID := LabelLoadsMapping(c)
 	template.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*template); err != nil {
@@ -142,6 +146,10 @@ func TemplateCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create template", err)
 	}
 
+	if err = resolveCookbookVersion(c, template); err != nil {
+		formatter.PrintFatal("cannot resolve cookbook versions data", err)
+	}
+
 	template.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*template); err != nil {
 		formatter.PrintFatal("Couldn't print/format result", err)
@@ -194,6 +202,10 @@ func TemplateUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update template", err)
 	}
 
+	if err = resolveCookbookVersion(c, template); err != nil {
+		formatter.PrintFatal("cannot resolve cookbook versions data", err)
+	}
+
 	_, labelNamesByID := LabelLoadsMapping(c)
 	template.FillInLabelNames(labelNamesByID)
 	if err = formatter.PrintItem(*template); err != nil {
@@ -211,6 +223,10 @@ func TemplateCompile(c *cli.Context) error {
 	template, err := templateSvc.CompileTemplate(utils.FlagConvertParams(c), c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't compile template", err)
+	}
+
+	if err = resolveCookbookVersion(c, template); err != nil {
+		formatter.PrintFatal("cannot resolve cookbook versions data", err)
 	}
 
 	_, labelNamesByID := LabelLoadsMapping(c)
@@ -462,4 +478,21 @@ func convertFlagParamsJsonFromFileOrStdin(c *cli.Context, dataIn string) (map[st
 		return nil, fmt.Errorf("cannot read JSON params from %s: %v", dataIn, err)
 	}
 	return content, nil
+}
+
+// resolveCookbookVersion resolves adequate cookbook version ids
+func resolveCookbookVersion(c *cli.Context, template *types.Template) error {
+	svc, _ := WireUpCookbookVersion(c)
+	cbvs, err := svc.GetCookbookVersionList()
+	if err != nil {
+		return err
+	}
+
+	VersionByVersionID := make(map[string]string)
+	for _, cbv := range cbvs {
+		VersionByVersionID[cbv.ID] = cbv.Version
+	}
+	template.FillInCookbookVersion(VersionByVersionID)
+
+	return nil
 }

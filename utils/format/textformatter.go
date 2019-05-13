@@ -40,16 +40,33 @@ func (f *TextFormatter) printItemAux(w *tabwriter.Writer, item interface{}) erro
 					fmt.Fprintf(w, "\t%+v/%+v-%+v:%+v\n", strings.ToUpper(rule.Protocol), rule.MinPort, rule.MaxPort, rule.CidrIP)
 				}
 			case "map[string]interface {}": // TBD
-				cbs := it.Field(i).Interface()
-				fmt.Fprintf(w, "%s:", it.Type().Field(i).Tag.Get("header"))
-				for r, v := range cbs.(map[string]interface{}) {
-					fmt.Fprintf(w, "\t%s %s\n", r, strings.Replace(fmt.Sprintf("%+v\t", v), "map[", "[", -1))
+				cbs := it.Field(i).Interface().(map[string]interface{})
+				if len(cbs) > 0 {
+					fmt.Fprintf(w, "%s:", it.Type().Field(i).Tag.Get("header"))
+					for r, v := range cbs {
+						fmt.Fprintf(w, "\t%s %s\n", r, strings.Replace(fmt.Sprintf("%+v\t", v), "map[", "[", -1))
+					}
+				} else {
+					fmt.Fprintf(w, "%s:\t\n", it.Type().Field(i).Tag.Get("header"))
 				}
 			default:
 				if it.Field(i).Kind() == reflect.Struct {
 					f.printItemAux(w, it.Field(i).Interface())
 				} else if it.Field(i).Kind() == reflect.Map {
-					fmt.Fprintln(w, fmt.Sprintf("%s:\t%+v", it.Type().Field(i).Tag.Get("header"), strings.Replace(fmt.Sprintf("%+v\t", it.Field(i).Interface()), "map[", "[", -1)))
+					if len(it.Field(i).MapKeys()) > 0 {
+						fmt.Fprintf(w, fmt.Sprintf("%s:", it.Type().Field(i).Tag.Get("header")))
+						for _, mapVal := range it.Field(i).MapKeys() {
+							itVal := reflect.ValueOf(it.Field(i).MapIndex(mapVal).Interface())
+							for k := 0; k < itVal.NumField(); k++ {
+								sTags := strings.Split(itVal.Type().Field(k).Tag.Get("show"), ",")
+								if !utils.Contains(sTags, "noshow") {
+									fmt.Fprintf(w, "\t%+v %+v\n", mapVal.Interface(), itVal.Field(k).Interface())
+								}
+							}
+						}
+					} else {
+						fmt.Fprintf(w, fmt.Sprintf("%s:\t\n", it.Type().Field(i).Tag.Get("header")))
+					}
 				} else {
 					fmt.Fprintln(w, fmt.Sprintf("%s:\t%+v", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
 				}
