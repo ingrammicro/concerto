@@ -1,6 +1,7 @@
 package format
 
 import (
+	"encoding/json"
 	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"github.com/ingrammicro/concerto/api/types"
@@ -33,37 +34,49 @@ func (f *TextFormatter) printItemAux(w *tabwriter.Writer, item interface{}) erro
 			switch it.Field(i).Type().String() {
 			case "time.Time":
 				fmt.Fprintln(w, fmt.Sprintf("%s:\t%+v", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
-			case "[]types.Rule": // TBD
+			case "[]types.Rule": // TBD -> Rules
+				chunks := make([]string, 0)
+
 				rules := it.Field(i).Interface().([]types.Rule)
-				fmt.Fprintf(w, "%s:\tPROTOCOL/MIN_PORT-MAX_PORT:SOURCE\n", it.Type().Field(i).Tag.Get("header"))
+				fmt.Fprintf(w, fmt.Sprintf("%s:\t", it.Type().Field(i).Tag.Get("header")))
 				for _, rule := range rules {
-					fmt.Fprintf(w, "\t%+v/%+v-%+v:%+v\n", strings.ToUpper(rule.Protocol), rule.MinPort, rule.MaxPort, rule.CidrIP)
+					chunks = append(chunks, fmt.Sprintf("%+v/%+v-%+v:%+v", strings.ToUpper(rule.Protocol), rule.MinPort, rule.MaxPort, rule.CidrIP))
 				}
-			case "map[string]interface {}": // TBD
+				fmt.Fprintf(w, "%s\n", strings.Join(chunks, ","))
+			case "map[string]interface {}": // TBD -> configuration_attributes, parameter_values... (raw json)
 				cbs := it.Field(i).Interface().(map[string]interface{})
 				if len(cbs) > 0 {
-					fmt.Fprintf(w, "%s:", it.Type().Field(i).Tag.Get("header"))
-					for r, v := range cbs {
-						fmt.Fprintf(w, "\t%s %s\n", r, strings.Replace(fmt.Sprintf("%+v\t", v), "map[", "[", -1))
+					data, err := json.Marshal(cbs)
+					if err != nil {
+						return err
 					}
+					fmt.Fprintf(w, "%s:\t%+v\n", it.Type().Field(i).Tag.Get("header"), string(data))
 				} else {
 					fmt.Fprintf(w, "%s:\t\n", it.Type().Field(i).Tag.Get("header"))
 				}
+			case "[]string": // TBD -> run-list, labels
+				fmt.Fprintf(w, "%s:\t%s\n", it.Type().Field(i).Tag.Get("header"), strings.Join(it.Field(i).Interface().([]string), ","))
 			default:
 				if it.Field(i).Kind() == reflect.Struct {
 					f.printItemAux(w, it.Field(i).Interface())
-				} else if it.Field(i).Kind() == reflect.Map {
+				} else if it.Field(i).Kind() == reflect.Map { // TBD -> cookbook versions
 					if len(it.Field(i).MapKeys()) > 0 {
-						fmt.Fprintf(w, fmt.Sprintf("%s:", it.Type().Field(i).Tag.Get("header")))
+						fmt.Fprintf(w, fmt.Sprintf("%s:\t", it.Type().Field(i).Tag.Get("header")))
+						chunks := make([]string, 0)
 						for _, mapVal := range it.Field(i).MapKeys() {
 							itVal := reflect.ValueOf(it.Field(i).MapIndex(mapVal).Interface())
 							for k := 0; k < itVal.NumField(); k++ {
 								sTags := strings.Split(itVal.Type().Field(k).Tag.Get("show"), ",")
 								if !utils.Contains(sTags, "noshow") {
-									fmt.Fprintf(w, "\t%+v %+v\n", mapVal.Interface(), itVal.Field(k).Interface())
+									if !utils.Contains(sTags, "noheader") {
+										chunks = append(chunks, fmt.Sprintf("%s", fmt.Sprintf("%+v %+v", mapVal.Interface(), itVal.Field(k).Interface())))
+									} else {
+										chunks = append(chunks, fmt.Sprintf("%s", itVal.Field(k).Interface()))
+									}
 								}
 							}
 						}
+						fmt.Fprintf(w, "%s\n", strings.Join(chunks, ","))
 					} else {
 						fmt.Fprintf(w, fmt.Sprintf("%s:\t\n", it.Type().Field(i).Tag.Get("header")))
 					}

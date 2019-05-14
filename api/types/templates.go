@@ -1,5 +1,9 @@
 package types
 
+import (
+	"strings"
+)
+
 // Template stores blueprint templates
 type Template struct {
 	ID                      string                 `json:"id,omitempty" header:"ID"`
@@ -44,19 +48,24 @@ type cookbookVersionsMap map[string]cookbookVersionsFields
 
 // cookbookVersionsFields stores cookbook versions fields: version/version_id
 type cookbookVersionsFields struct {
-	Version   string `json:"version,omitempty" header:"VERSION"`
-	VersionId string `json:"version_id,omitempty" header:"VERSION_ID" show:"nolist,noshow"`
+	Version          string `json:"version,omitempty" header:"VERSION" show:"nolist,noshow"`
+	VersionId        string `json:"version_id,omitempty" header:"VERSION_ID" show:"nolist,noshow"`
+	VersionComposite string `json:"omitempty" header:"VERSION_COMPOSITE" show:"nolist,noheader"`
 }
 
 // FillInCookbookVersion resolves adequate cookbook version from version_id
 func (cbf *Template) FillInCookbookVersion(VersionByVersionID map[string]string) {
 	for name, cb := range cbf.CookbookVersions {
+		t := new(cookbookVersionsFields)
 		if _, found := VersionByVersionID[cb.VersionId]; found {
 			cb.Version = VersionByVersionID[cb.VersionId]
-			t := new(cookbookVersionsFields)
 			t.Version = cb.Version
 			t.VersionId = cb.VersionId
-			cbf.CookbookVersions[name] = *t
+			t.VersionComposite = strings.Join([]string{name, cb.Version}, ":")
+		} else {
+			t.Version = cb.Version
+			t.VersionComposite = strings.Join([]string{name, strings.Replace(cb.Version, " ", "", -1)}, "")
 		}
+		cbf.CookbookVersions[name] = *t
 	}
 }

@@ -45,15 +45,15 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "run-list",
-					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up, i.e: --run-list imco::client,1password,wordpress",
+					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up, i.e: --run-list imco::client,1password,joomla",
 				},
 				cli.StringFlag{
 					Name:  "cookbook-versions",
-					Usage: "The cookbook versions used to configure the service recipes in the run-list, i.e: --cookbook-versions \"imco:3.0.3,1password~>1.3.0,wordpress:0.1.0\" \n\tCookbook version format: [NAME<OPERATOR>VERSION] \n\tSupported Operators:\n\t\tChef supermarket cookbook '~>','=','>=','>','<','<='\n\t\tUploaded cookbook ':'",
+					Usage: "The cookbook versions used to configure the service recipes in the run-list, i.e: --cookbook-versions \"imco:3.0.3,1password~>1.3.0,joomla:0.11.0\" \n\tCookbook version format: [NAME<OPERATOR>VERSION] \n\tSupported Operators:\n\t\tChef supermarket cookbook '~>','=','>=','>','<','<='\n\t\tUploaded cookbook ':'",
 				},
 				cli.StringFlag{
 					Name:  "configuration-attributes",
-					Usage: "The attributes used to configure the service recipes in the run-list, as a json formatted parameter",
+					Usage: "The attributes used to configure the service recipes in the run-list, as a json formatted parameter. i.e: --configuration-attributes '{\"joomla\":{\"db\":{\"password\":\"my_pass\"},\"port\":\"8080\"}}'",
 				},
 				cli.StringFlag{
 					Name:  "configuration-attributes-from-file",
@@ -80,15 +80,15 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "run-list",
-					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up, i.e: --run-list imco::client,1password,wordpress",
+					Usage: "A list of comma separated cookbook recipes that is run on the servers at start-up, i.e: --run-list imco::client,1password,joomla",
 				},
 				cli.StringFlag{
 					Name:  "cookbook-versions",
-					Usage: "The cookbook versions used to configure the service recipes in the run-list, i.e: --cookbook-versions \"imco:3.0.3,1password~>1.3.0,wordpress:0.1.0\" \n\tCookbook version format: [NAME<OPERATOR>VERSION] \n\tSupported Operators:\n\t\tChef supermarket cookbook '~>','=','>=','>','<','<='\n\t\tUploaded cookbook ':'",
+					Usage: "The cookbook versions used to configure the service recipes in the run-list, i.e: --cookbook-versions \"imco:3.0.3,1password~>1.3.0,joomla:0.11.0\" \n\tCookbook version format: [NAME<OPERATOR>VERSION] \n\tSupported Operators:\n\t\tChef supermarket cookbook '~>','=','>=','>','<','<='\n\t\tUploaded cookbook ':'",
 				},
 				cli.StringFlag{
 					Name:  "configuration-attributes",
-					Usage: "The attributes used to configure the service recipes in the run-list, as a json formatted parameter",
+					Usage: "The attributes used to configure the service recipes in the run-list, as a json formatted parameter. i.e: --configuration-attributes '{\"joomla\":{\"db\":{\"password\":\"my_pass\"},\"port\":\"8080\"}}'",
 				},
 				cli.StringFlag{
 					Name:  "configuration-attributes-from-file",
