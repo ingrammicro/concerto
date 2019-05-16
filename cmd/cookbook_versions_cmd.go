@@ -98,8 +98,7 @@ func CookbookVersionUpload(c *cli.Context) error {
 	cbIn := map[string]interface{}{}
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
-		cbIn["label_ids"] = labelsIdsArr
+		cbIn["label_ids"] = LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
 	}
 
 	// creates new cookbook_version

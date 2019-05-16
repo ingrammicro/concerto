@@ -99,8 +99,7 @@ func SSHProfileCreate(c *cli.Context) error {
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
-		sshProfileIn["label_ids"] = labelsIdsArr
+		sshProfileIn["label_ids"] = LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
 	}
 
 	sshProfile, err := sshProfileSvc.CreateSSHProfile(&sshProfileIn)

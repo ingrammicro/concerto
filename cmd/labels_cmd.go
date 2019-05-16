@@ -161,11 +161,11 @@ func LabelResolution(c *cli.Context, labelsNames string, labelNamesByID *map[str
 			labelsOutMap[name] = (*labelIDsByName)[name]
 		}
 	}
-	labelsIdsArr := make([]string, 0)
+	labelIds := make([]string, 0)
 	for _, mp := range labelsOutMap {
-		labelsIdsArr = append(labelsIdsArr, mp)
+		labelIds = append(labelIds, mp)
 	}
-	return labelsIdsArr
+	return labelIds
 }
 
 // LabelAdd subcommand function assigns a single label from a single labelable resource
@@ -176,11 +176,11 @@ func LabelAdd(c *cli.Context) error {
 	checkRequiredFlags(c, []string{"id", "label"}, formatter)
 
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
-	labelsIdsArr := LabelResolution(c, c.String("label"), &labelNamesByID, &labelIDsByName)
-	if len(labelsIdsArr) > 1 {
-		formatter.PrintFatal("Too many label names. Please, Use only one label name", fmt.Errorf("invalid parameter: %v - %v", c.String("label"), labelsIdsArr))
+	labelIds := LabelResolution(c, c.String("label"), &labelNamesByID, &labelIDsByName)
+	if len(labelIds) > 1 {
+		formatter.PrintFatal("Too many label names. Please, Use only one label name", fmt.Errorf("invalid parameter: %v - %v", c.String("label"), labelIds))
 	}
-	labelID := labelsIdsArr[0]
+	labelID := labelIds[0]
 
 	resData := make(map[string]string)
 	resData["id"] = c.String("id")

@@ -100,8 +100,7 @@ func ServerCreate(c *cli.Context) error {
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
-		serverIn["label_ids"] = labelsIdsArr
+		serverIn["label_ids"] = LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
 	}
 
 	server, err := serverSvc.CreateServer(&serverIn)
