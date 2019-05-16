@@ -51,7 +51,7 @@ func GetFloatingIPListMockedFilteredByServer(t *testing.T, floatingIPIn []*types
 	assert.Nil(err, "FloatingIP test data corrupted")
 
 	// call service
-	cs.On("Get", fmt.Sprintf("/network/floating_ips?server_id=%s", floatingIPIn[0].AttachedServerID)).Return(dIn, 200, nil)
+	cs.On("Get", fmt.Sprintf("/cloud/servers/%s/floating_ips", floatingIPIn[0].AttachedServerID)).Return(dIn, 200, nil)
 	floatingIPOut, err := ds.GetFloatingIPList(floatingIPIn[0].AttachedServerID)
 	assert.Nil(err, "Error getting floating IP list filtered by server")
 	assert.Equal(floatingIPIn, floatingIPOut, "GetFloatingIPList returned different floating IPs")

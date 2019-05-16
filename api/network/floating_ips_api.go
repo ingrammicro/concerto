@@ -3,8 +3,6 @@ package network
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
-
 	log "github.com/Sirupsen/logrus"
 	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
@@ -32,7 +30,8 @@ func (dm *FloatingIPService) GetFloatingIPList(serverID string) (floatingIPs []*
 
 	path := "/network/floating_ips"
 	if serverID != "" {
-		path = strings.Join([]string{path, "?server_id=", serverID}, "")
+		path = fmt.Sprintf("/cloud/servers/%s/floating_ips", serverID)
+
 	}
 	data, status, err := dm.concertoService.Get(path)
 
