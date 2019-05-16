@@ -64,7 +64,7 @@ func (f *TextFormatter) printItemAux(w *tabwriter.Writer, item interface{}) erro
 						fmt.Fprintf(w, fmt.Sprintf("%s:\t", it.Type().Field(i).Tag.Get("header")))
 						chunks := make([]string, 0)
 						for _, mapVal := range it.Field(i).MapKeys() {
-							itVal := reflect.ValueOf(it.Field(i).MapIndex(mapVal).Interface())
+							itVal := reflect.ValueOf(it.Field(i).MapIndex(mapVal).Interface()).Elem()
 							for k := 0; k < itVal.NumField(); k++ {
 								sTags := strings.Split(itVal.Type().Field(k).Tag.Get("show"), ",")
 								if !utils.Contains(sTags, "noshow") {

@@ -44,7 +44,7 @@ type TemplateServer struct {
 type TemplateScriptCredentials interface{}
 
 // cookbookVersionsMap stores template cookbook versions map
-type cookbookVersionsMap map[string]cookbookVersionsFields
+type cookbookVersionsMap map[string]*cookbookVersionsFields
 
 // cookbookVersionsFields stores cookbook versions fields: version/version_id
 type cookbookVersionsFields struct {
@@ -53,19 +53,14 @@ type cookbookVersionsFields struct {
 	VersionComposite string `json:"omitempty" header:"VERSION_COMPOSITE" show:"nolist,noheader"`
 }
 
-// FillInCookbookVersion resolves adequate cookbook version from version_id
-func (cbf *Template) FillInCookbookVersion(VersionByVersionID map[string]string) {
-	for name, cb := range cbf.CookbookVersions {
-		t := new(cookbookVersionsFields)
-		if _, found := VersionByVersionID[cb.VersionId]; found {
-			cb.Version = VersionByVersionID[cb.VersionId]
-			t.Version = cb.Version
-			t.VersionId = cb.VersionId
-			t.VersionComposite = strings.Join([]string{name, cb.Version}, ":")
+// FillInCookbookVersionComposite resolves adequate cookbook version from version_id
+func (t *Template) FillInCookbookVersionComposite(customCookbookVersionsByVersionID map[string]string) {
+	for name, cv := range t.CookbookVersions {
+		if v, found := customCookbookVersionsByVersionID[cv.VersionId]; found {
+			cv.Version = v
+			cv.VersionComposite = strings.Join([]string{name, v}, ":")
 		} else {
-			t.Version = cb.Version
-			t.VersionComposite = strings.Join([]string{name, strings.Replace(cb.Version, " ", "", -1)}, "")
+			cv.VersionComposite = strings.Join([]string{name, strings.Replace(cv.Version, " ", "", -1)}, "")
 		}
-		cbf.CookbookVersions[name] = *t
 	}
 }

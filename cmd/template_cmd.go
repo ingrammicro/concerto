@@ -82,7 +82,7 @@ func TemplateShow(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't receive template data", err)
 	}
 
-	if err = resolveCookbookVersion(c, template); err != nil {
+	if err = resolveCookbookVersions(c, template); err != nil {
 		formatter.PrintFatal("cannot resolve cookbook versions data", err)
 	}
 
@@ -146,7 +146,7 @@ func TemplateCreate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't create template", err)
 	}
 
-	if err = resolveCookbookVersion(c, template); err != nil {
+	if err = resolveCookbookVersions(c, template); err != nil {
 		formatter.PrintFatal("cannot resolve cookbook versions data", err)
 	}
 
@@ -202,7 +202,7 @@ func TemplateUpdate(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't update template", err)
 	}
 
-	if err = resolveCookbookVersion(c, template); err != nil {
+	if err = resolveCookbookVersions(c, template); err != nil {
 		formatter.PrintFatal("cannot resolve cookbook versions data", err)
 	}
 
@@ -225,7 +225,7 @@ func TemplateCompile(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't compile template", err)
 	}
 
-	if err = resolveCookbookVersion(c, template); err != nil {
+	if err = resolveCookbookVersions(c, template); err != nil {
 		formatter.PrintFatal("cannot resolve cookbook versions data", err)
 	}
 
@@ -480,19 +480,19 @@ func convertFlagParamsJsonFromFileOrStdin(c *cli.Context, dataIn string) (map[st
 	return content, nil
 }
 
-// resolveCookbookVersion resolves adequate cookbook version ids
-func resolveCookbookVersion(c *cli.Context, template *types.Template) error {
+// resolveCookbookVersions resolves adequate cookbook version ids
+func resolveCookbookVersions(c *cli.Context, template *types.Template) error {
 	svc, _ := WireUpCookbookVersion(c)
 	cbvs, err := svc.GetCookbookVersionList()
 	if err != nil {
 		return err
 	}
 
-	VersionByVersionID := make(map[string]string)
+	customCookbookVersionsByVersionID := make(map[string]string)
 	for _, cbv := range cbvs {
-		VersionByVersionID[cbv.ID] = cbv.Version
+		customCookbookVersionsByVersionID[cbv.ID] = cbv.Version
 	}
-	template.FillInCookbookVersion(VersionByVersionID)
+	template.FillInCookbookVersionComposite(customCookbookVersionsByVersionID)
 
 	return nil
 }
