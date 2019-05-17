@@ -4,6 +4,7 @@ import (
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/network/firewall_profiles"
 	"github.com/ingrammicro/concerto/network/floating_ips"
+	"github.com/ingrammicro/concerto/network/subnets"
 	"github.com/ingrammicro/concerto/network/vpcs"
 )
 
@@ -24,6 +25,11 @@ func SubCommands() []cli.Command {
 			Name:        "vpcs",
 			Usage:       "Provides information about Virtual Private Clouds (VPCs)",
 			Subcommands: append(vpcs.SubCommands()),
+		},
+		{
+			Name:        "subnets",
+			Usage:       "Provides information about VPC Subnets",
+			Subcommands: append(subnets.SubCommands()),
 		},
 	}
 }
