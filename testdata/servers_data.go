@@ -1,7 +1,6 @@
 package testdata
 
 import (
-	"encoding/json"
 	"github.com/ingrammicro/concerto/api/types"
 )
 
@@ -37,14 +36,11 @@ func GetServerData() []*types.Server {
 // GetScriptCharData loads test data
 func GetScriptCharData() []*types.ScriptChar {
 
-	param0 := json.RawMessage(`{"fakeConf01":"x","fakeConf02":"y"}`)
-	param1 := json.RawMessage(`{"fakeConf11":"x","fakeConf12":"y"}`)
-
 	return []*types.ScriptChar{
 		{
 			ID:              "fakeID0",
 			Type:            "fakeType0",
-			ParameterValues: &param0,
+			ParameterValues: map[string]interface{}{"fakeConf01": "x", "fakeConf02": "y"},
 			TemplateID:      "fakeTemplateID0",
 			ScriptID:        "fakeScriptID0",
 			ExecutionOrder:  0,
@@ -53,7 +49,7 @@ func GetScriptCharData() []*types.ScriptChar {
 		{
 			ID:              "fakeID1",
 			Type:            "fakeType1",
-			ParameterValues: &param1,
+			ParameterValues: map[string]interface{}{"fakeConf11": "x", "fakeConf12": "y"},
 			TemplateID:      "fakeTemplateID1",
 			ScriptID:        "fakeScriptID1",
 			ExecutionOrder:  1,

@@ -45,7 +45,7 @@ type bootstrappingProcess struct {
 }
 type attributes struct {
 	revisionID string
-	rawData    *json.RawMessage
+	rawData    map[string]interface{}
 }
 
 type policyfile types.BootstrappingPolicyfile

@@ -1,8 +1,10 @@
 package format
 
 import (
+	"encoding/json"
 	"fmt"
 	log "github.com/Sirupsen/logrus"
+	"github.com/ingrammicro/concerto/api/types"
 	"github.com/ingrammicro/concerto/utils"
 	"io"
 	"reflect"
@@ -32,17 +34,52 @@ func (f *TextFormatter) printItemAux(w *tabwriter.Writer, item interface{}) erro
 			switch it.Field(i).Type().String() {
 			case "time.Time":
 				fmt.Fprintln(w, fmt.Sprintf("%s:\t%+v", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
-			case "json.RawMessage":
-				fmt.Fprintln(w, fmt.Sprintf("%s:\t%s", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
-			case "*json.RawMessage":
-				if it.Field(i).IsNil() {
-					fmt.Fprintln(w, fmt.Sprintf("%s:\t", it.Type().Field(i).Tag.Get("header")))
-				} else {
-					fmt.Fprintln(w, fmt.Sprintf("%s:\t%s", it.Type().Field(i).Tag.Get("header"), it.Field(i).Elem()))
+			case "[]types.Rule": // TBD -> Rules
+				chunks := make([]string, 0)
+
+				rules := it.Field(i).Interface().([]types.Rule)
+				fmt.Fprintf(w, fmt.Sprintf("%s:\t", it.Type().Field(i).Tag.Get("header")))
+				for _, rule := range rules {
+					chunks = append(chunks, fmt.Sprintf("%+v/%+v-%+v:%+v", strings.ToUpper(rule.Protocol), rule.MinPort, rule.MaxPort, rule.CidrIP))
 				}
+				fmt.Fprintf(w, "%s\n", strings.Join(chunks, ","))
+			case "map[string]interface {}": // TBD -> configuration_attributes, parameter_values... (raw json)
+				cbs := it.Field(i).Interface().(map[string]interface{})
+				if len(cbs) > 0 {
+					data, err := json.Marshal(cbs)
+					if err != nil {
+						return err
+					}
+					fmt.Fprintf(w, "%s:\t%+v\n", it.Type().Field(i).Tag.Get("header"), string(data))
+				} else {
+					fmt.Fprintf(w, "%s:\t\n", it.Type().Field(i).Tag.Get("header"))
+				}
+			case "[]string": // TBD -> run-list, labels
+				fmt.Fprintf(w, "%s:\t%s\n", it.Type().Field(i).Tag.Get("header"), strings.Join(it.Field(i).Interface().([]string), ","))
 			default:
 				if it.Field(i).Kind() == reflect.Struct {
 					f.printItemAux(w, it.Field(i).Interface())
+				} else if it.Field(i).Kind() == reflect.Map { // TBD -> cookbook versions
+					if len(it.Field(i).MapKeys()) > 0 {
+						fmt.Fprintf(w, fmt.Sprintf("%s:\t", it.Type().Field(i).Tag.Get("header")))
+						chunks := make([]string, 0)
+						for _, mapVal := range it.Field(i).MapKeys() {
+							itVal := reflect.ValueOf(it.Field(i).MapIndex(mapVal).Interface()).Elem()
+							for k := 0; k < itVal.NumField(); k++ {
+								sTags := strings.Split(itVal.Type().Field(k).Tag.Get("show"), ",")
+								if !utils.Contains(sTags, "noshow") {
+									if !utils.Contains(sTags, "noheader") {
+										chunks = append(chunks, fmt.Sprintf("%s", fmt.Sprintf("%+v %+v", mapVal.Interface(), itVal.Field(k).Interface())))
+									} else {
+										chunks = append(chunks, fmt.Sprintf("%s", itVal.Field(k).Interface()))
+									}
+								}
+							}
+						}
+						fmt.Fprintf(w, "%s\n", strings.Join(chunks, ","))
+					} else {
+						fmt.Fprintf(w, fmt.Sprintf("%s:\t\n", it.Type().Field(i).Tag.Get("header")))
+					}
 				} else {
 					fmt.Fprintln(w, fmt.Sprintf("%s:\t%+v", it.Type().Field(i).Tag.Get("header"), it.Field(i).Interface()))
 				}
@@ -111,17 +148,11 @@ func (f *TextFormatter) printListBodyAux(w *tabwriter.Writer, rv reflect.Value, 
 				switch field.Type().String() {
 				case "time.Time":
 					fmt.Fprint(w, fmt.Sprintf("%+v\t", field.Interface()))
-				case "json.RawMessage":
-					fmt.Fprint(w, fmt.Sprintf("%s\t", field.Interface()))
-				case "*json.RawMessage":
-					if field.IsNil() {
-						fmt.Fprint(w, fmt.Sprintf(" \t"))
-					} else {
-						fmt.Fprint(w, fmt.Sprintf("%s\t", field.Elem()))
-					}
 				default:
 					if field.Kind() == reflect.Struct {
 						f.printListBodyAux(w, field, depth+1)
+					} else if field.Kind() == reflect.Map {
+						fmt.Fprint(w, strings.Replace(fmt.Sprintf("%+v\t", field), "map[", "[", -1))
 					} else {
 						fmt.Fprint(w, fmt.Sprintf("%+v\t", field))
 					}
@@ -129,6 +160,7 @@ func (f *TextFormatter) printListBodyAux(w *tabwriter.Writer, rv reflect.Value, 
 			}
 		}
 	}
+
 }
 
 // PrintList prints item list

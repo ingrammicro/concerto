@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/api/network"
 	"github.com/ingrammicro/concerto/api/types"
@@ -88,17 +87,18 @@ func FirewallProfileCreate(c *cli.Context) error {
 	firewallProfileSvc, formatter := WireUpFirewallProfile(c)
 
 	checkRequiredFlags(c, []string{"name", "description"}, formatter)
-	params, err := utils.FlagConvertParamsJSON(c, []string{"rules"})
-	if err != nil {
-		formatter.PrintFatal("Error parsing parameters", err)
-	}
 
 	firewallProfileIn := map[string]interface{}{
 		"name":        c.String("name"),
 		"description": c.String("description"),
 	}
+
 	if c.String("rules") != "" {
-		firewallProfileIn["rules"] = (*params)["rules"]
+		fw := new(types.FirewallProfile)
+		if err := fw.ConvertFlagParamsToRules(c.String("rules")); err != nil {
+			formatter.PrintFatal("Error parsing parameters", err)
+		}
+		firewallProfileIn["rules"] = fw.Rules
 	}
 
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
@@ -126,11 +126,23 @@ func FirewallProfileUpdate(c *cli.Context) error {
 	firewallProfileSvc, formatter := WireUpFirewallProfile(c)
 
 	checkRequiredFlags(c, []string{"id"}, formatter)
-	params, err := utils.FlagConvertParamsJSON(c, []string{"rules"})
-	if err != nil {
-		formatter.PrintFatal("Error parsing parameters", err)
+
+	firewallProfileIn := map[string]interface{}{}
+	if c.String("name") != "" {
+		firewallProfileIn["name"] = c.String("name")
 	}
-	firewallProfile, err := firewallProfileSvc.UpdateFirewallProfile(params, c.String("id"))
+	if c.String("description") != "" {
+		firewallProfileIn["description"] = c.String("description")
+	}
+	if c.String("rules") != "" {
+		fw := new(types.FirewallProfile)
+		if err := fw.ConvertFlagParamsToRules(c.String("rules")); err != nil {
+			formatter.PrintFatal("Error parsing parameters", err)
+		}
+		firewallProfileIn["rules"] = fw.Rules
+	}
+
+	firewallProfile, err := firewallProfileSvc.UpdateFirewallProfile(&firewallProfileIn, c.String("id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't update firewallProfile", err)
 	}

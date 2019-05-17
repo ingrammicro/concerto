@@ -68,10 +68,3 @@ func ItemConvertParams(item interface{}) (*map[string]interface{}, error) {
 	}
 	return &v, nil
 }
-
-// JSONParam parses parameter as json structure
-func JSONParam(param string) (interface{}, error) {
-	var p interface{}
-	err := json.Unmarshal([]byte(param), &p)
-	return p, err
-}

@@ -1,12 +1,8 @@
 package types
 
-import (
-	"encoding/json"
-)
-
 type BootstrappingConfiguration struct {
 	Policyfiles         []BootstrappingPolicyfile `json:"policyfiles,omitempty" header:"POLICY_FILES" show:"nolist"`
-	Attributes          *json.RawMessage          `json:"attributes,omitempty" header:"ATTRIBUTES" show:"nolist"`
+	Attributes          map[string]interface{}    `json:"attributes,omitempty" header:"ATTRIBUTES" show:"nolist"`
 	AttributeRevisionID string                    `json:"attribute_revision_id,omitempty" header:"ATTRIBUTE_REVISION_ID"`
 }
 
