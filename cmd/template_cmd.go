@@ -137,8 +137,7 @@ func TemplateCreate(c *cli.Context) error {
 	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
 
 	if c.IsSet("labels") {
-		labelsIdsArr := LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
-		templateIn["label_ids"] = labelsIdsArr
+		templateIn["label_ids"] = LabelResolution(c, c.String("labels"), &labelNamesByID, &labelIDsByName)
 	}
 
 	template, err := templateSvc.CreateTemplate(&templateIn)
