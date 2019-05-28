@@ -513,3 +513,70 @@ func DeleteVPCFailStatusMocked(t *testing.T, vpcIn *types.Vpc) {
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 }
+
+// DiscardVPCMocked test mocked function
+func DiscardVPCMocked(t *testing.T, vpcIn *types.Vpc) {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewVPCService(cs)
+	assert.Nil(err, "Couldn't load VPC service")
+	assert.NotNil(ds, "VPC service not instanced")
+
+	// to json
+	dIn, err := json.Marshal(vpcIn)
+	assert.Nil(err, "VPC test data corrupted")
+
+	// call service
+	cs.On("Delete", fmt.Sprintf("/network/vpcs/%s/discard", vpcIn.ID)).Return(dIn, 200, nil)
+	err = ds.DiscardVPC(vpcIn.ID)
+	assert.Nil(err, "Error discarding VPC")
+}
+
+// DiscardVPCFailErrMocked test mocked function
+func DiscardVPCFailErrMocked(t *testing.T, vpcIn *types.Vpc) {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewVPCService(cs)
+	assert.Nil(err, "Couldn't load VPC service")
+	assert.NotNil(ds, "VPC service not instanced")
+
+	// to json
+	dIn, err := json.Marshal(vpcIn)
+	assert.Nil(err, "VPC test data corrupted")
+
+	// call service
+	cs.On("Delete", fmt.Sprintf("/network/vpcs/%s/discard", vpcIn.ID)).Return(dIn, 200, fmt.Errorf("mocked error"))
+	err = ds.DiscardVPC(vpcIn.ID)
+
+	assert.NotNil(err, "We are expecting an error")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
+}
+
+// DiscardVPCFailStatusMocked test mocked function
+func DiscardVPCFailStatusMocked(t *testing.T, vpcIn *types.Vpc) {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewVPCService(cs)
+	assert.Nil(err, "Couldn't load VPC service")
+	assert.NotNil(ds, "VPC service not instanced")
+
+	// to json
+	dIn, err := json.Marshal(vpcIn)
+	assert.Nil(err, "VPC test data corrupted")
+
+	// call service
+	cs.On("Delete", fmt.Sprintf("/network/vpcs/%s/discard", vpcIn.ID)).Return(dIn, 499, nil)
+	err = ds.DiscardVPC(vpcIn.ID)
+
+	assert.NotNil(err, "We are expecting an status code error")
+	assert.Contains(err.Error(), "499", "Error should contain http code 499")
+}

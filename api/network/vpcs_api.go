@@ -120,3 +120,19 @@ func (dm *VPCService) DeleteVPC(ID string) (err error) {
 
 	return nil
 }
+
+// DiscardVPC deletes a VPC by its ID
+func (dm *VPCService) DiscardVPC(ID string) (err error) {
+	log.Debug("DiscardVPC")
+
+	data, status, err := dm.concertoService.Delete(fmt.Sprintf("/network/vpcs/%s/discard", ID))
+	if err != nil {
+		return err
+	}
+
+	if err = utils.CheckStandardStatus(status, data); err != nil {
+		return err
+	}
+
+	return nil
+}

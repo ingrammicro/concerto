@@ -149,3 +149,16 @@ func VPCDelete(c *cli.Context) error {
 	}
 	return nil
 }
+
+// VPCDiscard subcommand function
+func VPCDiscard(c *cli.Context) error {
+	debugCmdFuncInfo(c)
+	vpcSvc, formatter := WireUpVPC(c)
+
+	checkRequiredFlags(c, []string{"id"}, formatter)
+	err := vpcSvc.DiscardVPC(c.String("id"))
+	if err != nil {
+		formatter.PrintFatal("Couldn't discard VPC", err)
+	}
+	return nil
+}

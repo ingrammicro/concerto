@@ -59,3 +59,12 @@ func TestDeleteVPC(t *testing.T) {
 		DeleteVPCFailStatusMocked(t, vpcIn)
 	}
 }
+
+func TestDiscardVPC(t *testing.T) {
+	vpcsIn := testdata.GetVPCData()
+	for _, vpcIn := range vpcsIn {
+		DiscardVPCMocked(t, vpcIn)
+		DiscardVPCFailErrMocked(t, vpcIn)
+		DiscardVPCFailStatusMocked(t, vpcIn)
+	}
+}

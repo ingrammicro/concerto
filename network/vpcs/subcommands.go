@@ -84,6 +84,17 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
+			Name:   "discard",
+			Usage:  "Discards a VPC but does not delete it from the cloud provider",
+			Action: cmd.VPCDiscard,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "VPC Id",
+				},
+			},
+		},
+		{
 			Name:   "add-label",
 			Usage:  "This action assigns a single label from a single labelable resource",
 			Action: cmd.LabelAdd,
