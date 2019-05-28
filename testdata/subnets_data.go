@@ -27,3 +27,35 @@ func GetSubnetData() []*types.Subnet {
 		},
 	}
 }
+
+// GetSubnetServersData loads test data
+func GetSubnetServersData() []*types.Server {
+	return []*types.Server{
+		{
+			ID:                "fakeID0",
+			Name:              "fakeName0",
+			Fqdn:              "fakeFqdn0",
+			State:             "fakeState0",
+			PublicIP:          "fakePublicIP0",
+			TemplateID:        "fakeTemplateID0",
+			ServerPlanID:      "fakeServerPlanID0",
+			SSHProfileID:      "fakeSSHProfileID0",
+			FirewallProfileID: "fakeFirewallProfileID0",
+			SubnetID:          "fakeSubnetID0",
+			VpcID:             "fakeVpcID0",
+		},
+		{
+			ID:                "fakeID1",
+			Name:              "fakeName1",
+			Fqdn:              "fakeFqdn1",
+			State:             "fakeState1",
+			PublicIP:          "fakePublicIP1",
+			TemplateID:        "fakeTemplateID1",
+			ServerPlanID:      "fakeServerPlanID1",
+			SSHProfileID:      "fakeSSHProfileID1",
+			FirewallProfileID: "fakeFirewallProfileID1",
+			SubnetID:          "fakeSubnetID1",
+			VpcID:             "fakeVpcID1",
+		},
+	}
+}

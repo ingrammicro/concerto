@@ -513,3 +513,104 @@ func DeleteSubnetFailStatusMocked(t *testing.T, subnetIn *types.Subnet) {
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 }
+
+// GetSubnetServersListMocked test mocked function
+func GetSubnetServersListMocked(t *testing.T, serversIn []*types.Server) []*types.Server {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewSubnetService(cs)
+	assert.Nil(err, "Couldn't load Subnet service")
+	assert.NotNil(ds, "Subnet service not instanced")
+
+	// to json
+	dIn, err := json.Marshal(serversIn)
+	assert.Nil(err, "Subnet test data corrupted")
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/network/subnets/%s/servers", serversIn[0].VpcID)).Return(dIn, 200, nil)
+	serversOut, err := ds.GetSubnetServersList(serversIn[0].VpcID)
+	assert.Nil(err, "Error getting Subnet servers list")
+	assert.Equal(serversIn, serversOut, "GetSubnetServersList returned different Servers")
+
+	return serversOut
+}
+
+// GetSubnetServersListFailErrMocked test mocked function
+func GetSubnetServersListFailErrMocked(t *testing.T, serversIn []*types.Server) []*types.Server {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewSubnetService(cs)
+	assert.Nil(err, "Couldn't load Subnet service")
+	assert.NotNil(ds, "Subnet service not instanced")
+
+	// to json
+	dIn, err := json.Marshal(serversIn)
+	assert.Nil(err, "Subnet test data corrupted")
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/network/subnets/%s/servers", serversIn[0].VpcID)).Return(dIn, 200, fmt.Errorf("mocked error"))
+	serversOut, err := ds.GetSubnetServersList(serversIn[0].VpcID)
+
+	assert.NotNil(err, "We are expecting an error")
+	assert.Nil(serversOut, "Expecting nil output")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
+
+	return serversOut
+}
+
+// GetSubnetServersListFailStatusMocked test mocked function
+func GetSubnetServersListFailStatusMocked(t *testing.T, serversIn []*types.Server) []*types.Server {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewSubnetService(cs)
+	assert.Nil(err, "Couldn't load Subnet service")
+	assert.NotNil(ds, "Subnet service not instanced")
+
+	// to json
+	dIn, err := json.Marshal(serversIn)
+	assert.Nil(err, "Subnet test data corrupted")
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/network/subnets/%s/servers", serversIn[0].VpcID)).Return(dIn, 499, nil)
+	serversOut, err := ds.GetSubnetServersList(serversIn[0].VpcID)
+
+	assert.NotNil(err, "We are expecting an status code error")
+	assert.Nil(serversOut, "Expecting nil output")
+	assert.Contains(err.Error(), "499", "Error should contain http code 499")
+
+	return serversOut
+}
+
+// GetSubnetServersListFailJSONMocked test mocked function
+func GetSubnetServersListFailJSONMocked(t *testing.T, serversIn []*types.Server) []*types.Server {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewSubnetService(cs)
+	assert.Nil(err, "Couldn't load Subnet service")
+	assert.NotNil(ds, "Subnet service not instanced")
+
+	// wrong json
+	dIn := []byte{10, 20, 30}
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/network/subnets/%s/servers", serversIn[0].VpcID)).Return(dIn, 200, nil)
+	serversOut, err := ds.GetSubnetServersList(serversIn[0].VpcID)
+
+	assert.NotNil(err, "We are expecting a marshalling error")
+	assert.Nil(serversOut, "Expecting nil output")
+	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
+
+	return serversOut
+}

@@ -121,3 +121,20 @@ func SubnetDelete(c *cli.Context) error {
 	}
 	return nil
 }
+
+// SubnetListServers subcommand function
+func SubnetListServers(c *cli.Context) error {
+	debugCmdFuncInfo(c)
+	subnetSvc, formatter := WireUpSubnet(c)
+
+	checkRequiredFlags(c, []string{"id"}, formatter)
+	servers, err := subnetSvc.GetSubnetServersList(c.String("id"))
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive servers data", err)
+	}
+
+	if err = formatter.PrintList(servers); err != nil {
+		formatter.PrintFatal("Couldn't print/format result", err)
+	}
+	return nil
+}
