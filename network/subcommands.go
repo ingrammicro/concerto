@@ -6,6 +6,7 @@ import (
 	"github.com/ingrammicro/concerto/network/floating_ips"
 	"github.com/ingrammicro/concerto/network/subnets"
 	"github.com/ingrammicro/concerto/network/vpcs"
+	"github.com/ingrammicro/concerto/network/vpns"
 )
 
 // SubCommands returns network commands
@@ -30,6 +31,11 @@ func SubCommands() []cli.Command {
 			Name:        "subnets",
 			Usage:       "Provides information about VPC Subnets",
 			Subcommands: append(subnets.SubCommands()),
+		},
+		{
+			Name:        "vpns",
+			Usage:       "Provides information about VPC Virtual Private Networks (VPNs)",
+			Subcommands: append(vpns.SubCommands()),
 		},
 	}
 }
