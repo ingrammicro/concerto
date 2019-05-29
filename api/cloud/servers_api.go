@@ -201,6 +201,26 @@ func (dm *ServerService) DeleteServer(ID string) (err error) {
 	return nil
 }
 
+// GetServerVolumesList returns the list of volumes as an array of Volume
+func (dm *ServerService) GetServerVolumesList(serverID string) (volumes []*types.Volume, err error) {
+	log.Debug("GetServerVolumesList")
+
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/cloud/servers/%s/volumes", serverID))
+	if err != nil {
+		return nil, err
+	}
+
+	if err = utils.CheckStandardStatus(status, data); err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal(data, &volumes); err != nil {
+		return nil, err
+	}
+
+	return volumes, nil
+}
+
 //======= Events ==========
 
 // GetEventsList returns a list of events by server ID

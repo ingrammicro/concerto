@@ -43,3 +43,23 @@ func (cl *CloudProviderService) GetCloudProviderList() (cloudProviders []*types.
 
 	return cloudProviders, nil
 }
+
+// GetServerStoragePlanList returns the list of storage plans as an array of StoragePlan
+func (dm *CloudProviderService) GetServerStoragePlanList(providerID string) (storagePlans []*types.StoragePlan, err error) {
+	log.Debug("GetServerStoragePlanList")
+
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/cloud/cloud_providers/%s/storage_plans", providerID))
+	if err != nil {
+		return nil, err
+	}
+
+	if err = utils.CheckStandardStatus(status, data); err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal(data, &storagePlans); err != nil {
+		return nil, err
+	}
+
+	return storagePlans, nil
+}

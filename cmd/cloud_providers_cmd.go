@@ -43,6 +43,31 @@ func CloudProviderList(c *cli.Context) error {
 	return nil
 }
 
+// CloudProviderStoragePlansList subcommand function
+func CloudProviderStoragePlansList(c *cli.Context) error {
+	debugCmdFuncInfo(c)
+	cloudProvidersSvc, formatter := WireUpCloudProvider(c)
+
+	checkRequiredFlags(c, []string{"cloud-provider-id"}, formatter)
+	storagePlans, err := cloudProvidersSvc.GetServerStoragePlanList(c.String("cloud-provider-id"))
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive storage plans data", err)
+	}
+
+	cloudProvidersMap := LoadCloudProvidersMapping(c)
+	locationsMap := LoadLocationsMapping(c)
+
+	for id, sp := range storagePlans {
+		storagePlans[id].CloudProviderName = cloudProvidersMap[sp.CloudProviderID]
+		storagePlans[id].LocationName = locationsMap[sp.LocationID]
+	}
+
+	if err = formatter.PrintList(storagePlans); err != nil {
+		formatter.PrintFatal("Couldn't print/format result", err)
+	}
+	return nil
+}
+
 // LoadCloudProvidersMapping retrieves Cloud Providers and create a map between ID and Name
 func LoadCloudProvidersMapping(c *cli.Context) map[string]string {
 	debugCmdFuncInfo(c)
