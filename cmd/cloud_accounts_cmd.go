@@ -50,3 +50,24 @@ func CloudAccountList(c *cli.Context) error {
 
 	return nil
 }
+
+// CloudAccountShow subcommand function
+func CloudAccountShow(c *cli.Context) error {
+	debugCmdFuncInfo(c)
+	cloudAccountSvc, formatter := WireUpCloudAccount(c)
+
+	checkRequiredFlags(c, []string{"id"}, formatter)
+	cloudAccount, err := cloudAccountSvc.GetCloudAccount(c.String("id"))
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive cloudAccount data", err)
+	}
+
+	cloudProvidersMap := LoadCloudProvidersMapping(c)
+
+	cloudAccount.CloudProviderName = cloudProvidersMap[cloudAccount.CloudProviderID]
+
+	if err = formatter.PrintItem(*cloudAccount); err != nil {
+		formatter.PrintFatal("Couldn't print/format result", err)
+	}
+	return nil
+}

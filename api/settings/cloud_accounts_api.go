@@ -44,3 +44,23 @@ func (ca *CloudAccountService) GetCloudAccountList() (cloudAccounts []*types.Clo
 
 	return cloudAccounts, nil
 }
+
+// GetCloudAccount returns a cloudAccount by its ID
+func (ca *CloudAccountService) GetCloudAccount(cloudAccountID string) (cloudAccount *types.CloudAccount, err error) {
+	log.Debug("GetCloudAccount")
+
+	data, status, err := ca.concertoService.Get(fmt.Sprintf("/settings/cloud_accounts/%s", cloudAccountID))
+	if err != nil {
+		return nil, err
+	}
+
+	if err = utils.CheckStandardStatus(status, data); err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal(data, &cloudAccount); err != nil {
+		return nil, err
+	}
+
+	return cloudAccount, nil
+}
