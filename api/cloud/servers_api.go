@@ -201,6 +201,26 @@ func (dm *ServerService) DeleteServer(ID string) (err error) {
 	return nil
 }
 
+// GetServerFloatingIPList returns the list of floating IPs as an array of FloatingIP
+func (dm *ServerService) GetServerFloatingIPList(serverID string) (floatingIPs []*types.FloatingIP, err error) {
+	log.Debug("GetServerFloatingIPList")
+
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/cloud/servers/%s/floating_ips", serverID))
+	if err != nil {
+		return nil, err
+	}
+
+	if err = utils.CheckStandardStatus(status, data); err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal(data, &floatingIPs); err != nil {
+		return nil, err
+	}
+
+	return floatingIPs, nil
+}
+
 // GetServerVolumesList returns the list of volumes as an array of Volume
 func (dm *ServerService) GetServerVolumesList(serverID string) (volumes []*types.Volume, err error) {
 	log.Debug("GetServerVolumesList")

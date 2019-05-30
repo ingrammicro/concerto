@@ -223,6 +223,40 @@ func ServerDelete(c *cli.Context) error {
 	return nil
 }
 
+// ServerFloatingIPList subcommand function
+func ServerFloatingIPList(c *cli.Context) error {
+	debugCmdFuncInfo(c)
+	serverSvc, formatter := WireUpServer(c)
+
+	checkRequiredFlags(c, []string{"id"}, formatter)
+	floatingIPs, err := serverSvc.GetServerFloatingIPList(c.String("id"))
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive floating IPs data", err)
+	}
+
+	labelables := make([]types.Labelable, len(floatingIPs))
+	for i := 0; i < len(floatingIPs); i++ {
+		labelables[i] = types.Labelable(floatingIPs[i])
+	}
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
+	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
+
+	floatingIPs = make([]*types.FloatingIP, len(filteredLabelables))
+	for i, labelable := range filteredLabelables {
+		fIP, ok := labelable.(*types.FloatingIP)
+		if !ok {
+			formatter.PrintFatal("Label filtering returned unexpected result",
+				fmt.Errorf("expected labelable to be a *types.FloatingIP, got a %T", labelable))
+		}
+		floatingIPs[i] = fIP
+	}
+	if err = formatter.PrintList(floatingIPs); err != nil {
+		formatter.PrintFatal("Couldn't print/format result", err)
+	}
+	return nil
+}
+
 // ServerVolumesList subcommand function
 func ServerVolumesList(c *cli.Context) error {
 	debugCmdFuncInfo(c)
