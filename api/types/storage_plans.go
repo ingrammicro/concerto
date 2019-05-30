@@ -6,9 +6,9 @@ type StoragePlan struct {
 	MinSize             int    `json:"min_size,omitempty" header:"MIN_SIZE"`
 	MaxSize             int    `json:"max_size,omitempty" header:"MAX_SIZE"`
 	CloudProviderID     string `json:"cloud_provider_id,omitempty" header:"CLOUD_PROVIDER_ID"`
-	CloudProviderName   string `json:"cloud_provider_name" header:"CLOUD_PROVIDER_NAME"`
+	CloudProviderName   string `header:"CLOUD_PROVIDER_NAME"`
 	LocationID          string `json:"location_id,omitempty" header:"LOCATION_ID"`
-	LocationName        string `json:"location_name" header:"LOCATION_NAME"`
+	LocationName        string `header:"LOCATION_NAME"`
 	RealmID             string `json:"realm_id,omitempty" header:"REALM_ID"`
 	RealmProviderName   string `json:"realm_provider_name,omitempty" header:"REALM_PROVIDER_NAME"`
 	FlavourProviderName string `json:"flavour_provider_name,omitempty" header:"FLAVOUR_PROVIDER_NAME"`
