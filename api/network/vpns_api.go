@@ -80,9 +80,9 @@ func (dm *VPNService) DeleteVPN(vpcID string) (err error) {
 	return nil
 }
 
-// GetVPNListPlans returns the list of VPN plans for a given VPC ID
-func (dm *VPNService) GetVPNListPlans(vpcID string) (vpnPlans []*types.VpnPlan, err error) {
-	log.Debug("GetVPNListPlans")
+// GetVPNPlanList returns the list of VPN plans for a given VPC ID
+func (dm *VPNService) GetVPNPlanList(vpcID string) (vpnPlans []*types.VpnPlan, err error) {
+	log.Debug("GetVPNPlanList")
 
 	data, status, err := dm.concertoService.Get(fmt.Sprintf("/network/vpcs/%s/vpn_plans", vpcID))
 

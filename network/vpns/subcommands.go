@@ -60,7 +60,7 @@ func SubCommands() []cli.Command {
 		{
 			Name:   "list-plans",
 			Usage:  "Lists VPN plans of the specified VPC",
-			Action: cmd.VPNListPlans,
+			Action: cmd.VPNPlanList,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "vpc-id",

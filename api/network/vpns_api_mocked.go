@@ -297,8 +297,8 @@ func DeleteVPNFailStatusMocked(t *testing.T, vpnIn *types.Vpn) {
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 }
 
-// GetVPNListPlansMocked test mocked function
-func GetVPNListPlansMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpcID string) []*types.VpnPlan {
+// GetVPNPlanListMocked test mocked function
+func GetVPNPlanListMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpcID string) []*types.VpnPlan {
 
 	assert := assert.New(t)
 
@@ -314,15 +314,15 @@ func GetVPNListPlansMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpcID stri
 
 	// call service
 	cs.On("Get", fmt.Sprintf("/network/vpcs/%s/vpn_plans", vpcID)).Return(dIn, 200, nil)
-	vpnPlansOut, err := ds.GetVPNListPlans(vpcID)
+	vpnPlansOut, err := ds.GetVPNPlanList(vpcID)
 	assert.Nil(err, "Error getting VPN plans list")
-	assert.Equal(vpnPlansIn, vpnPlansOut, "GetVPNListPlans returned different VPN plans")
+	assert.Equal(vpnPlansIn, vpnPlansOut, "GetVPNPlanList returned different VPN plans")
 
 	return vpnPlansOut
 }
 
-// GetVPNListPlansFailErrMocked test mocked function
-func GetVPNListPlansFailErrMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpcID string) []*types.VpnPlan {
+// GetVPNPlanListFailErrMocked test mocked function
+func GetVPNPlanListFailErrMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpcID string) []*types.VpnPlan {
 
 	assert := assert.New(t)
 
@@ -338,7 +338,7 @@ func GetVPNListPlansFailErrMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpc
 
 	// call service
 	cs.On("Get", fmt.Sprintf("/network/vpcs/%s/vpn_plans", vpcID)).Return(dIn, 200, fmt.Errorf("mocked error"))
-	vpnPlansOut, err := ds.GetVPNListPlans(vpcID)
+	vpnPlansOut, err := ds.GetVPNPlanList(vpcID)
 
 	assert.NotNil(err, "We are expecting an error")
 	assert.Nil(vpnPlansOut, "Expecting nil output")
@@ -347,8 +347,8 @@ func GetVPNListPlansFailErrMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpc
 	return vpnPlansOut
 }
 
-// GetVPNListPlansFailStatusMocked test mocked function
-func GetVPNListPlansFailStatusMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpcID string) []*types.VpnPlan {
+// GetVPNPlanListFailStatusMocked test mocked function
+func GetVPNPlanListFailStatusMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpcID string) []*types.VpnPlan {
 
 	assert := assert.New(t)
 
@@ -364,7 +364,7 @@ func GetVPNListPlansFailStatusMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, 
 
 	// call service
 	cs.On("Get", fmt.Sprintf("/network/vpcs/%s/vpn_plans", vpcID)).Return(dIn, 499, nil)
-	vpnPlansOut, err := ds.GetVPNListPlans(vpcID)
+	vpnPlansOut, err := ds.GetVPNPlanList(vpcID)
 
 	assert.NotNil(err, "We are expecting an status code error")
 	assert.Nil(vpnPlansOut, "Expecting nil output")
@@ -373,8 +373,8 @@ func GetVPNListPlansFailStatusMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, 
 	return vpnPlansOut
 }
 
-// GetVPNListPlansFailJSONMocked test mocked function
-func GetVPNListPlansFailJSONMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpcID string) []*types.VpnPlan {
+// GetVPNPlanListFailJSONMocked test mocked function
+func GetVPNPlanListFailJSONMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vpcID string) []*types.VpnPlan {
 
 	assert := assert.New(t)
 
@@ -389,7 +389,7 @@ func GetVPNListPlansFailJSONMocked(t *testing.T, vpnPlansIn []*types.VpnPlan, vp
 
 	// call service
 	cs.On("Get", fmt.Sprintf("/network/vpcs/%s/vpn_plans", vpcID)).Return(dIn, 200, nil)
-	vpnPlansOut, err := ds.GetVPNListPlans(vpcID)
+	vpnPlansOut, err := ds.GetVPNPlanList(vpcID)
 
 	assert.NotNil(err, "We are expecting a marshalling error")
 	assert.Nil(vpnPlansOut, "Expecting nil output")

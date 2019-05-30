@@ -83,13 +83,13 @@ func VPNDelete(c *cli.Context) error {
 	return nil
 }
 
-// VPNListPlans subcommand function
-func VPNListPlans(c *cli.Context) error {
+// VPNPlanList subcommand function
+func VPNPlanList(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	vpcSvc, formatter := WireUpVPN(c)
 	checkRequiredFlags(c, []string{"vpc-id"}, formatter)
 
-	vpns, err := vpcSvc.GetVPNListPlans(c.String("vpc-id"))
+	vpns, err := vpcSvc.GetVPNPlanList(c.String("vpc-id"))
 	if err != nil {
 		formatter.PrintFatal("Couldn't receive VPN data", err)
 	}

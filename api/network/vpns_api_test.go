@@ -42,10 +42,10 @@ func TestDeleteVPN(t *testing.T) {
 	}
 }
 
-func TestGetVPNListPlans(t *testing.T) {
+func TestGetVPNPlanList(t *testing.T) {
 	vpnPlansIn := testdata.GetVPNPlanData()
-	GetVPNListPlansMocked(t, vpnPlansIn, "fakeVpcID0")
-	GetVPNListPlansFailErrMocked(t, vpnPlansIn, "fakeVpcID0")
-	GetVPNListPlansFailStatusMocked(t, vpnPlansIn, "fakeVpcID0")
-	GetVPNListPlansFailJSONMocked(t, vpnPlansIn,"fakeVpcID0")
+	GetVPNPlanListMocked(t, vpnPlansIn, "fakeVpcID0")
+	GetVPNPlanListFailErrMocked(t, vpnPlansIn, "fakeVpcID0")
+	GetVPNPlanListFailStatusMocked(t, vpnPlansIn, "fakeVpcID0")
+	GetVPNPlanListFailJSONMocked(t, vpnPlansIn,"fakeVpcID0")
 }
