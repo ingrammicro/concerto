@@ -67,7 +67,7 @@ var clientCommands = []cli.Command{
 	{
 		Name:        "cloud",
 		ShortName:   "clo",
-		Usage:       "Manages cloud related commands for servers, generic images, ssh profiles, cloud providers and server plans",
+		Usage:       "Manages cloud related commands for server arrays, servers, generic images, ssh profiles, cloud providers and server plans",
 		Subcommands: append(cloud.SubCommands()),
 	},
 	{
