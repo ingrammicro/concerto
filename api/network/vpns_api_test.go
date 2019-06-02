@@ -47,5 +47,5 @@ func TestGetVPNPlanList(t *testing.T) {
 	GetVPNPlanListMocked(t, vpnPlansIn, "fakeVpcID0")
 	GetVPNPlanListFailErrMocked(t, vpnPlansIn, "fakeVpcID0")
 	GetVPNPlanListFailStatusMocked(t, vpnPlansIn, "fakeVpcID0")
-	GetVPNPlanListFailJSONMocked(t, vpnPlansIn,"fakeVpcID0")
+	GetVPNPlanListFailJSONMocked(t, vpnPlansIn, "fakeVpcID0")
 }

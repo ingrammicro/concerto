@@ -121,9 +121,9 @@ func (dm *SubnetService) DeleteSubnet(ID string) (err error) {
 	return nil
 }
 
-// GetSubnetServersList returns the list of Servers of a Subnet as an array of Servers
-func (dm *SubnetService) GetSubnetServersList(subnetID string) (subnets []*types.Server, err error) {
-	log.Debug("GetSubnetServersList")
+// GetSubnetServerList returns the list of Servers of a Subnet as an array of Servers
+func (dm *SubnetService) GetSubnetServerList(subnetID string) (subnets []*types.Server, err error) {
+	log.Debug("GetSubnetServerList")
 
 	data, status, err := dm.concertoService.Get(fmt.Sprintf("/network/subnets/%s/servers", subnetID))
 

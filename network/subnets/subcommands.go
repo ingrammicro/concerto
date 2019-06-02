@@ -82,7 +82,7 @@ func SubCommands() []cli.Command {
 		{
 			Name:   "list-servers",
 			Usage:  "Lists servers belonging to the subnet identified by the given id",
-			Action: cmd.SubnetListServers,
+			Action: cmd.SubnetServerList,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "id",
