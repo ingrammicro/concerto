@@ -11,6 +11,8 @@ type Server struct {
 	CloudAccountID    string `json:"cloud_account_id" header:"CLOUD_ACCOUNT_ID"`
 	SSHProfileID      string `json:"ssh_profile_id" header:"SSH_PROFILE_ID"`
 	FirewallProfileID string `json:"firewall_profile_id" header:"FIREWALL_PROFILE_ID"`
+	SubnetID          string `json:"subnet_id,omitempty" header:"SUBNET_ID" show:"nolist"`
+	VpcID             string `json:"vpc_id,omitempty" header:"VPC_ID" show:"nolist"`
 	ResourceType      string `json:"resource_type" header:"RESOURCE_TYPE" show:"nolist"`
 	LabelableFields
 }
