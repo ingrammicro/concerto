@@ -102,6 +102,17 @@ func TestDeleteServer(t *testing.T) {
 	}
 }
 
+func TestGetServerFloatingIPList(t *testing.T) {
+	serversIn := testdata.GetServerData()
+	floatingIPsIn := testdata.GetFloatingIPData()
+	for _, serverIn := range serversIn {
+		GetServerFloatingIPListMocked(t, floatingIPsIn, serverIn.ID)
+		GetServerFloatingIPListFailErrMocked(t, floatingIPsIn, serverIn.ID)
+		GetServerFloatingIPListFailStatusMocked(t, floatingIPsIn, serverIn.ID)
+		GetServerFloatingIPListFailJSONMocked(t, floatingIPsIn, serverIn.ID)
+	}
+}
+
 func TestGetServerVolumesList(t *testing.T) {
 	serversIn := testdata.GetServerData()
 	volumesIn := testdata.GetVolumeData()

@@ -173,6 +173,17 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
+			Name:   "list-floating-ips",
+			Usage:  "This action returns information about the floating IPs attached to the server with the given id",
+			Action: cmd.ServerFloatingIPList,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Server Id",
+				},
+			},
+		},
+		{
 			Name:   "list-volumes",
 			Usage:  "This action returns information about the volumes attached to the server with the given id",
 			Action: cmd.ServerVolumesList,

@@ -979,6 +979,107 @@ func DeleteServerFailStatusMocked(t *testing.T, serverIn *types.Server) {
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 }
 
+// GetServerFloatingIPListMocked test mocked function
+func GetServerFloatingIPListMocked(t *testing.T, floatingIPsIn []*types.FloatingIP, serverID string) []*types.FloatingIP {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewServerService(cs)
+	assert.Nil(err, "Couldn't load server service")
+	assert.NotNil(ds, "Server service not instanced")
+
+	// to json
+	fIn, err := json.Marshal(floatingIPsIn)
+	assert.Nil(err, "Server floating IP test data corrupted")
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/cloud/servers/%s/floating_ips", serverID)).Return(fIn, 200, nil)
+	floatingIPsOut, err := ds.GetServerFloatingIPList(serverID)
+	assert.Nil(err, "Error getting server floating IP list")
+	assert.Equal(floatingIPsIn, floatingIPsOut, "GetServerFloatingIPListMocked returned different server floating IPs")
+
+	return floatingIPsOut
+}
+
+// GetServerFloatingIPListFailErrMocked test mocked function
+func GetServerFloatingIPListFailErrMocked(t *testing.T, floatingIPsIn []*types.FloatingIP, serverID string) []*types.FloatingIP {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewServerService(cs)
+	assert.Nil(err, "Couldn't load server service")
+	assert.NotNil(ds, "Server service not instanced")
+
+	// to json
+	fIn, err := json.Marshal(floatingIPsIn)
+	assert.Nil(err, "Server floating IP test data corrupted")
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/cloud/servers/%s/floating_ips", serverID)).Return(fIn, 200, fmt.Errorf("mocked error"))
+	floatingIPsOut, err := ds.GetServerFloatingIPList(serverID)
+
+	assert.NotNil(err, "We are expecting an error")
+	assert.Nil(floatingIPsOut, "Expecting nil output")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
+
+	return floatingIPsOut
+}
+
+// GetServerFloatingIPListFailStatusMocked test mocked function
+func GetServerFloatingIPListFailStatusMocked(t *testing.T, floatingIPsIn []*types.FloatingIP, serverID string) []*types.FloatingIP {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewServerService(cs)
+	assert.Nil(err, "Couldn't load server service")
+	assert.NotNil(ds, "Server service not instanced")
+
+	// to json
+	fIn, err := json.Marshal(floatingIPsIn)
+	assert.Nil(err, "Server floating IP test data corrupted")
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/cloud/servers/%s/floating_ips", serverID)).Return(fIn, 499, nil)
+	floatingIPsOut, err := ds.GetServerFloatingIPList(serverID)
+
+	assert.NotNil(err, "We are expecting an status code error")
+	assert.Nil(floatingIPsOut, "Expecting nil output")
+	assert.Contains(err.Error(), "499", "Error should contain http code 499")
+
+	return floatingIPsOut
+}
+
+// GetServerFloatingIPListFailJSONMocked test mocked function
+func GetServerFloatingIPListFailJSONMocked(t *testing.T, floatingIPsIn []*types.FloatingIP, serverID string) []*types.FloatingIP {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewServerService(cs)
+	assert.Nil(err, "Couldn't load server service")
+	assert.NotNil(ds, "Server service not instanced")
+
+	// wrong json
+	fIn := []byte{10, 20, 30}
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/cloud/servers/%s/floating_ips", serverID)).Return(fIn, 200, nil)
+	floatingIPsOut, err := ds.GetServerFloatingIPList(serverID)
+
+	assert.NotNil(err, "We are expecting a marshalling error")
+	assert.Nil(floatingIPsOut, "Expecting nil output")
+	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
+
+	return floatingIPsOut
+}
+
 // GetServerVolumesListMocked test mocked function
 func GetServerVolumesListMocked(t *testing.T, volumesIn []*types.Volume, serverID string) []*types.Volume {
 
