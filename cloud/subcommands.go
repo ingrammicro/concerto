@@ -4,6 +4,7 @@ import (
 	"github.com/codegangsta/cli"
 	"github.com/ingrammicro/concerto/cloud/cloud_providers"
 	"github.com/ingrammicro/concerto/cloud/generic_images"
+	"github.com/ingrammicro/concerto/cloud/server_arrays"
 	"github.com/ingrammicro/concerto/cloud/server_plan"
 	"github.com/ingrammicro/concerto/cloud/servers"
 	"github.com/ingrammicro/concerto/cloud/ssh_profiles"
@@ -12,6 +13,11 @@ import (
 // SubCommands returns cloud commands
 func SubCommands() []cli.Command {
 	return []cli.Command{
+		{
+			Name:        "server-arrays",
+			Usage:       "Provides information on server arrays",
+			Subcommands: append(server_arrays.SubCommands()),
+		},
 		{
 			Name:        "servers",
 			Usage:       "Provides information on servers",
