@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -150,13 +151,14 @@ func CheckStandardStatus(status int, mesg []byte) error {
 
 		message = ScrapeErrorMessage(message, scrapResponse)
 		result := strings.Split(message, ",")
-		if result != nil && len(result) >= 1 {
-			message = result[0]
+		// concatenate as many errors as received
+		subMessages := make([]string, 0)
+		for i, val := range result {
+			// Separate into fields with func.
+			fields := strings.FieldsFunc(val, f)
+			subMessages = append(subMessages, strings.Join([]string{strconv.Itoa(i), strings.Join(fields[:], " ")}, "# "))
 		}
-		// Separate into fields with func.
-		fields := strings.FieldsFunc(message, f)
-		message = strings.Join(fields[:], " ")
-
+		message = strings.Join(subMessages, " ")
 	} else if strings.Contains(message, "{\"error\":") {
 		scrapResponse := "{\"error\":\"(.*?)\"}"
 		message = ScrapeErrorMessage(message, scrapResponse)
