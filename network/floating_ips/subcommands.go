@@ -99,7 +99,7 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "destroy",
+			Name:   "delete",
 			Usage:  "Deletes a floating IP",
 			Action: cmd.FloatingIPDelete,
 			Flags: []cli.Flag{

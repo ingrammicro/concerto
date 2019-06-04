@@ -152,8 +152,8 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "destroy",
-			Usage:  "This action destroys the server array with the given id. This action will only be allowed if the server array is empty",
+			Name:   "delete",
+			Usage:  "This action decommissions the server array with the given id. This action will only be allowed if the server array is empty",
 			Action: cmd.ServerArrayDelete,
 			Flags: []cli.Flag{
 				cli.StringFlag{
