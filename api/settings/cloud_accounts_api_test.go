@@ -21,3 +21,13 @@ func TestGetCloudAccountList(t *testing.T) {
 	GetCloudAccountListFailStatusMocked(t, cloudAccountsIn)
 	GetCloudAccountListFailJSONMocked(t, cloudAccountsIn)
 }
+
+func TestGetCloudAccount(t *testing.T) {
+	cloudAccountsIn := testdata.GetCloudAccountData()
+	for _, cloudAccountIn := range cloudAccountsIn {
+		GetCloudAccountMocked(t, cloudAccountIn)
+		GetCloudAccountFailErrMocked(t, cloudAccountIn)
+		GetCloudAccountFailStatusMocked(t, cloudAccountIn)
+		GetCloudAccountFailJSONMocked(t, cloudAccountIn)
+	}
+}
