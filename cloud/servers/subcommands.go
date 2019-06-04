@@ -173,6 +173,17 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
+			Name:   "list-volumes",
+			Usage:  "This action returns information about the volumes attached to the server with the given id",
+			Action: cmd.ServerVolumesList,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Server Id",
+				},
+			},
+		},
+		{
 			Name:   "add-label",
 			Usage:  "This action assigns a single label from a single labelable resource",
 			Action: cmd.LabelAdd,

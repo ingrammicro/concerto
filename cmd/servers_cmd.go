@@ -223,6 +223,40 @@ func ServerDelete(c *cli.Context) error {
 	return nil
 }
 
+// ServerVolumesList subcommand function
+func ServerVolumesList(c *cli.Context) error {
+	debugCmdFuncInfo(c)
+	serverSvc, formatter := WireUpServer(c)
+
+	checkRequiredFlags(c, []string{"id"}, formatter)
+	volumes, err := serverSvc.GetServerVolumesList(c.String("id"))
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive volumes data", err)
+	}
+
+	labelables := make([]types.Labelable, len(volumes))
+	for i := 0; i < len(volumes); i++ {
+		labelables[i] = types.Labelable(volumes[i])
+	}
+	labelIDsByName, labelNamesByID := LabelLoadsMapping(c)
+	filteredLabelables := LabelFiltering(c, labelables, labelIDsByName)
+	LabelAssignNamesForIDs(c, filteredLabelables, labelNamesByID)
+
+	volumes = make([]*types.Volume, len(filteredLabelables))
+	for i, labelable := range filteredLabelables {
+		v, ok := labelable.(*types.Volume)
+		if !ok {
+			formatter.PrintFatal("Label filtering returned unexpected result",
+				fmt.Errorf("expected labelable to be a *types.Volume, got a %T", labelable))
+		}
+		volumes[i] = v
+	}
+	if err = formatter.PrintList(volumes); err != nil {
+		formatter.PrintFatal("Couldn't print/format result", err)
+	}
+	return nil
+}
+
 // ========= Events ========
 
 // EventsList subcommand function

@@ -16,6 +16,7 @@ import (
 	"github.com/ingrammicro/concerto/labels"
 	"github.com/ingrammicro/concerto/network"
 	"github.com/ingrammicro/concerto/settings"
+	"github.com/ingrammicro/concerto/storage"
 	"github.com/ingrammicro/concerto/utils"
 	"github.com/ingrammicro/concerto/utils/format"
 	"github.com/ingrammicro/concerto/wizard"
@@ -86,6 +87,12 @@ var clientCommands = []cli.Command{
 		ShortName:   "net",
 		Usage:       "Manages network related commands for firewall profiles",
 		Subcommands: append(network.SubCommands()),
+	},
+	{
+		Name:        "storage",
+		ShortName:   "st",
+		Usage:       "Manages storage commands for plans and volumes",
+		Subcommands: append(storage.SubCommands()),
 	},
 	{
 		Name:        "settings",

@@ -102,6 +102,17 @@ func TestDeleteServer(t *testing.T) {
 	}
 }
 
+func TestGetServerVolumesList(t *testing.T) {
+	serversIn := testdata.GetServerData()
+	volumesIn := testdata.GetVolumeData()
+	for _, serverIn := range serversIn {
+		GetServerVolumesListMocked(t, volumesIn, serverIn.ID)
+		GetServerVolumesListFailErrMocked(t, volumesIn, serverIn.ID)
+		GetServerVolumesListFailStatusMocked(t, volumesIn, serverIn.ID)
+		GetServerVolumesListFailJSONMocked(t, volumesIn, serverIn.ID)
+	}
+}
+
 //======= Events ==========
 func TestGetEventsList(t *testing.T) {
 	serversIn := testdata.GetServerData()

@@ -979,6 +979,107 @@ func DeleteServerFailStatusMocked(t *testing.T, serverIn *types.Server) {
 	assert.Contains(err.Error(), "499", "Error should contain http code 499")
 }
 
+// GetServerVolumesListMocked test mocked function
+func GetServerVolumesListMocked(t *testing.T, volumesIn []*types.Volume, serverID string) []*types.Volume {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewServerService(cs)
+	assert.Nil(err, "Couldn't load server service")
+	assert.NotNil(ds, "Server service not instanced")
+
+	// to json
+	vIn, err := json.Marshal(volumesIn)
+	assert.Nil(err, "Server volume test data corrupted")
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/cloud/servers/%s/volumes", serverID)).Return(vIn, 200, nil)
+	vOut, err := ds.GetServerVolumesList(serverID)
+	assert.Nil(err, "Error getting server volume list")
+	assert.Equal(volumesIn, vOut, "GetServerVolumesListMocked returned different server volumes")
+
+	return vOut
+}
+
+// GetServerVolumesListFailErrMocked test mocked function
+func GetServerVolumesListFailErrMocked(t *testing.T, volumesIn []*types.Volume, serverID string) []*types.Volume {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewServerService(cs)
+	assert.Nil(err, "Couldn't load server service")
+	assert.NotNil(ds, "Server service not instanced")
+
+	// to json
+	vIn, err := json.Marshal(volumesIn)
+	assert.Nil(err, "Server volume test data corrupted")
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/cloud/servers/%s/volumes", serverID)).Return(vIn, 200, fmt.Errorf("mocked error"))
+	vOut, err := ds.GetServerVolumesList(serverID)
+
+	assert.NotNil(err, "We are expecting an error")
+	assert.Nil(vOut, "Expecting nil output")
+	assert.Equal(err.Error(), "mocked error", "Error should be 'mocked error'")
+
+	return vOut
+}
+
+// GetServerVolumesListFailStatusMocked test mocked function
+func GetServerVolumesListFailStatusMocked(t *testing.T, volumesIn []*types.Volume, serverID string) []*types.Volume {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewServerService(cs)
+	assert.Nil(err, "Couldn't load server service")
+	assert.NotNil(ds, "Server service not instanced")
+
+	// to json
+	vIn, err := json.Marshal(volumesIn)
+	assert.Nil(err, "Server volume test data corrupted")
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/cloud/servers/%s/volumes", serverID)).Return(vIn, 499, nil)
+	vOut, err := ds.GetServerVolumesList(serverID)
+
+	assert.NotNil(err, "We are expecting an status code error")
+	assert.Nil(vOut, "Expecting nil output")
+	assert.Contains(err.Error(), "499", "Error should contain http code 499")
+
+	return vOut
+}
+
+// GetServerVolumesListFailJSONMocked test mocked function
+func GetServerVolumesListFailJSONMocked(t *testing.T, volumesIn []*types.Volume, serverID string) []*types.Volume {
+
+	assert := assert.New(t)
+
+	// wire up
+	cs := &utils.MockConcertoService{}
+	ds, err := NewServerService(cs)
+	assert.Nil(err, "Couldn't load server service")
+	assert.NotNil(ds, "Server service not instanced")
+
+	// wrong json
+	vIn := []byte{10, 20, 30}
+
+	// call service
+	cs.On("Get", fmt.Sprintf("/cloud/servers/%s/volumes", serverID)).Return(vIn, 200, nil)
+	vOut, err := ds.GetServerVolumesList(serverID)
+
+	assert.NotNil(err, "We are expecting a marshalling error")
+	assert.Nil(vOut, "Expecting nil output")
+	assert.Contains(err.Error(), "invalid character", "Error message should include the string 'invalid character'")
+
+	return vOut
+}
+
 // GetServerEventListMocked test mocked function
 func GetServerEventListMocked(t *testing.T, eventsIn []*types.Event, serverID string) []*types.Event {
 
