@@ -90,5 +90,16 @@ func SubCommands() []cli.Command {
 				},
 			},
 		},
+		{
+			Name:   "list-server-arrays",
+			Usage:  "Lists server arrays belonging to the subnet identified by the given id",
+			Action: cmd.SubnetServerArrayList,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Subnet Id",
+				},
+			},
+		},
 	}
 }

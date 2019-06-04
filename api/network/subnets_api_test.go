@@ -61,9 +61,17 @@ func TestDeleteSubnet(t *testing.T) {
 }
 
 func TestGetSubnetServerList(t *testing.T) {
-	subnetsIn := testdata.GetSubnetServersData()
-	GetSubnetServerListMocked(t, subnetsIn)
-	GetSubnetServerListFailErrMocked(t, subnetsIn)
-	GetSubnetServerListFailStatusMocked(t, subnetsIn)
-	GetSubnetServerListFailJSONMocked(t, subnetsIn)
+	serversIn := testdata.GetSubnetServersData()
+	GetSubnetServerListMocked(t, serversIn)
+	GetSubnetServerListFailErrMocked(t, serversIn)
+	GetSubnetServerListFailStatusMocked(t, serversIn)
+	GetSubnetServerListFailJSONMocked(t, serversIn)
+}
+
+func TestGetSubnetServerArrayList(t *testing.T) {
+	serverArraysIn := testdata.GetServerArrayData()
+	GetSubnetServerArrayListMocked(t, serverArraysIn)
+	GetSubnetServerArrayListFailErrMocked(t, serverArraysIn)
+	GetSubnetServerArrayListFailStatusMocked(t, serverArraysIn)
+	GetSubnetServerArrayListFailJSONMocked(t, serverArraysIn)
 }

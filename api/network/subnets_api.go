@@ -121,8 +121,8 @@ func (dm *SubnetService) DeleteSubnet(ID string) (err error) {
 	return nil
 }
 
-// GetSubnetServerList returns the list of Servers of a Subnet as an array of Servers
-func (dm *SubnetService) GetSubnetServerList(subnetID string) (subnets []*types.Server, err error) {
+// GetSubnetServerList returns the list of Servers of a Subnet as an array of Server
+func (dm *SubnetService) GetSubnetServerList(subnetID string) (servers []*types.Server, err error) {
 	log.Debug("GetSubnetServerList")
 
 	data, status, err := dm.concertoService.Get(fmt.Sprintf("/network/subnets/%s/servers", subnetID))
@@ -135,9 +135,30 @@ func (dm *SubnetService) GetSubnetServerList(subnetID string) (subnets []*types.
 		return nil, err
 	}
 
-	if err = json.Unmarshal(data, &subnets); err != nil {
+	if err = json.Unmarshal(data, &servers); err != nil {
 		return nil, err
 	}
 
-	return subnets, nil
+	return servers, nil
+}
+
+// GetSubnetServerArrayList returns the list of Server arrays of a Subnet as an array of ServerArray
+func (dm *SubnetService) GetSubnetServerArrayList(subnetID string) (serverArrays []*types.ServerArray, err error) {
+	log.Debug("GetSubnetServerArrayList")
+
+	data, status, err := dm.concertoService.Get(fmt.Sprintf("/network/subnets/%s/server_arrays", subnetID))
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err = utils.CheckStandardStatus(status, data); err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal(data, &serverArrays); err != nil {
+		return nil, err
+	}
+
+	return serverArrays, nil
 }
