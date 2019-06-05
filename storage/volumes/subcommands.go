@@ -103,7 +103,7 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "destroy",
+			Name:   "delete",
 			Usage:  "Deletes a volume",
 			Action: cmd.VolumeDelete,
 			Flags: []cli.Flag{

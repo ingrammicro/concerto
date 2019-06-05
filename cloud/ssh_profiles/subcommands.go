@@ -77,8 +77,8 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "destroy",
-			Usage:  "Destroys an SSH profile",
+			Name:   "delete",
+			Usage:  "Deletes a SSH profile",
 			Action: cmd.SSHProfileDelete,
 			Flags: []cli.Flag{
 				cli.StringFlag{

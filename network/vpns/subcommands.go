@@ -47,7 +47,7 @@ func SubCommands() []cli.Command {
 			},
 		},
 		{
-			Name:   "destroy",
+			Name:   "delete",
 			Usage:  "Deletes a VPN of the specified VPC",
 			Action: cmd.VPNDelete,
 			Flags: []cli.Flag{

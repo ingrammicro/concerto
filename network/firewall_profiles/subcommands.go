@@ -78,7 +78,7 @@ func SubCommands() []cli.Command {
 		},
 		{
 			Name:   "delete",
-			Usage:  "Destroy a firewall profile",
+			Usage:  "Deletes a firewall profile",
 			Action: cmd.FirewallProfileDelete,
 			Flags: []cli.Flag{
 				cli.StringFlag{
