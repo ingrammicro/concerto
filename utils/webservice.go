@@ -20,7 +20,7 @@ type ConcertoService interface {
 	Put(path string, payload *map[string]interface{}) ([]byte, int, error)
 	Delete(path string) ([]byte, int, error)
 	Get(path string) ([]byte, int, error)
-	GetFile(path string, filePath string, discoveryFileName bool) (string, int, error)
+	GetFile(url string, filePath string, discoveryFileName bool) (string, int, error)
 	PutFile(sourceFilePath string, targetURL string) ([]byte, int, error)
 }
 
@@ -213,12 +213,7 @@ func (hcs *HTTPConcertoservice) Get(path string) ([]byte, int, error) {
 }
 
 // GetFile sends GET request to Concerto API and receives a file
-func (hcs *HTTPConcertoservice) GetFile(path string, filePath string, discoveryFileName bool) (string, int, error) {
-
-	url, _, err := hcs.prepareCall(path, nil)
-	if err != nil {
-		return "", 0, err
-	}
+func (hcs *HTTPConcertoservice) GetFile(url string, filePath string, discoveryFileName bool) (string, int, error) {
 
 	log.Debugf("Sending GET request to %s", url)
 	response, err := hcs.client.Get(url)

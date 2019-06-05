@@ -28,7 +28,7 @@ func cmdShutdown(c *cli.Context) error {
 
 func execute(c *cli.Context, phase string, scriptCharacterizationUUID string) {
 	var scriptChars []*types.ScriptCharacterization
-	dispatcherSvc, formatter := cmd.WireUpDispatcher(c)
+	dispatcherSvc, config, formatter := cmd.WireUpDispatcher(c)
 
 	var err error
 	log.Debugf("Current Script Characterization %s (UUID=%s)", phase, scriptCharacterizationUUID)
@@ -74,7 +74,7 @@ func execute(c *cli.Context, phase string, scriptCharacterizationUUID string) {
 			log.Infof("Attachment Folder: %s", attachmentDir)
 			log.Infof("Attachments")
 			for _, endpoint := range sc.Script.AttachmentPaths {
-				realFileName, _, err := dispatcherSvc.DownloadAttachment(endpoint, attachmentDir)
+				realFileName, _, err := dispatcherSvc.DownloadAttachment(fmt.Sprintf("%s%s", config.APIEndpoint, endpoint), attachmentDir)
 				if err != nil {
 					formatter.PrintFatal("Couldn't download attachment", err)
 				}

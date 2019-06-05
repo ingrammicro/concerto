@@ -2,6 +2,7 @@ package blueprint
 
 import (
 	"github.com/codegangsta/cli"
+	"github.com/ingrammicro/concerto/blueprint/attachments"
 	"github.com/ingrammicro/concerto/blueprint/cookbook_versions"
 	"github.com/ingrammicro/concerto/blueprint/scripts"
 	"github.com/ingrammicro/concerto/blueprint/templates"
@@ -19,6 +20,11 @@ func SubCommands() []cli.Command {
 			Name:        "scripts",
 			Usage:       "Allow the user to manage the scripts they want to run on the servers",
 			Subcommands: append(scripts.SubCommands()),
+		},
+		{
+			Name:        "attachments",
+			Usage:       "Allow the user to manage the attachments they want to store on the servers",
+			Subcommands: append(attachments.SubCommands()),
 		},
 		{
 			Name:        "templates",

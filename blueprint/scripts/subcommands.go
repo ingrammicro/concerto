@@ -32,7 +32,7 @@ func SubCommands() []cli.Command {
 		},
 		{
 			Name:   "create",
-			Usage:  "Creates a new script to be used in the templates. ",
+			Usage:  "Creates a new script to be used in the templates",
 			Action: cmd.ScriptCreate,
 			Flags: []cli.Flag{
 				cli.StringFlag{
@@ -41,7 +41,7 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "description",
-					Usage: "Description of the script's purpose ",
+					Usage: "Description of the script's purpose",
 				},
 				cli.StringFlag{
 					Name:  "code",
@@ -72,7 +72,7 @@ func SubCommands() []cli.Command {
 				},
 				cli.StringFlag{
 					Name:  "description",
-					Usage: "Description of the script's purpose ",
+					Usage: "Description of the script's purpose",
 				},
 				cli.StringFlag{
 					Name:  "code",
@@ -88,6 +88,36 @@ func SubCommands() []cli.Command {
 			Name:   "delete",
 			Usage:  "Deletes a script",
 			Action: cmd.ScriptDelete,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Script Id",
+				},
+			},
+		},
+		{
+			Name:   "add-attachment",
+			Usage:  "Adds an attachment to a script",
+			Action: cmd.ScriptAttachmentAdd,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "id",
+					Usage: "Script Id",
+				},
+				cli.StringFlag{
+					Name:  "name",
+					Usage: "Name of the attachment",
+				},
+				cli.StringFlag{
+					Name:  "filepath",
+					Usage: "path to attachment file",
+				},
+			},
+		},
+		{
+			Name:   "list-attachments",
+			Usage:  "List the attachments a script has",
+			Action: cmd.ScriptAttachmentList,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "id",
