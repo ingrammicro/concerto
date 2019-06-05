@@ -79,16 +79,21 @@ func RunFile(command string) (output string, exitCode int, startedAt time.Time, 
 	}
 
 	stdout, err := cmd.StdoutPipe()
-	CheckError(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	stderr, err := cmd.StderrPipe()
-	CheckError(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	multi := io.MultiReader(stdout, stderr)
 
 	startedAt = time.Now()
-	err = cmd.Start()
-	CheckError(err)
+	if err = cmd.Start(); err != nil {
+		log.Fatal(err)
+	}
 
 	io.Copy(buffer, multi)
 
@@ -99,8 +104,9 @@ func RunFile(command string) (output string, exitCode int, startedAt time.Time, 
 	finishedAt = time.Now()
 	exitCode = extractExitCode(err)
 
-	err = buffer.Flush()
-	CheckError(err)
+	if err = buffer.Flush(); err != nil {
+		log.Fatal(err)
+	}
 	output = b.String()
 
 	log.Debugf("Starting Time: %s", startedAt.Format(TimeStampLayout))
