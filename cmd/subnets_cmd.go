@@ -138,3 +138,20 @@ func SubnetServerList(c *cli.Context) error {
 	}
 	return nil
 }
+
+// SubnetServerArrayList subcommand function
+func SubnetServerArrayList(c *cli.Context) error {
+	debugCmdFuncInfo(c)
+	subnetSvc, formatter := WireUpSubnet(c)
+
+	checkRequiredFlags(c, []string{"id"}, formatter)
+	serverArrays, err := subnetSvc.GetSubnetServerArrayList(c.String("id"))
+	if err != nil {
+		formatter.PrintFatal("Couldn't receive server arrays data", err)
+	}
+
+	if err = formatter.PrintList(serverArrays); err != nil {
+		formatter.PrintFatal("Couldn't print/format result", err)
+	}
+	return nil
+}

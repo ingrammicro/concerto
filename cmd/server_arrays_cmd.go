@@ -87,7 +87,7 @@ func ServerArrayCreate(c *cli.Context) error {
 	debugCmdFuncInfo(c)
 	serverArraySvc, formatter := WireUpServerArray(c)
 
-	checkRequiredFlags(c, []string{"name", "template-id", "cloud-account-id", "server-plan-id",}, formatter)
+	checkRequiredFlags(c, []string{"name", "template-id", "cloud-account-id", "server-plan-id"}, formatter)
 	serverArrayIn := map[string]interface{}{
 		"name":             c.String("name"),
 		"template_id":      c.String("template-id"),
