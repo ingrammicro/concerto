@@ -190,12 +190,15 @@ func ScriptAttachmentAdd(c *cli.Context) error {
 	// uploads new attachment file
 	err = scriptSvc.UploadScriptAttachment(sourceFilePath, attachment.UploadURL)
 	if err != nil {
+		cleanAttachment(c, attachment.ID)
 		formatter.PrintFatal("Couldn't upload attachment data", err)
 	}
 
 	// marks the attachment as "uploaded"
+	attachmentID := attachment.ID
 	attachment, err = scriptSvc.UploadedScriptAttachment(&attachmentIn, attachment.ID)
 	if err != nil {
+		cleanAttachment(c, attachmentID)
 		formatter.PrintFatal("Couldn't set attachment as uploaded", err)
 	}
 
@@ -203,6 +206,14 @@ func ScriptAttachmentAdd(c *cli.Context) error {
 		formatter.PrintFatal("Couldn't print/format result", err)
 	}
 	return nil
+}
+
+// cleanAttachment deletes Attachment. Ideally for cleaning at uploading error cases
+func cleanAttachment(c *cli.Context, attachmentID string) {
+	attachmentSvc, formatter := WireUpAttachment(c)
+	if err := attachmentSvc.DeleteAttachment(attachmentID); err != nil {
+		formatter.PrintError("Couldn't clean failed attachment", err)
+	}
 }
 
 // ScriptAttachmentList subcommand function

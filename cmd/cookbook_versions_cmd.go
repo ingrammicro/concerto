@@ -110,12 +110,15 @@ func CookbookVersionUpload(c *cli.Context) error {
 	// uploads new cookbook_version file
 	err = svc.UploadCookbookVersion(sourceFilePath, cookbookVersion.UploadURL)
 	if err != nil {
+		cleanCookbookVersion(c, cookbookVersion.ID)
 		formatter.PrintFatal("Couldn't upload cookbook version data", err)
 	}
 
 	// processes the new cookbook_version
+	cookbookVersionID := cookbookVersion.ID
 	cookbookVersion, err = svc.ProcessCookbookVersion(utils.FlagConvertParams(c), cookbookVersion.ID)
 	if err != nil {
+		cleanCookbookVersion(c, cookbookVersionID)
 		formatter.PrintFatal("Couldn't process cookbook version", err)
 	}
 
@@ -125,6 +128,14 @@ func CookbookVersionUpload(c *cli.Context) error {
 	}
 
 	return nil
+}
+
+// cleanCookbookVersion deletes CookbookVersion. Ideally for cleaning at uploading error cases
+func cleanCookbookVersion(c *cli.Context, cookbookVersionID string) {
+	svc, formatter := WireUpCookbookVersion(c)
+	if err := svc.DeleteCookbookVersion(cookbookVersionID); err != nil {
+		formatter.PrintError("Couldn't clean failed cookbook version", err)
+	}
 }
 
 // CookbookVersionDelete subcommand function
