@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 	"time"
 )
 
@@ -48,21 +49,11 @@ func CheckStandardStatus(status int, response []byte) error {
 		if responseContent["errors"] != nil {
 			message = ""
 			for key, value := range responseContent["errors"].(map[string]interface{}) {
-				subMessages := value.([]interface{})
-				composedMsg := ""
-				if len(subMessages) > 1 {
-					// several error messages per field
-					for _, m := range subMessages {
-						if composedMsg != "" {
-							composedMsg = fmt.Sprintf("%s,%s", composedMsg, m)
-						} else {
-							composedMsg = fmt.Sprintf("%s", m)
-						}
-					}
-				} else {
-					// only one error message per field
-					composedMsg = subMessages[0].(string)
+				subMessages := make([]string, len(value.([]interface{})))
+				for i, v := range value.([]interface{}) {
+					subMessages[i] = fmt.Sprint(v)
 				}
+				composedMsg := strings.Join(subMessages, ",")
 				message = fmt.Sprintf("%s#%s:%s", message, key, composedMsg)
 			}
 		} else if responseContent["error"] != nil {
