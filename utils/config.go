@@ -35,11 +35,12 @@ const nixServerKeyPath = "/etc/cio/client_ssl/private/key.pem"
 
 // Config stores configuration file contents
 type Config struct {
-	XMLName             xml.Name `xml:"concerto"`
-	APIEndpoint         string   `xml:"server,attr"`
-	LogFile             string   `xml:"log_file,attr"`
-	LogLevel            string   `xml:"log_level,attr"`
-	Certificate         Cert     `xml:"ssl"`
+	XMLName             xml.Name        `xml:"concerto"`
+	APIEndpoint         string          `xml:"server,attr"`
+	LogFile             string          `xml:"log_file,attr"`
+	LogLevel            string          `xml:"log_level,attr"`
+	Certificate         Cert            `xml:"ssl"`
+	BootstrapConfig     BootstrapConfig `xml:"bootstrap"`
 	ConfLocation        string
 	ConfFile            string
 	IsHost              bool
@@ -56,6 +57,14 @@ type Cert struct {
 	Cert string `xml:"cert,attr"`
 	Key  string `xml:"key,attr"`
 	Ca   string `xml:"server_ca,attr"`
+}
+
+// BootstrapConfig stores configuration specific to the bootstrap command
+type BootstrapConfig struct {
+	IntervalSeconds      int  `xml:"interval,attr"`
+	SplaySeconds         int  `xml:"splay,attr"`
+	ApplyAfterIterations int  `xml:"apply_after_iterations,attr"`
+	RunOnce              bool `xml:"run_once,attr"`
 }
 
 var cachedConfig *Config
