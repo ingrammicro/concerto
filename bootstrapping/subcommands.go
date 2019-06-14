@@ -15,7 +15,7 @@ func SubCommands() []cli.Command {
 				cli.IntFlag{
 					Name:  "lines, l",
 					Usage: "Maximum lines threshold per response chunk",
-					Value: DefaultThresholdLines,
+					Value: defaultThresholdLines,
 				},
 			},
 		},

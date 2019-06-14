@@ -26,13 +26,24 @@ import (
 )
 
 const (
-	//DefaultTimingInterval Default period for looping
-	DefaultTimingInterval       = 600 // 600 seconds = 10 minutes
-	DefaultTimingSplay          = 360 // seconds
-	DefaultThresholdLines       = 10
-	DefaultApplyAfterIterations = 4 // iterations
-	ProcessLockFile             = "cio-bootstrapping.lock"
-	RetriesNumber               = 5
+	// defaultIntervalSeconds is the default minimum number of seconds
+	// we will wait between policyfile applications (or attempts)
+	defaultIntervalSeconds = 600 // 600 seconds = 10 minutes
+	// defaultSplaySeconds is the maximum number of seconds added to
+	// the configured interval to randomize the actual interval between
+	// policyfiles applications (or attempts)
+	defaultSplaySeconds = 300 // 300 seconds = 5 minutes
+	// defaultThresholdLines is the default maximum number of lines a
+	// batch of policyfile application output report can have
+	defaultThresholdLines = 10
+	// defaultApplyAfterIterations is the default number of iterations
+	// the continuous bootstrap command can go without attempting to apply
+	// policyfiles
+	defaultApplyAfterIterations = 4 // iterations
+	// ProcessLockFile is the name of the file used to ensure the bootstrap
+	// command is the only one of its kind running
+	ProcessLockFile = "cio-bootstrapping.lock"
+	retriesNumber   = 5
 )
 
 type bootstrappingProcess struct {
@@ -149,22 +160,22 @@ func start(c *cli.Context) error {
 
 	interval := config.BootstrapConfig.IntervalSeconds
 	if !(interval > 0) {
-		interval = DefaultTimingInterval
+		interval = defaultIntervalSeconds
 	}
 
 	splay := config.BootstrapConfig.SplaySeconds
 	if !(splay > 0) {
-		splay = DefaultTimingSplay
+		splay = defaultSplaySeconds
 	}
 
 	applyAfterIterations := config.BootstrapConfig.ApplyAfterIterations
 	if !(applyAfterIterations > 0) {
-		applyAfterIterations = DefaultApplyAfterIterations
+		applyAfterIterations = defaultApplyAfterIterations
 	}
 
 	thresholdLines := c.Int("lines")
 	if !(thresholdLines > 0) {
-		thresholdLines = DefaultThresholdLines
+		thresholdLines = defaultThresholdLines
 	}
 	log.Debug("routine lines threshold: ", thresholdLines)
 	bootstrappingSvc, formatter := cmd.WireUpBootstrapping(c)
@@ -437,7 +448,7 @@ func processPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsProc
 		// Custom method for chunks processing
 		fn := func(chunk string) error {
 			log.Debug("sendChunks")
-			err := utils.Retry(RetriesNumber, time.Second, func() error {
+			err := utils.Retry(retriesNumber, time.Second, func() error {
 				log.Debug("Sending: ", chunk)
 
 				commandIn := map[string]interface{}{
