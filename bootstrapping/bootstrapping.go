@@ -26,12 +26,24 @@ import (
 )
 
 const (
-	//DefaultTimingInterval Default period for looping
-	DefaultTimingInterval = 600 // 600 seconds = 10 minutes
-	DefaultTimingSplay    = 360 // seconds
-	DefaultThresholdLines = 10
-	ProcessLockFile       = "cio-bootstrapping.lock"
-	RetriesNumber         = 5
+	// defaultIntervalSeconds is the default minimum number of seconds
+	// we will wait between policyfile applications (or attempts)
+	defaultIntervalSeconds = 600 // 600 seconds = 10 minutes
+	// defaultSplaySeconds is the maximum number of seconds added to
+	// the configured interval to randomize the actual interval between
+	// policyfiles applications (or attempts)
+	defaultSplaySeconds = 300 // 300 seconds = 5 minutes
+	// defaultThresholdLines is the default maximum number of lines a
+	// batch of policyfile application output report can have
+	defaultThresholdLines = 10
+	// defaultApplyAfterIterations is the default number of iterations
+	// the continuous bootstrap command can go without attempting to apply
+	// policyfiles
+	defaultApplyAfterIterations = 4 // iterations
+	// ProcessLockFile is the name of the file used to ensure the bootstrap
+	// command is the only one of its kind running
+	ProcessLockFile = "cio-bootstrapping.lock"
+	retriesNumber   = 5
 )
 
 type bootstrappingProcess struct {
@@ -139,47 +151,39 @@ func start(c *cli.Context) error {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
 	go handleSysSignals(cancel)
 
-	timingInterval := c.Int64("interval")
-	if !(timingInterval > 0) {
-		timingInterval = DefaultTimingInterval
+	config, err := utils.GetConcertoConfig()
+	if err != nil {
+		formatter.PrintFatal("Couldn't wire up config", err)
 	}
 
-	timingSplay := c.Int64("splay")
-	if !(timingSplay > 0) {
-		timingSplay = DefaultTimingSplay
+	interval := config.BootstrapConfig.IntervalSeconds
+	if !(interval > 0) {
+		interval = defaultIntervalSeconds
+	}
+
+	splay := config.BootstrapConfig.SplaySeconds
+	if !(splay > 0) {
+		splay = defaultSplaySeconds
+	}
+
+	applyAfterIterations := config.BootstrapConfig.ApplyAfterIterations
+	if !(applyAfterIterations > 0) {
+		applyAfterIterations = defaultApplyAfterIterations
 	}
 
 	thresholdLines := c.Int("lines")
 	if !(thresholdLines > 0) {
-		thresholdLines = DefaultThresholdLines
+		thresholdLines = defaultThresholdLines
 	}
 	log.Debug("routine lines threshold: ", thresholdLines)
-
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	bootstrappingSvc, formatter := cmd.WireUpBootstrapping(c)
-	for {
-		applyPolicyfiles(ctx, bootstrappingSvc, formatter, thresholdLines)
 
-		// Sleep for a configured amount of time plus a random amount of time (10 minutes plus 0 to 5 minutes, for instance)
-		ticker := time.NewTicker(time.Duration(timingInterval+int64(r.Intn(int(timingSplay)))) * time.Second)
-
-		select {
-		case <-ticker.C:
-			log.Debug("ticker")
-		case <-ctx.Done():
-			log.Debug(ctx.Err())
-			log.Debug("closing bootstrapping")
-		}
-		ticker.Stop()
-		if ctx.Err() != nil {
-			break
-		}
+	if config.BootstrapConfig.RunOnce {
+		return runBootstrapOnce(ctx, bootstrappingSvc, formatter, thresholdLines, interval, splay)
 	}
-
-	return nil
+	return runBootstrapPeriodically(ctx, bootstrappingSvc, formatter, applyAfterIterations, thresholdLines, interval, splay)
 }
 
 // Stop the bootstrapping process
@@ -195,20 +199,98 @@ func stop(c *cli.Context) error {
 	return nil
 }
 
-// Subsidiary routine for commands processing
-func applyPolicyfiles(ctx context.Context, bootstrappingSvc *blueprint.BootstrappingService, formatter format.Formatter, thresholdLines int) error {
-	log.Debug("applyPolicyfiles")
+func runBootstrapPeriodically(ctx context.Context, bootstrappingSvc *blueprint.BootstrappingService, formatter format.Formatter, applyAfterIterations, thresholdLines, interval, splay int) error {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	var blueprintConfig *types.BootstrappingConfiguration
+	var noPolicyfileApplicationIterations int
+	var lastPolicyfileApplicationErr, err error
+	for {
+		var updated bool
+		blueprintConfig, updated, err = getBlueprintConfig(ctx, bootstrappingSvc, blueprintConfig, formatter)
+		if err == nil {
+			if updated || lastPolicyfileApplicationErr != nil || noPolicyfileApplicationIterations >= applyAfterIterations {
+				noPolicyfileApplicationIterations = -1
+				lastPolicyfileApplicationErr = applyPolicyfiles(ctx, bootstrappingSvc, blueprintConfig, formatter, thresholdLines)
+			}
+		}
+		noPolicyfileApplicationIterations++
 
+		// Sleep for a configured amount of time plus a random amount of time (10 minutes plus 0 to 5 minutes, for instance)
+		ticker := time.NewTicker(time.Duration(interval+r.Intn(int(splay))) * time.Second)
+
+		select {
+		case <-ticker.C:
+			log.Debug("ticker")
+		case <-ctx.Done():
+			log.Debug(ctx.Err())
+			log.Debug("closing bootstrapping")
+		}
+		ticker.Stop()
+		if ctx.Err() != nil {
+			break
+		}
+	}
+	return nil
+}
+
+func runBootstrapOnce(ctx context.Context, bootstrappingSvc *blueprint.BootstrappingService, formatter format.Formatter, thresholdLines, interval, splay int) error {
+	blueprintConfig, _, err := getBlueprintConfig(ctx, bootstrappingSvc, nil, formatter)
+	if err == nil {
+		err = applyPolicyfiles(ctx, bootstrappingSvc, blueprintConfig, formatter, thresholdLines)
+	}
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; err != nil && i < 3; i++ {
+		// Sleep for a configured amount of time plus a random amount of time (10 minutes plus 0 to 5 minutes, for instance)
+		ticker := time.NewTicker(time.Duration(interval+r.Intn(int(splay))) * time.Second)
+		select {
+		case <-ticker.C:
+			log.Debug("ticker")
+		case <-ctx.Done():
+			log.Debug(ctx.Err())
+			log.Debug("interrupting bootstrapping")
+			break
+		}
+		ticker.Stop()
+		blueprintConfig, _, err = getBlueprintConfig(ctx, bootstrappingSvc, nil, formatter)
+		if err == nil {
+			err = applyPolicyfiles(ctx, bootstrappingSvc, blueprintConfig, formatter, thresholdLines)
+		}
+	}
+	return err
+}
+
+func getBlueprintConfig(ctx context.Context, bootstrappingSvc *blueprint.BootstrappingService, previousBlueprintConfig *types.BootstrappingConfiguration, formatter format.Formatter) (*types.BootstrappingConfiguration, bool, error) {
+	log.Debug("getBlueprintConfig")
 	// Inquire about desired configuration changes to be applied by querying the `GET /blueprint/configuration` endpoint. This will provide a JSON response with the desired configuration changes
-	bsConfiguration, status, err := bootstrappingSvc.GetBootstrappingConfiguration()
+	blueprintConfig, status, err := bootstrappingSvc.GetBootstrappingConfiguration()
 	if err == nil && status != 200 {
 		err = fmt.Errorf("received non-ok %d response", status)
 	}
 	if err != nil {
 		formatter.PrintError("couldn't receive bootstrapping data", err)
-		return err
+		return previousBlueprintConfig, false, err
 	}
-	err = generateWorkspaceDir()
+	updated := previousBlueprintConfig == nil
+	if !updated {
+		updated = previousBlueprintConfig.AttributeRevisionID != blueprintConfig.AttributeRevisionID
+		updated = updated || len(previousBlueprintConfig.Policyfiles) != len(blueprintConfig.Policyfiles)
+	}
+	if !updated {
+		for i, cp := range blueprintConfig.Policyfiles {
+			pp := previousBlueprintConfig.Policyfiles[i]
+			updated = cp.ID != pp.ID || cp.RevisionID != pp.RevisionID
+			if updated {
+				break
+			}
+		}
+	}
+	return blueprintConfig, updated, ctx.Err()
+}
+
+// Subsidiary routine for commands processing
+func applyPolicyfiles(ctx context.Context, bootstrappingSvc *blueprint.BootstrappingService, blueprintConfig *types.BootstrappingConfiguration, formatter format.Formatter, thresholdLines int) error {
+	log.Debug("applyPolicyfiles")
+	err := generateWorkspaceDir()
 	if err != nil {
 		formatter.PrintError("couldn't generated workspace directory", err)
 		return err
@@ -221,7 +303,7 @@ func applyPolicyfiles(ctx context.Context, bootstrappingSvc *blueprint.Bootstrap
 	}
 
 	// proto structures
-	err = initializePrototype(bsConfiguration, bsProcess)
+	err = initializePrototype(blueprintConfig, bsProcess)
 	if err != nil {
 		formatter.PrintError("couldn't initialize prototype", err)
 		return err
@@ -366,7 +448,7 @@ func processPolicyfiles(bootstrappingSvc *blueprint.BootstrappingService, bsProc
 		// Custom method for chunks processing
 		fn := func(chunk string) error {
 			log.Debug("sendChunks")
-			err := utils.Retry(RetriesNumber, time.Second, func() error {
+			err := utils.Retry(retriesNumber, time.Second, func() error {
 				log.Debug("Sending: ", chunk)
 
 				commandIn := map[string]interface{}{
