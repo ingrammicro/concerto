@@ -8,7 +8,7 @@ import (
 )
 
 // WireUpDispatcher prepares common resources to send request to API
-func WireUpDispatcher(c *cli.Context) (ds *dispatcher.DispatcherService, f format.Formatter) {
+func WireUpDispatcher(c *cli.Context) (ds *dispatcher.DispatcherService, config *utils.Config, f format.Formatter) {
 
 	f = format.GetFormatter()
 
@@ -25,5 +25,5 @@ func WireUpDispatcher(c *cli.Context) (ds *dispatcher.DispatcherService, f forma
 		f.PrintFatal("Couldn't wire up dispatcher service", err)
 	}
 
-	return ds, f
+	return ds, config, f
 }

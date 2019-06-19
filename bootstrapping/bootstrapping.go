@@ -363,13 +363,9 @@ func downloadPolicyfiles(ctx context.Context, bootstrappingSvc *blueprint.Bootst
 	for _, bsPolicyfile := range bsProcess.policyfiles {
 		tarballPath := bsPolicyfile.TarballPath(bsProcess.directoryPath)
 		log.Debug("downloading: ", tarballPath)
-		queryURL, err := bsPolicyfile.QueryURL()
-		if err != nil {
-			return err
-		}
-		_, status, err := bootstrappingSvc.DownloadPolicyfile(queryURL, tarballPath)
+		_, status, err := bootstrappingSvc.DownloadPolicyfile(bsPolicyfile.DownloadURL, tarballPath)
 		if err == nil && status != 200 {
-			err = fmt.Errorf("obtained non-ok response when downloading policyfile %s", queryURL)
+			err = fmt.Errorf("obtained non-ok response when downloading policyfile %s", bsPolicyfile.DownloadURL)
 		}
 		if err != nil {
 			return err

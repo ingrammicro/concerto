@@ -59,3 +59,42 @@ func TestDeleteScript(t *testing.T) {
 		DeleteScriptFailStatusMocked(t, scriptIn)
 	}
 }
+
+func TestAddScriptAttachment(t *testing.T) {
+	attachmentsIn := testdata.GetAttachmentData()
+	scriptsIn := testdata.GetScriptData()
+	for _, attachmentIn := range attachmentsIn {
+		AddScriptAttachmentMocked(t, attachmentIn, scriptsIn[0].ID)
+		AddScriptAttachmentFailErrMocked(t, attachmentIn, scriptsIn[0].ID)
+		AddScriptAttachmentFailStatusMocked(t, attachmentIn, scriptsIn[0].ID)
+		AddScriptAttachmentFailJSONMocked(t, attachmentIn, scriptsIn[0].ID)
+	}
+}
+
+func TestUploadScriptAttachment(t *testing.T) {
+	attachmentsIn := testdata.GetAttachmentData()
+	for _, attachmentIn := range attachmentsIn {
+		UploadScriptAttachmentMocked(t, attachmentIn)
+		UploadScriptAttachmentFailStatusMocked(t, attachmentIn)
+		UploadScriptAttachmentFailErrMocked(t, attachmentIn)
+	}
+}
+
+func TestUploadedScriptAttachment(t *testing.T) {
+	attachmentsIn := testdata.GetAttachmentData()
+	for _, attachmentIn := range attachmentsIn {
+		UploadedScriptAttachmentMocked(t, attachmentIn)
+		UploadedScriptAttachmentFailErrMocked(t, attachmentIn)
+		UploadedScriptAttachmentFailStatusMocked(t, attachmentIn)
+		UploadedScriptAttachmentFailJSONMocked(t, attachmentIn)
+	}
+}
+
+func TestListScriptAttachments(t *testing.T) {
+	attachmentsIn := testdata.GetAttachmentData()
+	scriptsIn := testdata.GetScriptData()
+	ListScriptAttachmentsMocked(t, attachmentsIn, scriptsIn[0].ID)
+	ListScriptAttachmentsFailErrMocked(t, attachmentsIn, scriptsIn[0].ID)
+	ListScriptAttachmentsFailStatusMocked(t, attachmentsIn, scriptsIn[0].ID)
+	ListScriptAttachmentsFailJSONMocked(t, attachmentsIn, scriptsIn[0].ID)
+}

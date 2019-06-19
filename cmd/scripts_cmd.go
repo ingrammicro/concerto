@@ -164,3 +164,71 @@ func ScriptDelete(c *cli.Context) error {
 	}
 	return nil
 }
+
+// ScriptAttachmentAdd subcommand function
+func ScriptAttachmentAdd(c *cli.Context) error {
+	debugCmdFuncInfo(c)
+	scriptSvc, formatter := WireUpScript(c)
+
+	checkRequiredFlags(c, []string{"id", "name", "filepath"}, formatter)
+
+	sourceFilePath := c.String("filepath")
+	if !utils.FileExists(sourceFilePath) {
+		formatter.PrintFatal("Invalid file path", fmt.Errorf("no such file or directory: %s", sourceFilePath))
+	}
+
+	attachmentIn := map[string]interface{}{
+		"name": c.String("name"),
+	}
+
+	// adds new attachment
+	attachment, err := scriptSvc.AddScriptAttachment(&attachmentIn, c.String("id"))
+	if err != nil {
+		formatter.PrintFatal("Couldn't add attachment to script", err)
+	}
+
+	// uploads new attachment file
+	err = scriptSvc.UploadScriptAttachment(sourceFilePath, attachment.UploadURL)
+	if err != nil {
+		cleanAttachment(c, attachment.ID)
+		formatter.PrintFatal("Couldn't upload attachment data", err)
+	}
+
+	// marks the attachment as "uploaded"
+	attachmentID := attachment.ID
+	attachment, err = scriptSvc.UploadedScriptAttachment(&attachmentIn, attachment.ID)
+	if err != nil {
+		cleanAttachment(c, attachmentID)
+		formatter.PrintFatal("Couldn't set attachment as uploaded", err)
+	}
+
+	if err = formatter.PrintItem(*attachment); err != nil {
+		formatter.PrintFatal("Couldn't print/format result", err)
+	}
+	return nil
+}
+
+// cleanAttachment deletes Attachment. Ideally for cleaning at uploading error cases
+func cleanAttachment(c *cli.Context, attachmentID string) {
+	attachmentSvc, formatter := WireUpAttachment(c)
+	if err := attachmentSvc.DeleteAttachment(attachmentID); err != nil {
+		formatter.PrintError("Couldn't clean failed attachment", err)
+	}
+}
+
+// ScriptAttachmentList subcommand function
+func ScriptAttachmentList(c *cli.Context) error {
+	debugCmdFuncInfo(c)
+	scriptSvc, formatter := WireUpScript(c)
+
+	checkRequiredFlags(c, []string{"id"}, formatter)
+	attachments, err := scriptSvc.ListScriptAttachments(c.String("id"))
+	if err != nil {
+		formatter.PrintFatal("Couldn't list attachments script", err)
+	}
+
+	if err = formatter.PrintList(attachments); err != nil {
+		formatter.PrintFatal("Couldn't print/format result", err)
+	}
+	return nil
+}
